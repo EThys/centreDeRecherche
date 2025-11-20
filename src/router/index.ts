@@ -9,6 +9,12 @@ import PublicationView from "../views/PublicationView.vue";
 import EventView from "../views/EventView.vue";
 //@ts-ignore
 import ActivityRecherche from "../views/ActivityRechercheView.vue";
+//@ts-ignore
+import AllActuality from "../views/AllActualityView.vue";
+//@ts-ignore
+import PublicationDetail from "../views/PublicationDetailView.vue";
+import EventDetailView from '@/views/EventDetailView.vue';
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -29,9 +35,25 @@ const router = createRouter({
       component: PublicationView,
     },
     {
+      path: '/publications/:id',
+      name: 'PublicationDetail',
+      component: PublicationDetail,
+      props: true
+    }, 
+    {
+      path: '/actualites',
+      name: 'actualites',
+      component: AllActuality,
+    },
+    {
       path: '/evenements',
       name: 'evenement',
       component: EventView,
+    },
+    {
+      path: '/events/:id',
+      name: 'EventDetail',
+      component: EventDetailView
     },
     {
       path: '/activites-recherche',

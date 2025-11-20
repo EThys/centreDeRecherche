@@ -1,36 +1,41 @@
 <template>
   <div class="min-h-screen bg-white py-12 px-4 sm:px-6 lg:px-8">
     <div class="max-w-7xl mx-auto">
+      <!-- En-tête avec animations -->
       <div class="text-center mb-16">
-        <div class="flex items-center justify-center mb-6">
+        <div class="flex items-center justify-center mb-6 fade-in-up" data-delay="0">
           <h1 class="text-4xl md:text-5xl font-bold text-gray-900">Galerie Photo</h1>
         </div>
-        <p class="text-xl text-gray-600 max-w-3xl mx-auto mb-8 leading-relaxed">
+        <p class="text-xl text-gray-600 max-w-3xl mx-auto mb-8 leading-relaxed fade-in-up" data-delay="100">
           Captures d'exception de nos événements, installations et moments mémorables
         </p>
         
+        <!-- Filtres avec animations -->
         <div class="flex flex-wrap justify-center gap-3 mb-12">
           <button
-            v-for="filter in filters"
+            v-for="(filter, index) in filters"
             :key="filter.id"
             @click="setActiveFilter(filter.id)"
             :class="[
-              'px-6 py-3 rounded-xl font-medium cursor-pointer transition-all duration-300 transform hover:scale-105 border-2',
+              'px-6 py-3 rounded-xl font-medium cursor-pointer transition-all duration-300 transform hover:scale-105 border-2 fade-in-up',
               activeFilter === filter.id
                 ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg border-blue-500'
                 : 'bg-white text-gray-700 border-gray-200 hover:border-blue-300 hover:shadow-md'
             ]"
+            :data-delay="200 + index * 50"
           >
             {{ filter.name }}
           </button>
         </div>
       </div>
 
+      <!-- Grille de photos avec animations en cascade -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-12">
         <div
           v-for="(photo, index) in filteredPhotos"
           :key="photo.id"
-          class="group relative bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 cursor-pointer border border-gray-100"
+          class="group relative bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 cursor-pointer border border-gray-100 stagger-item"
+          :class="`delay-${300 + index * 50}`"
           @click="openLightbox(index)"
         >
           <div class="relative overflow-hidden aspect-square">
@@ -40,16 +45,17 @@
               class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
             />
             
-
+            <!-- Overlay au survol -->
             <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500">
               <div class="absolute bottom-0 left-0 right-0 p-6 text-white transform translate-y-6 group-hover:translate-y-0 transition-transform duration-500">
-                <h3 class="text-lg font-bold mb-2">{{ photo.title }}</h3>
+                <h3 class="text-lg font-bold mb-2 slide-in-up" data-delay="50">{{ photo.title }}</h3>
                 <p class="text-sm text-blue-100 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-200">
                   {{ photo.description }}
                 </p>
               </div>
             </div>
 
+            <!-- Bouton expand -->
             <div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transform scale-90 group-hover:scale-100 transition-all duration-500">
               <div class="bg-white/90 backdrop-blur-sm w-10 h-10 rounded-full flex items-center justify-center shadow-lg">
                 <i class="fas fa-expand-arrows-alt text-blue-700 text-sm"></i>
@@ -57,32 +63,53 @@
             </div>
 
             <!-- Badge de catégorie -->
-            <div class="absolute top-4 left-4">
+            <div class="absolute top-4 left-4 scale-in" data-delay="100">
               <span class="bg-white/90 backdrop-blur-sm text-blue-700 text-xs font-semibold px-3 py-2 rounded-full shadow-lg">
                 {{ photo.category }}
               </span>
             </div>
           </div>
 
-          
-
           <!-- Effet de bordure subtile -->
           <div class="absolute inset-0 rounded-xl border-2 border-transparent group-hover:border-blue-300 transition-all duration-500 pointer-events-none"></div>
+
+          <!-- Points décoratifs animés -->
+          <div class="absolute top-3 left-3 w-2 h-2 bg-blue-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-200"></div>
+          <div class="absolute bottom-3 right-3 w-2 h-2 bg-blue-400 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-300"></div>
         </div>
+      </div>
+
+      <!-- Bouton Load More avec animation -->
+      <div v-if="filteredPhotos.length < totalFilteredPhotos" class="text-center fade-in-up" data-delay="500">
+        <button
+          @click="loadMore"
+          :disabled="loading"
+          class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-8 py-4 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center mx-auto"
+        >
+          <span v-if="loading" class="flex items-center">
+            <div class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-3"></div>
+            Chargement...
+          </span>
+          <span v-else class="flex items-center">
+            <i class="fas fa-plus mr-2"></i>
+            Voir plus de photos
+          </span>
+        </button>
       </div>
     </div>
 
-    <!-- Lightbox Modal Élégant -->
+    <!-- Lightbox Modal Élégant avec animations -->
     <div
       v-if="lightboxOpen"
-      class="fixed inset-0 bg-black/95 backdrop-blur-md z-50 flex items-center justify-center p-4"
+      class="fixed inset-0 bg-black/95 backdrop-blur-md z-50 flex items-center justify-center p-4 lightbox-enter"
       @click="closeLightbox"
     >
-      <div class="relative max-w-6xl max-h-full" @click.stop>
+      <div class="relative max-w-6xl max-h-full scale-in" data-delay="100" @click.stop>
         <!-- Bouton fermer -->
         <button
           @click="closeLightbox"
-          class="absolute -top-16 right-0 text-white hover:text-blue-300 text-2xl z-10 transition-colors duration-300 bg-white/10 backdrop-blur-sm w-12 h-12 rounded-full flex items-center justify-center"
+          class="absolute -top-16 right-0 text-white hover:text-blue-300 text-2xl z-10 transition-all duration-300 bg-white/10 backdrop-blur-sm w-12 h-12 rounded-full flex items-center justify-center transform hover:scale-110 fade-in-up"
+          data-delay="200"
         >
           <i class="fas fa-times"></i>
         </button>
@@ -90,20 +117,22 @@
         <!-- Navigation -->
         <button
           @click="prevImage"
-          class="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 border border-white/20"
+          class="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 border border-white/20 slide-in-left"
+          data-delay="300"
         >
           <i class="fas fa-chevron-left"></i>
         </button>
         
         <button
           @click="nextImage"
-          class="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 border border-white/20"
+          class="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 border border-white/20 slide-in-right"
+          data-delay="300"
         >
           <i class="fas fa-chevron-right"></i>
         </button>
 
         <!-- Container image lightbox -->
-        <div class="relative bg-white rounded-sm overflow-hidden shadow-3xl">
+        <div class="relative bg-white rounded-sm overflow-hidden shadow-3xl fade-in-up" data-delay="400">
           <img
             :src="currentLightboxImage.image"
             :alt="currentLightboxImage.title"
@@ -113,32 +142,38 @@
           <!-- Infos lightbox -->
           <div class="bg-gradient-to-r from-blue-600 to-blue-700 p-8 text-white">
             <div class="flex flex-wrap items-center gap-4 mb-4">
-              <span class="bg-white/20 px-4 py-2 rounded-full text-sm font-medium backdrop-blur-sm">
+              <span class="bg-white/20 px-4 py-2 rounded-full text-sm font-medium backdrop-blur-sm scale-in" data-delay="500">
                 {{ currentLightboxImage.category }}
               </span>
-              <span class="flex items-center text-blue-100">
+              <span class="flex items-center text-blue-100 fade-in-up" data-delay="550">
                 <i class="far fa-calendar mr-2"></i>
                 {{ currentLightboxImage.date }}
               </span>
-              <span class="flex items-center text-blue-100">
+              <span class="flex items-center text-blue-100 fade-in-up" data-delay="600">
                 <i class="fas fa-user mr-2"></i>
                 {{ currentLightboxImage.author }}
               </span>
             </div>
             
-            <h3 class="text-3xl font-bold mb-4">{{ currentLightboxImage.title }}</h3>
-            <p class="text-lg text-blue-100 leading-relaxed mb-6">{{ currentLightboxImage.description }}</p>
-
+            <h3 class="text-3xl font-bold mb-4 fade-in-up" data-delay="650">{{ currentLightboxImage.title }}</h3>
+            <p class="text-lg text-blue-100 leading-relaxed mb-6 fade-in-up" data-delay="700">{{ currentLightboxImage.description }}</p>
           </div>
         </div>
 
         <!-- Compteur -->
-        <div class="absolute -bottom-16 left-0 text-white text-center w-full">
+        <div class="absolute -bottom-16 left-0 text-white text-center w-full fade-in-up" data-delay="800">
           <p class="text-lg bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full inline-block">
             {{ currentLightboxIndex + 1 }} / {{ photos.length }}
           </p>
         </div>
       </div>
+    </div>
+
+    <!-- Éléments décoratifs animés en arrière-plan -->
+    <div class="fixed inset-0 pointer-events-none z-0">
+      <div class="absolute top-20 left-10 w-20 h-20 bg-blue-200/30 rounded-full blur-xl animate-float-slow"></div>
+      <div class="absolute bottom-20 right-10 w-24 h-24 bg-blue-300/20 rounded-full blur-xl animate-float-medium"></div>
+      <div class="absolute top-1/3 right-1/4 w-16 h-16 bg-blue-100/40 rounded-full blur-lg animate-float-fast"></div>
     </div>
   </div>
 </template>
@@ -162,7 +197,7 @@ const filters = ref([
   { id: 'collaborations', name: 'Collaborations' }
 ])
 
-// Données des photos
+// Données des photos (identique à votre version précédente)
 const photos = ref([
   {
     id: 1,
@@ -283,6 +318,12 @@ const filteredPhotos = computed(() => {
   return items.slice(0, displayedCount.value)
 })
 
+const totalFilteredPhotos = computed(() => {
+  return activeFilter.value === 'all' 
+    ? photos.value.length 
+    : photos.value.filter(photo => photo.category === activeFilter.value).length
+})
+
 const currentLightboxImage = computed(() => {
   return photos.value[currentLightboxIndex.value]
 })
@@ -291,6 +332,10 @@ const currentLightboxImage = computed(() => {
 const setActiveFilter = (filterId) => {
   activeFilter.value = filterId
   displayedCount.value = 12
+  // Réinitialiser les animations pour les nouveaux éléments
+  setTimeout(() => {
+    initScrollAnimations()
+  }, 100)
 }
 
 const openLightbox = (index) => {
@@ -317,6 +362,34 @@ const loadMore = async () => {
   await new Promise(resolve => setTimeout(resolve, 1000))
   displayedCount.value += 8
   loading.value = false
+  // Réinitialiser les animations pour les nouveaux éléments
+  setTimeout(() => {
+    initScrollAnimations()
+  }, 100)
+}
+
+// Système d'animation
+let observer = null
+
+const initScrollAnimations = () => {
+  const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+  }
+
+  observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('animate-in')
+        observer.unobserve(entry.target)
+      }
+    })
+  }, observerOptions)
+
+  // Observer tous les éléments avec des classes d'animation
+  document.querySelectorAll('.fade-in-up, .slide-in-left, .slide-in-right, .slide-in-up, .scale-in, .stagger-item').forEach(el => {
+    observer.observe(el)
+  })
 }
 
 // Gestion des touches clavier
@@ -339,31 +412,228 @@ const handleKeydown = (event) => {
 // Lifecycle
 onMounted(() => {
   window.addEventListener('keydown', handleKeydown)
+  setTimeout(() => {
+    initScrollAnimations()
+  }, 100)
 })
 
 onUnmounted(() => {
   window.removeEventListener('keydown', handleKeydown)
+  if (observer) {
+    observer.disconnect()
+  }
 })
 </script>
 
 <style scoped>
-/* Animations fluides */
-.gallery-item {
-  animation: fadeInUp 0.6s ease-out forwards;
+/* Animations d'apparition */
+.fade-in-up {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-@keyframes fadeInUp {
+.fade-in-up.animate-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.slide-in-left {
+  opacity: 0;
+  transform: translateX(-30px);
+  transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.slide-in-left.animate-in {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.slide-in-right {
+  opacity: 0;
+  transform: translateX(30px);
+  transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.slide-in-right.animate-in {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.slide-in-up {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.slide-in-up.animate-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.scale-in {
+  opacity: 0;
+  transform: scale(0.8);
+  transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.scale-in.animate-in {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Système de délais pour les animations en cascade */
+.stagger-item {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.stagger-item.animate-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Délais personnalisés */
+[data-delay="0"] { transition-delay: 0ms; }
+[data-delay="50"] { transition-delay: 50ms; }
+[data-delay="100"] { transition-delay: 100ms; }
+[data-delay="200"] { transition-delay: 200ms; }
+[data-delay="300"] { transition-delay: 300ms; }
+[data-delay="400"] { transition-delay: 400ms; }
+[data-delay="500"] { transition-delay: 500ms; }
+[data-delay="550"] { transition-delay: 550ms; }
+[data-delay="600"] { transition-delay: 600ms; }
+[data-delay="650"] { transition-delay: 650ms; }
+[data-delay="700"] { transition-delay: 700ms; }
+[data-delay="800"] { transition-delay: 800ms; }
+
+.delay-300 { transition-delay: 300ms; }
+.delay-350 { transition-delay: 350ms; }
+.delay-400 { transition-delay: 400ms; }
+.delay-450 { transition-delay: 450ms; }
+.delay-500 { transition-delay: 500ms; }
+.delay-550 { transition-delay: 550ms; }
+.delay-600 { transition-delay: 600ms; }
+.delay-650 { transition-delay: 650ms; }
+
+/* Animations flottantes */
+@keyframes float-slow {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+}
+
+@keyframes float-medium {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes float-fast {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.animate-float-slow {
+  animation: float-slow 6s ease-in-out infinite;
+}
+
+.animate-float-medium {
+  animation: float-medium 4s ease-in-out infinite;
+}
+
+.animate-float-fast {
+  animation: float-fast 3s ease-in-out infinite;
+}
+
+/* Animation de spin pour le loading */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Animation d'entrée du lightbox */
+.lightbox-enter {
+  animation: lightboxFadeIn 0.3s ease-out forwards;
+}
+
+@keyframes lightboxFadeIn {
   from {
     opacity: 0;
-    transform: translateY(30px);
+    backdrop-filter: blur(0px);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    backdrop-filter: blur(12px);
   }
 }
 
-/* Effets de glassmorphisme */
+/* Support pour la réduction des animations */
+@media (prefers-reduced-motion: reduce) {
+  .fade-in-up,
+  .slide-in-left,
+  .slide-in-right,
+  .slide-in-up,
+  .scale-in,
+  .stagger-item,
+  .animate-float-slow,
+  .animate-float-medium,
+  .animate-float-fast,
+  .animate-spin,
+  .lightbox-enter,
+  .group-hover\:scale-110,
+  .hover\:scale-105 {
+    animation: none;
+    transition: none;
+    transform: none;
+  }
+  
+  .fade-in-up.animate-in,
+  .slide-in-left.animate-in,
+  .slide-in-right.animate-in,
+  .slide-in-up.animate-in,
+  .scale-in.animate-in,
+  .stagger-item.animate-in {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Optimisations pour mobile */
+@media (max-width: 768px) {
+  .fade-in-up,
+  .slide-in-left,
+  .slide-in-right,
+  .stagger-item {
+    transform: translateY(20px);
+    transition-duration: 0.6s;
+  }
+  
+  .slide-in-left { transform: translateX(-20px); }
+  .slide-in-right { transform: translateX(20px); }
+}
+
+/* Amélioration des performances */
+.transform {
+  will-change: transform;
+}
+
 .backdrop-blur-sm {
   backdrop-filter: blur(8px);
 }
@@ -379,17 +649,6 @@ onUnmounted(() => {
 
 .hover\:shadow-2xl:hover {
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-}
-
-/* Support pour la réduction des animations */
-@media (prefers-reduced-motion: reduce) {
-  .gallery-item,
-  .group-hover\:scale-110,
-  .hover\:scale-105 {
-    animation: none;
-    transition: none;
-    transform: none;
-  }
 }
 
 /* Amélioration des transitions */
