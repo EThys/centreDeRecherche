@@ -1,151 +1,96 @@
 <template>
-  <section id="mission" class="mission-section">
-    <div class="container">
-      <!-- En-tête avec design amélioré -->
-      <div class="section-header">
-        <div class="academic-badge">
-          <span class="badge-text">Notre Mission</span>
+  <section class="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <!-- Image de fond avec effet parallax -->
+    <div class="parallax-bg absolute inset-0 z-0">
+      <img 
+        src="../assets/carousel-2.jpg" 
+        alt="Centre de recherche CReFF-PME"
+        class="w-full h-full object-cover transform scale-105"
+      />
+      <!-- Overlay pour améliorer la lisibilité -->
+      <div class="absolute inset-0 bg-gradient-to-br from-blue-900/80 to-blue-800/70"></div>
+      
+      <!-- Éléments décoratifs animés -->
+      <div class="absolute top-20 left-20 w-64 h-64 bg-blue-400/10 rounded-full blur-3xl animate-float-slow"></div>
+      <div class="absolute bottom-20 right-20 w-80 h-80 bg-blue-300/10 rounded-full blur-3xl animate-float-medium"></div>
+      <div class="absolute top-1/2 left-1/2 w-72 h-72 bg-blue-200/5 rounded-full blur-3xl animate-float-fast -translate-x-1/2 -translate-y-1/2"></div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 py-20">
+      <!-- En-tête de section -->
+      <div class="text-center mb-16 fade-in-up" data-delay="0">
+        <div class="inline-flex items-center gap-3 text-white mb-6">
+          <div class="w-12 h-0.5 bg-blue-400 expand-width" data-delay="200"></div>
+          <span class="text-sm font-semibold tracking-wider uppercase text-blue-200 slide-in-up" data-delay="300">Notre Raison d'Être</span>
+          <div class="w-12 h-0.5 bg-blue-400 expand-width" data-delay="200"></div>
         </div>
-        <h2 class="section-title">Objectifs et Vision Stratégique</h2>
-        <p class="section-subtitle">
-          Une approche intégrée pour l'excellence en recherche et la formation 
-          dans le domaine du financement des PME
+        <h2 class="text-4xl lg:text-6xl font-bold text-white mb-6 fade-in-up" data-delay="400">
+          Notre <span class="text-blue-400 bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">Mission</span>
+        </h2>
+        <p class="text-xl text-blue-100 max-w-3xl mx-auto leading-relaxed fade-in-up" data-delay="600">
+          Transformer la recherche sur le financement des PME en leviers concrets de développement économique pour l'Afrique
         </p>
       </div>
 
-      <!-- Carousel Container -->
-      <div class="carousel-container">
-        <div class="carousel-wrapper">
-          <div 
-            class="carousel-track" 
-            :style="{ transform: `translateX(-${currentIndex * cardWidth}px)` }"
-            @touchstart="handleTouchStart"
-            @touchmove="handleTouchMove"
-            @touchend="handleTouchEnd"
-          >
-            <div 
-              class="carousel-slide" 
-              v-for="(mission, index) in missions" 
-              :key="mission.id"
-              :class="{ 
-                'active': isActive(index),
-                'prev': isPrev(index),
-                'next': isNext(index)
-              }"
-              @click="goToSlide(index)"
-            >
-              <div 
-                class="mission-card" 
-                :style="{ '--card-accent': mission.accentColor }"
-              >
-                <!-- Fond décoratif -->
-                <div class="card-background">
-                  <div class="accent-gradient"></div>
-                  <div class="pattern-overlay"></div>
-                </div>
-                
-                <!-- Contenu de la carte -->
-                <div class="card-content">
-                  <!-- En-tête de carte -->
-                  <div class="card-header">
-                    <div class="mission-icon">
-                      <div class="icon-wrapper">
-                        <component :is="mission.icon" />
-                      </div>
-                      <div class="icon-glow"></div>
-                    </div>
-                    <div class="mission-number">0{{ mission.id }}</div>
-                  </div>
+      <!-- Cartes Mission Principale -->
+      <div class="grid lg:grid-cols-3 gap-8">
+        <div 
+          v-for="(mission, index) in mainMissions"
+          :key="index"
+          class="group relative bg-gradient-to-br from-white/15 to-white/5 backdrop-blur-md rounded-2xl p-8 border border-white/20 transition-all duration-700 overflow-hidden cursor-pointer stagger-item"
+          :class="`delay-${index * 200}`"
+        >
+          <!-- Fond animé au survol -->
+          <div class="absolute inset-0 bg-gradient-to-br from-blue-500/0 via-blue-600/0 to-cyan-500/0 group-hover:from-blue-500/20 group-hover:via-blue-600/15 group-hover:to-cyan-500/10 transition-all duration-700 transform group-hover:scale-110"></div>
+          
+          <!-- Effet de lumière au survol -->
+          <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+          
+          <!-- Bordure animée -->
+          <div class="absolute inset-0 rounded-2xl bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity duration-500 p-[2px]">
+            <div class="w-full h-full rounded-2xl bg-gray-900/80"></div>
+          </div>
 
-                  <!-- Corps de la carte -->
-                  <div class="card-body">
-                    <h3 class="mission-card-title">{{ mission.title }}</h3>
-                    <p class="mission-card-description">{{ mission.description }}</p>
-                    
-                    <!-- Liste des points clés -->
-                    <ul class="mission-list">
-                      <li v-for="(item, itemIndex) in mission.items" :key="itemIndex">
-                        <span class="list-icon">
-                          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
-                          </svg>
-                        </span>
-                        <span class="list-text">{{ item }}</span>
-                      </li>
-                    </ul>
-                  </div>
+          <!-- Contenu de la carte -->
+          <div class="relative z-10">
+            <!-- Icône -->
+            <div class="w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mb-6 mx-auto transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 shadow-lg group-hover:shadow-2xl group-hover:shadow-blue-500/25">
+              <component :is="mission.icon" class="w-10 h-10 text-white transform group-hover:scale-110 transition-transform duration-300" />
+            </div>
+            
+            <!-- Contenu texte -->
+            <h3 class="text-2xl font-bold text-white text-center mb-4 group-hover:text-blue-300 transition-colors duration-300 transform group-hover:translate-y-1">
+              {{ mission.title }}
+            </h3>
+            <p class="text-blue-100 text-center leading-relaxed text-lg transform group-hover:translate-y-1 transition-transform duration-300">
+              {{ mission.description }}
+            </p>
 
-                  <!-- Footer de carte -->
-                  <div class="card-footer">
-                    <div class="mission-cta">
-                      <span class="cta-text">En savoir plus</span>
-                      <div class="cta-arrow">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
-                        </svg>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Effet de bordure animée -->
-                <div class="card-border"></div>
-              </div>
+            <!-- Indicateur de survol -->
+            <div class="flex justify-center mt-6 opacity-0 group-hover:opacity-100 transform group-hover:translate-y-0 translate-y-4 transition-all duration-500">
+              <div class="w-8 h-0.5 bg-blue-400 rounded-full"></div>
             </div>
           </div>
-        </div>
 
-        <!-- Navigation Controls -->
-        <div class="carousel-controls">
-          <button 
-            class="control-btn prev" 
-            @click="prevSlide"
-            :disabled="currentIndex === 0"
-          >
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-            </svg>
-          </button>
-          
-          <!-- Indicators -->
-          <div class="carousel-indicators">
-            <button
-              v-for="(mission, index) in missions"
-              :key="mission.id"
-              class="indicator"
-              :class="{ 'active': currentIndex === index }"
-              @click="goToSlide(index)"
-            >
-              <div class="indicator-dot"></div>
-            </button>
-          </div>
-
-          <button 
-            class="control-btn next" 
-            @click="nextSlide"
-            :disabled="currentIndex >= missions.length - visibleCards"
-          >
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-            </svg>
-          </button>
-        </div>
-
-        <!-- Slide Counter -->
-        <div class="slide-counter">
-          <span class="current-slide">0{{ currentIndex + 1 }}</span>
-          <span class="counter-separator">/</span>
-          <span class="total-slides">0{{ missions.length }}</span>
+          <!-- Points décoratifs -->
+          <div class="absolute top-4 right-4 w-2 h-2 bg-blue-400 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-200"></div>
+          <div class="absolute bottom-4 left-4 w-2 h-2 bg-cyan-400 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-300"></div>
         </div>
       </div>
 
-      <!-- Indicateurs de performance -->
-      <div class="performance-indicators">
-        <div class="indicator" v-for="indicator in performanceIndicators" :key="indicator.label">
-          <div class="indicator-value">{{ indicator.value }}</div>
-          <div class="indicator-label">{{ indicator.label }}</div>
-          <div class="indicator-progress">
-            <div class="progress-bar" :style="{ width: indicator.percentage + '%' }"></div>
+      <!-- Section supplémentaire avec statistiques -->
+      <div class="mt-20 grid md:grid-cols-4 gap-6 text-center">
+        <div 
+          v-for="(stat, index) in stats"
+          :key="index"
+          class="fade-in-up"
+          :data-delay="800 + index * 100"
+        >
+          <div class="text-3xl lg:text-4xl font-bold text-white mb-2 bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
+            {{ stat.value }}
+          </div>
+          <div class="text-blue-200 text-sm font-medium">
+            {{ stat.label }}
           </div>
         </div>
       </div>
@@ -153,795 +98,283 @@
   </section>
 </template>
 
-<script setup lang="ts">
-import { ref, onMounted, onUnmounted, computed } from 'vue'
+<script setup>
+import { MagnifyingGlassIcon, AcademicCapIcon, ChartBarIcon } from '@heroicons/vue/24/outline'
+import { ref, onMounted, onUnmounted } from 'vue'
 
-const currentIndex = ref(0)
-const cardWidth = 380 // Largeur d'une carte + gap
-const visibleCards = 2.5 // 2 cartes complètes + 1 partielle
-const touchStartX = ref(0)
-const touchEndX = ref(0)
-
-const isActive = (index: number) => {
-  return index >= currentIndex.value && index < currentIndex.value + visibleCards
-}
-
-const isPrev = (index: number) => {
-  return index < currentIndex.value
-}
-
-const isNext = (index: number) => {
-  return index >= currentIndex.value + visibleCards
-}
-
-const nextSlide = () => {
-  if (currentIndex.value < missions.length - visibleCards) {
-    currentIndex.value++
-  }
-}
-
-const prevSlide = () => {
-  if (currentIndex.value > 0) {
-    currentIndex.value--
-  }
-}
-
-const goToSlide = (index: number) => {
-  // Empêcher d'aller au-delà de la limite
-  if (index <= missions.length - visibleCards) {
-    currentIndex.value = index
-  } else {
-    currentIndex.value = missions.length - visibleCards
-  }
-}
-
-// Gestion du swipe tactile
-const handleTouchStart = (e: TouchEvent) => {
-  touchStartX.value = e.touches[0].clientX
-}
-
-const handleTouchMove = (e: TouchEvent) => {
-  touchEndX.value = e.touches[0].clientX
-}
-
-const handleTouchEnd = () => {
-  const diff = touchStartX.value - touchEndX.value
-  const minSwipeDistance = 50
-
-  if (Math.abs(diff) > minSwipeDistance) {
-    if (diff > 0) {
-      // Swipe gauche
-      nextSlide()
-    } else {
-      // Swipe droite
-      prevSlide()
-    }
-  }
-}
-
-const ResearchMissionIcon = {
-  template: `
-    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
-    </svg>
-  `
-}
-
-const TrainingMissionIcon = {
-  template: `
-    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-    </svg>
-  `
-}
-
-const ImpactMissionIcon = {
-  template: `
-    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
-    </svg>
-  `
-}
-
-const missions = [
+const mainMissions = [
   {
-    id: 1,
-    icon: ResearchMissionIcon,
-    title: "Excellence en Recherche",
-    description: "Développer une recherche innovante et rigoureuse sur les écosystèmes de financement des PME",
-    items: [
-      "Publications scientifiques internationales",
-      "Études terrain multi-pays",
-      "Analyse comparative des politiques",
-      "Revues systématiques de littérature"
-    ],
-    accentColor: "#3B82F6"
+    title: "Recherche Appliquée",
+    description: "Produire des connaissances scientifiques rigoureuses sur les mécanismes de financement des PME adaptés aux contextes africains.",
+    icon: MagnifyingGlassIcon
   },
   {
-    id: 2,
-    icon: TrainingMissionIcon,
-    title: "Formation & Leadership",
-    description: "Cultiver les talents et former les leaders de demain en finance d'entreprise",
-    items: [
-      "Encadrement doctoral et postdoctoral",
-      "Ateliers méthodologiques avancés",
-      "Séminaires internationaux d'excellence",
-      "Programmes de mentorat personnalisé"
-    ],
-    accentColor: "#10B981"
+    title: "Formation d'Excellence",
+    description: "Former la nouvelle génération de chercheurs et professionnels spécialisés en financement des entreprises en Afrique.",
+    icon: AcademicCapIcon
   },
   {
-    id: 3,
-    icon: ImpactMissionIcon,
-    title: "Impact & Transformation",
-    description: "Créer un impact mesurable sur l'écosystème entrepreneurial et politique",
-    items: [
-      "Recommandations politiques fondées sur des données",
-      "Accompagnement stratégique des PME",
-      "Transfert de connaissances innovant",
-      "Plateformes de dialogue multi-acteurs"
-    ],
-    accentColor: "#F59E0B"
-  },
-  {
-    id: 4,
-    icon: ResearchMissionIcon,
-    title: "Innovation Digitale",
-    description: "Lever les technologies émergentes pour révolutionner le financement des PME",
-    items: [
-      "Plateformes de financement digital",
-      "Analyse de données avancée",
-      "Solutions FinTech innovantes",
-      "Transformation digitale des processus"
-    ],
-    accentColor: "#8B5CF6"
+    title: "Accompagnement Stratégique",
+    description: "Appuyer concrètement les entrepreneurs et institutions grâce à des outils et solutions basées sur nos recherches.",
+    icon: ChartBarIcon
   }
 ]
 
-const performanceIndicators = [
-  { value: "15+", label: "Projets de Recherche", percentage: 85 },
-  { value: "50+", label: "Publications", percentage: 75 },
-  { value: "100+", label: "Chercheurs Formés", percentage: 90 },
-  { value: "12+", label: "Pays Partenaires", percentage: 70 }
+const stats = [
+  { value: "50+", label: "Projets de Recherche" },
+  { value: "200+", label: "Publications" },
+  { value: "30+", label: "Pays Partenaires" },
+  { value: "1000+", label: "Professionnels Formés" }
 ]
+
+// Système d'animation
+let observer = null
+
+const initScrollAnimations = () => {
+  const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+  }
+
+  observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('animate-in')
+        observer.unobserve(entry.target)
+      }
+    })
+  }, observerOptions)
+
+  // Observer tous les éléments avec des classes d'animation
+  document.querySelectorAll('.fade-in-up, .slide-in-up, .scale-in, .stagger-item, .expand-width').forEach(el => {
+    observer.observe(el)
+  })
+}
+
+onMounted(() => {
+  setTimeout(() => {
+    initScrollAnimations()
+  }, 100)
+})
+
+onUnmounted(() => {
+  if (observer) {
+    observer.disconnect()
+  }
+})
 </script>
 
 <style scoped>
-/* Variables CSS modernes */
-.mission-section {
-  --primary: #1E40AF;
-  --primary-dark: #1E3A8A;
-  --primary-light: #3B82F6;
-  --secondary: #10B981;
-  --accent: #F59E0B;
-  --accent-light: #FBBF24;
-  --dark: #1F2937;
-  --dark-light: #374151;
-  --light: #F8FAFC;
-  --gray: #6B7280;
-  --gray-light: #E5E7EB;
-  --white: #FFFFFF;
-  
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  --shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-  
-  --radius: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 20px;
-  
-  --transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+.parallax-bg {
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
-.mission-section {
-  padding: 6rem 0;
-  background: linear-gradient(135deg, var(--light) 0%, #FFFFFF 50%, #F1F5F9 100%);
-  position: relative;
-  overflow: hidden;
+.backdrop-blur-md {
+  backdrop-filter: blur(12px);
 }
 
-.container {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 0 2rem;
+/* Animations d'apparition */
+.fade-in-up {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-/* En-tête de section */
-.section-header {
-  text-align: center;
-  margin-bottom: 5rem;
+.fade-in-up.animate-in {
+  opacity: 1;
+  transform: translateY(0);
 }
 
-.academic-badge {
-  display: inline-flex;
-  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-  border-radius: 50px;
-  padding: 0.75rem 2rem;
-  margin-bottom: 1.5rem;
-  box-shadow: var(--shadow);
+.slide-in-up {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-.badge-text {
-  font-size: 0.875rem;
-  font-weight: 700;
-  color: var(--white);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+.slide-in-up.animate-in {
+  opacity: 1;
+  transform: translateY(0);
 }
 
-.section-title {
-  font-size: clamp(2.5rem, 4vw, 3.5rem);
-  font-weight: 800;
-  color: var(--dark);
-  line-height: 1.1;
-  margin-bottom: 1.5rem;
-  background: linear-gradient(135deg, var(--dark) 0%, var(--primary) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+.scale-in {
+  opacity: 0;
+  transform: scale(0.8);
+  transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-.section-subtitle {
-  font-size: 1.25rem;
-  color: var(--gray);
-  line-height: 1.7;
-  max-width: 600px;
-  margin: 0 auto;
-  font-weight: 500;
-}
-
-/* Carousel Styles */
-.carousel-container {
-  position: relative;
-  margin-bottom: 4rem;
-}
-
-.carousel-wrapper {
-  overflow: hidden;
-  padding: 2rem 0;
-  margin: 0 -2rem;
-}
-
-.carousel-track {
-  display: flex;
-  gap: 1.5rem;
-  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-  will-change: transform;
-  padding: 0 2rem;
-}
-
-.carousel-slide {
-  flex: 0 0 360px;
-  min-width: 360px;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  cursor: pointer;
-}
-
-/* États des slides */
-.carousel-slide.active {
+.scale-in.animate-in {
+  opacity: 1;
   transform: scale(1);
-  opacity: 1;
 }
 
-.carousel-slide.prev,
-.carousel-slide.next {
-  transform: scale(0.95);
-  opacity: 0.7;
-}
-
-.carousel-slide:not(.active):not(.prev):not(.next) {
-  transform: scale(0.9);
-  opacity: 0.4;
-}
-
-/* Mission Card Styles */
-.mission-card {
-  position: relative;
-  background: var(--white);
-  border-radius: var(--radius-xl);
-  padding: 0;
-  overflow: hidden;
-  box-shadow: var(--shadow-lg);
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  isolation: isolate;
-  height: 100%;
-  min-height: 550px;
-}
-
-.carousel-slide.active .mission-card {
-  box-shadow: var(--shadow-xl);
-}
-
-.carousel-slide:hover .mission-card {
-  transform: translateY(-5px);
-  box-shadow: var(--shadow-xl);
-}
-
-/* Reste des styles de carte */
-.card-background {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 1;
-}
-
-.accent-gradient {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, var(--card-accent), transparent);
-}
-
-.pattern-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: 
-    radial-gradient(circle at 20% 80%, rgba(99, 102, 241, 0.03) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.03) 0%, transparent 50%);
+.expand-width {
   opacity: 0;
-  transition: var(--transition);
+  transform: scaleX(0);
+  transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-.mission-card:hover .pattern-overlay {
+.expand-width.animate-in {
   opacity: 1;
+  transform: scaleX(1);
 }
 
-.card-content {
-  position: relative;
-  z-index: 2;
-  padding: 2.5rem;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 2rem;
-}
-
-.mission-icon {
-  position: relative;
-}
-
-.icon-wrapper {
-  width: 70px;
-  height: 70px;
-  background: linear-gradient(135deg, var(--card-accent), color-mix(in srgb, var(--card-accent) 80%, white));
-  border-radius: 18px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 8px 20px color-mix(in srgb, var(--card-accent) 30%, transparent);
-  transition: var(--transition);
-}
-
-.mission-card:hover .icon-wrapper {
-  transform: scale(1.1) rotate(5deg);
-}
-
-.icon-wrapper .icon {
-  width: 2rem;
-  height: 2rem;
-  color: var(--white);
-}
-
-.icon-glow {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 80px;
-  height: 80px;
-  background: var(--card-accent);
-  border-radius: 50%;
-  filter: blur(20px);
-  opacity: 0;
-  transition: var(--transition);
-  z-index: -1;
-}
-
-.mission-card:hover .icon-glow {
-  opacity: 0.3;
-}
-
-.mission-number {
-  font-size: 3rem;
-  font-weight: 900;
-  color: var(--gray-light);
-  line-height: 1;
-  transition: var(--transition);
-}
-
-.mission-card:hover .mission-number {
-  color: var(--card-accent);
-  transform: scale(1.1);
-}
-
-.card-body {
-  flex: 1;
-  margin-bottom: 2rem;
-}
-
-.mission-card-title {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--dark);
-  margin-bottom: 1rem;
-  line-height: 1.3;
-}
-
-.mission-card-description {
-  color: var(--gray);
-  line-height: 1.6;
-  margin-bottom: 2rem;
-  font-size: 1rem;
-}
-
-.mission-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.mission-list li {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.75rem;
-  padding: 0.75rem 0;
-  border-bottom: 1px solid var(--gray-light);
-  transition: var(--transition);
-}
-
-.mission-list li:last-child {
-  border-bottom: none;
-}
-
-.mission-list li:hover {
-  transform: translateX(5px);
-}
-
-.list-icon {
-  flex-shrink: 0;
-  width: 24px;
-  height: 24px;
-  background: var(--card-accent);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 0.125rem;
-}
-
-.list-icon svg {
-  width: 14px;
-  height: 14px;
-  color: var(--white);
-}
-
-.list-text {
-  color: var(--dark-light);
-  font-size: 0.9rem;
-  line-height: 1.5;
-  flex: 1;
-}
-
-.card-footer {
-  margin-top: auto;
-}
-
-.mission-cta {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: var(--card-accent);
-  font-weight: 600;
-  font-size: 0.9rem;
-  text-decoration: none;
-  transition: var(--transition);
-  cursor: pointer;
-}
-
-.mission-cta:hover {
-  gap: 0.75rem;
-}
-
-.cta-arrow {
-  width: 20px;
-  height: 20px;
-  transition: var(--transition);
-}
-
-.mission-cta:hover .cta-arrow {
-  transform: translateX(3px);
-}
-
-.cta-arrow svg {
-  width: 100%;
-  height: 100%;
-}
-
-.card-border {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  border: 2px solid transparent;
-  border-radius: var(--radius-xl);
-  background: linear-gradient(135deg, var(--card-accent), transparent) border-box;
-  mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
-  mask-composite: subtract;
-  opacity: 0;
-  transition: var(--transition);
-}
-
-.mission-card:hover .card-border {
-  opacity: 1;
-}
-
-/* Carousel Controls */
-.carousel-controls {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 2rem;
-  margin-top: 3rem;
-}
-
-.control-btn {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background: var(--white);
-  border: 2px solid var(--gray-light);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: var(--transition);
-  box-shadow: var(--shadow);
-}
-
-.control-btn:hover:not(:disabled) {
-  background: var(--primary);
-  border-color: var(--primary);
-  transform: scale(1.1);
-}
-
-.control-btn:disabled {
-  opacity: 0.3;
-  cursor: not-allowed;
-}
-
-.control-btn svg {
-  width: 24px;
-  height: 24px;
-  color: var(--gray);
-  transition: var(--transition);
-}
-
-.control-btn:hover:not(:disabled) svg {
-  color: var(--white);
-}
-
-/* Carousel Indicators */
-.carousel-indicators {
-  display: flex;
-  gap: 0.75rem;
-  align-items: center;
-}
-
-.indicator {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0.5rem;
-  transition: var(--transition);
-}
-
-.indicator-dot {
-  width: 8px;
-  height: 8px;
-  background: var(--gray-light);
-  border-radius: 50%;
-  transition: var(--transition);
-}
-
-.indicator.active .indicator-dot {
-  background: var(--primary);
-  transform: scale(1.5);
-}
-
-.indicator:hover .indicator-dot {
-  background: var(--primary-light);
-  transform: scale(1.2);
-}
-
-/* Slide Counter */
-.slide-counter {
-  position: absolute;
-  top: -60px;
-  right: 0;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-weight: 600;
-  color: var(--gray);
-}
-
-.current-slide {
-  color: var(--primary);
-  font-size: 1.25rem;
-}
-
-.total-slides {
-  color: var(--gray-light);
-}
-
-.counter-separator {
-  color: var(--gray-light);
-}
-
-/* Indicateurs de performance */
-.performance-indicators {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 2rem;
-  padding: 3rem;
-  background: var(--white);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-md);
-}
-
-.indicator {
-  text-align: center;
-  position: relative;
-}
-
-.indicator-value {
-  font-size: 2.5rem;
-  font-weight: 800;
-  color: var(--primary);
-  margin-bottom: 0.5rem;
-  line-height: 1;
-}
-
-.indicator-label {
-  font-size: 0.9rem;
-  color: var(--gray);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin-bottom: 1rem;
-}
-
-.indicator-progress {
-  height: 4px;
-  background: var(--gray-light);
-  border-radius: 2px;
-  overflow: hidden;
-}
-
-.progress-bar {
-  height: 100%;
-  background: linear-gradient(90deg, var(--primary), var(--secondary));
-  border-radius: 2px;
-  transition: width 1.5s ease-in-out;
-}
-
-/* Responsive */
-@media (max-width: 1200px) {
-  .carousel-slide {
-    flex: 0 0 340px;
-    min-width: 340px;
+/* Animations flottantes */
+@keyframes float-slow {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
   }
 }
 
+@keyframes float-medium {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+}
+
+@keyframes float-fast {
+  0%, 100% {
+    transform: translate(-50%, -50%) translateY(0px);
+  }
+  50% {
+    transform: translate(-50%, -50%) translateY(-10px);
+  }
+}
+
+.animate-float-slow {
+  animation: float-slow 8s ease-in-out infinite;
+}
+
+.animate-float-medium {
+  animation: float-medium 6s ease-in-out infinite;
+}
+
+.animate-float-fast {
+  animation: float-fast 4s ease-in-out infinite;
+}
+
+/* Système de délais pour les animations en cascade */
+.stagger-item {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.stagger-item.animate-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Délais personnalisés */
+[data-delay="0"] { transition-delay: 0ms; }
+[data-delay="100"] { transition-delay: 100ms; }
+[data-delay="200"] { transition-delay: 200ms; }
+[data-delay="300"] { transition-delay: 300ms; }
+[data-delay="400"] { transition-delay: 400ms; }
+[data-delay="500"] { transition-delay: 500ms; }
+[data-delay="600"] { transition-delay: 600ms; }
+[data-delay="700"] { transition-delay: 700ms; }
+[data-delay="800"] { transition-delay: 800ms; }
+[data-delay="900"] { transition-delay: 900ms; }
+
+.delay-0 { transition-delay: 0ms; }
+.delay-200 { transition-delay: 200ms; }
+.delay-400 { transition-delay: 400ms; }
+
+/* Améliorations des cartes au survol */
+.group:hover .group-hover\:scale-110 {
+  transform: scale(1.1);
+}
+
+.group:hover .group-hover\:rotate-3 {
+  transform: rotate(3deg);
+}
+
+.group:hover .group-hover\:translate-y-1 {
+  transform: translateY(-0.25rem);
+}
+
+/* Optimisations pour mobile */
 @media (max-width: 768px) {
-  .mission-section {
-    padding: 4rem 0;
+  .parallax-bg {
+    background-attachment: scroll;
   }
   
-  .container {
-    padding: 0 1.5rem;
+  .fade-in-up,
+  .slide-in-up,
+  .stagger-item {
+    transform: translateY(20px);
+    transition-duration: 0.6s;
   }
   
-  .section-header {
-    margin-bottom: 3rem;
+  .text-4xl {
+    font-size: 2.25rem;
   }
   
-  .carousel-slide {
-    flex: 0 0 300px;
-    min-width: 300px;
-  }
-  
-  .card-content {
-    padding: 2rem;
-  }
-  
-  .carousel-controls {
-    margin-top: 2rem;
-  }
-  
-  .control-btn {
-    width: 45px;
-    height: 45px;
-  }
-  
-  .slide-counter {
-    position: relative;
-    top: 0;
-    justify-content: center;
-    margin-top: 1rem;
-  }
-  
-  .performance-indicators {
-    grid-template-columns: repeat(2, 1fr);
-    padding: 2rem;
-    gap: 1.5rem;
+  .text-6xl {
+    font-size: 3rem;
   }
 }
 
-@media (max-width: 480px) {
-  .mission-section {
-    padding: 3rem 0;
+/* Support pour la réduction des animations */
+@media (prefers-reduced-motion: reduce) {
+  .fade-in-up,
+  .slide-in-up,
+  .scale-in,
+  .stagger-item,
+  .expand-width,
+  .animate-float-slow,
+  .animate-float-medium,
+  .animate-float-fast,
+  .group-hover\:scale-110,
+  .group-hover\:rotate-3,
+  .group-hover\:translate-y-1 {
+    animation: none;
+    transition: none;
+    transform: none;
   }
   
-  .container {
-    padding: 0 1rem;
+  .fade-in-up.animate-in,
+  .slide-in-up.animate-in,
+  .scale-in.animate-in,
+  .stagger-item.animate-in,
+  .expand-width.animate-in {
+    opacity: 1;
+    transform: none;
   }
-  
-  .section-title {
-    font-size: 2rem;
-  }
-  
-  .carousel-slide {
-    flex: 0 0 280px;
-    min-width: 280px;
-  }
-  
-  .card-content {
-    padding: 1.5rem;
-  }
-  
-  .card-header {
-    flex-direction: column;
-    gap: 1rem;
-    align-items: center;
-    text-align: center;
-  }
-  
-  .mission-number {
-    align-self: center;
-  }
-  
-  .carousel-controls {
-    gap: 1rem;
-  }
-  
-  .performance-indicators {
-    grid-template-columns: 1fr;
-    padding: 1.5rem;
-  }
-  
-  .mission-card-title {
-    font-size: 1.3rem;
-  }
-  
-  .mission-card-description {
-    font-size: 0.9rem;
-  }
+}
+
+/* Amélioration des performances */
+.transform {
+  will-change: transform;
+}
+
+.backdrop-blur-md {
+  will-change: backdrop-filter;
+}
+
+/* Effets de brillance améliorés */
+.shadow-2xl {
+  box-shadow: 
+    0 25px 50px -12px rgba(0, 0, 0, 0.25),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+.group:hover .group-hover\:shadow-2xl {
+  box-shadow: 
+    0 35px 60px -12px rgba(59, 130, 246, 0.3),
+    0 0 0 1px rgba(59, 130, 246, 0.2);
+}
+
+.group:hover .group-hover\:shadow-blue-500\/25 {
+  box-shadow: 0 25px 50px -12px rgba(59, 130, 246, 0.25);
 }
 </style>
