@@ -16,6 +16,7 @@ import PublicationDetail from "../views/PublicationDetailView.vue";
 //@ts-ignore
 import EventDetailView from '@/views/EventDetailView.vue';
 import ContactView from '@/views/ContactView.vue';
+import AuthView from '@/views/AuthView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -24,6 +25,11 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: HomeView,
+    },
+    {
+      path: '/authentification',
+      name: 'authentification',
+      component: AuthView,
     },
     {
       path: '/forum',

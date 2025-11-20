@@ -260,7 +260,7 @@
 
           <!-- Bouton Espace Membre -->
           <router-link
-            to="/espace-membre"
+            to="/authentification"
             class="ml-2 px-6 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300 flex items-center group relative overflow-hidden"
           >
             <div class="absolute inset-0 bg-gradient-to-r from-blue-500 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -494,7 +494,7 @@
 
           <!-- Bouton Espace Membre Mobile -->
           <router-link
-            to="/espace-membre"
+            to="/authentification"
             class="flex items-center justify-center px-5 py-4 mt-6 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300 group relative overflow-hidden"
             @click="closeMobileMenu"
           >
