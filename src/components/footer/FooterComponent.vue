@@ -1,257 +1,513 @@
 <template>
-  <footer
-    class="bg-gradient-to-br from-blue-800 via-indigo-800 to-indigo-900 text-white pt-16 pb-10 relative overflow-hidden"
-  >
-    <!-- Éléments décoratifs -->
-    <div class="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
-      <div
-        class="absolute top-20 left-10 w-32 h-32 rounded-full bg-blue-400 filter blur-3xl animate-pulse"
-      ></div>
-      <div
-        class="absolute bottom-10 right-20 w-40 h-40 rounded-full bg-indigo-400 filter blur-3xl animate-pulse"
-      ></div>
+  <footer class="relative bg-gradient-to-br from-blue-900 via-blue-800 to-blue-900 overflow-hidden">
+    <!-- Image de fond avec overlay -->
+    <div class="absolute inset-0 z-0">
+      <img 
+        src="../../assets/carousel-4.jpg" 
+        alt="Background Footer"
+        class="w-full h-full object-cover opacity-20 transform scale-110"
+      />
+      <!-- Overlay bleu -->
+      <div class="absolute inset-0 bg-gradient-to-br from-blue-900/90 via-blue-800/85 to-blue-900/90"></div>
+      
+      <!-- Éléments décoratifs animés -->
+      <div class="absolute top-10 left-10 w-32 h-32 bg-blue-400/10 rounded-full blur-2xl animate-float-slow"></div>
+      <div class="absolute bottom-10 right-10 w-40 h-40 bg-cyan-400/10 rounded-full blur-2xl animate-float-medium"></div>
+      <div class="absolute top-1/3 right-1/4 w-24 h-24 bg-blue-300/10 rounded-full blur-2xl animate-float-fast"></div>
+      <div class="absolute bottom-1/4 left-1/3 w-28 h-28 bg-cyan-300/10 rounded-full blur-2xl animate-float-slow"></div>
     </div>
 
-    <!-- Effet de vagues animé -->
-    <div class="absolute -top-1 left-0 w-full overflow-hidden leading-none rotate-180">
-      <svg
-        class="relative block w-full h-12"
-        xmlns="http://www.w3.org/2000/svg"
-        preserveAspectRatio="none"
-        viewBox="0 0 1200 120"
-      >
-        <path
-          d="M985.66 92.83c-83.3-21.5-168.06-38.26-252.84-42.8C646.4 46.48 560.81 57 475.18 63.35 379.72 70.19 284.1 72.34 188.57 62.12c-62.9-6.85-125.82-19.76-188.57-35.39v93.27h1200V59.72c-71.62 21.93-145.58 38.54-221.34 33.11z"
-          fill="url(#grad1)"
-        ></path>
-        <defs>
-          <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" style="stop-color: #2563eb; stop-opacity: 1"></stop>
-            <stop offset="100%" style="stop-color: #4f46e5; stop-opacity: 1"></stop>
-          </linearGradient>
-        </defs>
-      </svg>
-    </div>
-
-    <div class="container mx-auto px-6 relative">
-      <!-- Contenu principal -->
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
-        <!-- Colonne Logo -->
-        <div class="md:col-span-2">
-          <div class="flex items-center mb-6">
-            <div
-              class="bg-white/20 p-2.5 rounded-xl mr-4 backdrop-blur-sm transform transition duration-500 hover:rotate-12 hover:scale-110"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-9 w-9 text-white"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M12 6v6l4 2"
-                />
-              </svg>
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
+      <!-- Section principale du footer -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12 mb-12">
+        
+        <!-- Colonne 1: Logo et description -->
+        <div class="fade-in-up" data-delay="0">
+          <div class="flex items-center mb-6 slide-in-left" data-delay="100">
+            <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center mr-3 shadow-lg">
+              <i class="fas fa-university text-white text-lg"></i>
             </div>
-            <h2
-              class="text-3xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-300 to-indigo-200"
-            >
-              École<span class="font-light">Nova</span>
-            </h2>
+            <span class="text-xl font-bold text-white">CReFF-PME</span>
           </div>
-          <p class="text-indigo-100/90 text-lg mb-6 leading-relaxed">
-            Une école d’excellence tournée vers l’avenir. Nous formons les leaders de demain grâce à
-            des programmes innovants et une pédagogie moderne.
+          <p class="text-blue-100 leading-relaxed mb-6 fade-in-up" data-delay="200">
+            Centre de Recherche et de Formation sur le Financement des PME en Afrique. 
+            Nous œuvrons pour le développement économique grâce à la recherche appliquée 
+            et la formation d'excellence.
           </p>
-          <div class="flex space-x-5">
-            <a
-              href="#"
-              class="text-white hover:text-blue-300 transition-all duration-300 transform hover:-translate-y-1"
+          <div class="flex space-x-4 fade-in-up" data-delay="300">
+            <a 
+              v-for="(social, index) in socialLinks"
+              :key="social.name"
+              :href="social.url"
+              class="w-10 h-10 bg-white/10 hover:bg-blue-500 rounded-lg flex items-center justify-center transition-all duration-300 transform hover:scale-110 hover:-translate-y-1 backdrop-blur-sm"
+              :style="`transition-delay: ${index * 100}ms`"
+              target="_blank"
             >
-              <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
-                <path
-                  d="M22 12c0-5.5-4.5-10-10-10S2 6.5 2 12c0 5 3.7 9.1 8.4 9.9v-7h-2.5v-3h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 3h-2.4v7c4.7-.8 8.4-4.9 8.4-9.9z"
-                />
-              </svg>
-            </a>
-            <a
-              href="#"
-              class="text-white hover:text-blue-300 transition-all duration-300 transform hover:-translate-y-1"
-            >
-              <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
-                <path
-                  d="M8.3 20.2c7.5 0 11.7-6.3 11.7-11.7v-.5A8.3 8.3 0 0022 5.9a8.1 8.1 0 01-2.4.6 4.1 4.1 0 001.8-2.3 8.2 8.2 0 01-2.6 1A4.1 4.1 0 0012 9.4a11.6 11.6 0 01-8.5-4.3 4.1 4.1 0 001.3 5.5 4 4 0 01-1.9-.5v.1c0 2 1.4 3.7 3.3 4a4.2 4.2 0 01-1.9.1 4.1 4.1 0 003.8 2.9A8.2 8.2 0 012 18.4a11.6 11.6 0 006.3 1.8"
-                />
-              </svg>
+              <i :class="social.icon" class="text-white text-sm"></i>
             </a>
           </div>
         </div>
 
-        <!-- Liens rapides -->
-        <div>
-          <h3 class="text-xl font-semibold mb-5 pb-2 relative inline-block">
-            <span class="relative z-10">Liens rapides</span>
-            <span class="absolute bottom-0 left-0 w-full h-0.5 bg-blue-400/50 rounded-full"></span>
+        <!-- Colonne 2: Liens rapides -->
+        <div class="fade-in-up" data-delay="400">
+          <h3 class="text-lg font-semibold text-white mb-6 flex items-center slide-in-up" data-delay="500">
+            <div class="w-2 h-2 bg-cyan-400 rounded-full mr-3 animate-pulse"></div>
+            Liens Rapides
           </h3>
           <ul class="space-y-3">
-            <li>
-              <a
-                href="#"
-                class="flex items-center text-indigo-100/90 hover:text-white transition-all duration-300 group"
+            <li 
+              v-for="(link, index) in quickLinks"
+              :key="link.name"
+              class="slide-in-left"
+              :data-delay="600 + index * 100"
+            >
+              <router-link 
+                :to="link.path"
+                class="text-blue-100 hover:text-white transition-all duration-300 flex items-center group"
               >
-                <span
-                  class="w-2 h-2 bg-blue-400 rounded-full mr-3 opacity-0 group-hover:opacity-100 transition-all duration-300"
-                ></span>
-                <span class="group-hover:translate-x-1 transition-transform duration-300"
-                  >Accueil</span
-                >
-              </a>
-            </li>
-            <li>
-              <a
-                href="#"
-                class="flex items-center text-indigo-100/90 hover:text-white transition-all duration-300 group"
-              >
-                <span
-                  class="w-2 h-2 bg-blue-400 rounded-full mr-3 opacity-0 group-hover:opacity-100 transition-all duration-300"
-                ></span>
-                <span class="group-hover:translate-x-1 transition-transform duration-300"
-                  >Programmes</span
-                >
-              </a>
-            </li>
-            <li>
-              <a
-                href="#"
-                class="flex items-center text-indigo-100/90 hover:text-white transition-all duration-300 group"
-              >
-                <span
-                  class="w-2 h-2 bg-blue-400 rounded-full mr-3 opacity-0 group-hover:opacity-100 transition-all duration-300"
-                ></span>
-                <span class="group-hover:translate-x-1 transition-transform duration-300"
-                  >Admissions</span
-                >
-              </a>
-            </li>
-            <li>
-              <a
-                href="#"
-                class="flex items-center text-indigo-100/90 hover:text-white transition-all duration-300 group"
-              >
-                <span
-                  class="w-2 h-2 bg-blue-400 rounded-full mr-3 opacity-0 group-hover:opacity-100 transition-all duration-300"
-                ></span>
-                <span class="group-hover:translate-x-1 transition-transform duration-300"
-                  >Contact</span
-                >
-              </a>
+                <div class="w-1.5 h-1.5 bg-blue-400 rounded-full mr-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <span class="group-hover:translate-x-2 transition-transform duration-300">{{ link.name }}</span>
+              </router-link>
             </li>
           </ul>
         </div>
 
-        <!-- Contact -->
-        <div>
-          <h3 class="text-xl font-semibold mb-5 pb-2 relative inline-block">
-            <span class="relative z-10">Contact</span>
-            <span class="absolute bottom-0 left-0 w-full h-0.5 bg-blue-400/50 rounded-full"></span>
+        <!-- Colonne 3: Contact -->
+        <div class="fade-in-up" data-delay="800">
+          <h3 class="text-lg font-semibold text-white mb-6 flex items-center slide-in-up" data-delay="900">
+            <div class="w-2 h-2 bg-cyan-400 rounded-full mr-3 animate-pulse"></div>
+            Contact
           </h3>
           <ul class="space-y-4">
-            <li class="flex items-start group">
-              <div
-                class="bg-indigo-900/30 p-1.5 rounded-lg mr-3 group-hover:bg-blue-700/50 transition-colors duration-300"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-5 w-5 text-blue-300"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M3 8l7.9 5.3a2 2 0 002.2 0L21 8M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                  />
-                </svg>
+            <li 
+              v-for="(contact, index) in contactInfo"
+              :key="contact.type"
+              class="flex items-start slide-in-right"
+              :data-delay="1000 + index * 100"
+            >
+              <div class="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center mr-3 mt-1 group-hover:bg-blue-500 transition-colors duration-300">
+                <i :class="contact.icon" class="text-blue-300 text-sm"></i>
               </div>
-              <span class="text-indigo-100/90 group-hover:text-white transition-colors duration-300"
-                >contact@ecolenova.com</span
-              >
-            </li>
-            <li class="flex items-start group">
-              <div
-                class="bg-indigo-900/30 p-1.5 rounded-lg mr-3 group-hover:bg-blue-700/50 transition-colors duration-300"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-5 w-5 text-blue-300"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M3 5a2 2 0 012-2h3.3a1 1 0 01.9.7l1.5 4.5a1 1 0 01-.5 1.2l-2.3 1.1a11 11 0 005.5 5.5l1.1-2.3a1 1 0 011.2-.5l4.5 1.5a1 1 0 01.7.9V19a2 2 0 01-2 2h-1C9.7 21 3 14.3 3 6V5z"
-                  />
-                </svg>
+              <div>
+                <p class="text-blue-100 text-sm">{{ contact.value }}</p>
+                <p class="text-blue-300/80 text-xs">{{ contact.label }}</p>
               </div>
-              <span class="text-indigo-100/90 group-hover:text-white transition-colors duration-300"
-                >+33 1 23 45 67 89</span
-              >
             </li>
           </ul>
         </div>
-      </div>
 
-      <!-- Copyright -->
-      <div
-        class="border-t border-indigo-500/20 pt-8 flex flex-col md:flex-row justify-between items-center"
-      >
-        <p class="text-indigo-100/80 text-sm mb-4 md:mb-0">
-          © 2025 ÉcoleNova. Tous droits réservés.
-        </p>
-        <div class="flex flex-wrap justify-center gap-4 md:gap-6">
-          <a
-            href="#"
-            class="text-indigo-100/80 hover:text-white text-sm transition-all duration-300 hover:underline underline-offset-4"
-            >Mentions légales</a
-          >
-          <a
-            href="#"
-            class="text-indigo-100/80 hover:text-white text-sm transition-all duration-300 hover:underline underline-offset-4"
-            >Politique de confidentialité</a
-          >
+        <!-- Colonne 4: Newsletter -->
+        <div class="fade-in-up" data-delay="1200">
+          <h3 class="text-lg font-semibold text-white mb-6 flex items-center slide-in-up" data-delay="1300">
+            <div class="w-2 h-2 bg-cyan-400 rounded-full mr-3 animate-pulse"></div>
+            Newsletter
+          </h3>
+          <p class="text-blue-100 text-sm mb-4 fade-in-up" data-delay="1400">
+            Restez informé de nos dernières recherches et événements.
+          </p>
+          <div class="space-y-3 fade-in-up" data-delay="1500">
+            <input 
+              type="email" 
+              placeholder="Votre email"
+              v-model="email"
+              class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-blue-200 focus:outline-none focus:border-cyan-400 transition-all duration-300 backdrop-blur-sm"
+            >
+            <button 
+              @click="subscribeNewsletter"
+              :disabled="!email"
+              class="w-full bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-medium py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center"
+            >
+              <span class="mr-2">S'abonner</span>
+              <i class="fas fa-paper-plane text-sm"></i>
+            </button>
+          </div>
         </div>
       </div>
+
+      <!-- Séparateur décoratif -->
+      <div class="flex items-center justify-center my-12">
+        <div class="w-32 h-0.5 bg-gradient-to-r from-transparent via-blue-400 to-transparent rounded-full expand-width" data-delay="1600"></div>
+        <div class="mx-4 w-2 h-2 bg-cyan-400 rounded-full animate-bounce scale-in" data-delay="1700"></div>
+        <div class="w-32 h-0.5 bg-gradient-to-r from-transparent via-blue-400 to-transparent rounded-full expand-width" data-delay="1600"></div>
+      </div>
+
+      <!-- Section bas du footer -->
+      <div class="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-white/20 fade-in-up" data-delay="1800">
+        <!-- Copyright -->
+        <div class="text-blue-200 text-sm mb-4 md:mb-0 slide-in-left" data-delay="1900">
+          <p>&copy; {{ currentYear }} CReFF-PME. Tous droits réservés.</p>
+        </div>
+
+        <!-- Liens légaux -->
+        <div class="flex flex-wrap justify-center gap-6 slide-in-right" data-delay="2000">
+          <a 
+            v-for="(link, index) in legalLinks"
+            :key="link.name"
+            :href="link.url"
+            class="text-blue-200 hover:text-white text-sm transition-colors duration-300 transform hover:scale-105"
+            :style="`transition-delay: ${index * 100}ms`"
+          >
+            {{ link.name }}
+          </a>
+        </div>
+      </div>
+
+      <!-- Bouton back to top -->
+      <button 
+        @click="scrollToTop"
+        class="fixed bottom-8 right-8 w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-full shadow-2xl flex items-center justify-center text-white transition-all duration-300 transform hover:scale-110 hover:-translate-y-1 backdrop-blur-sm border border-white/20 fade-in-up"
+        :class="{ 'opacity-0 translate-y-10': !showBackToTop }"
+        data-delay="2100"
+      >
+        <i class="fas fa-chevron-up text-sm"></i>
+      </button>
     </div>
   </footer>
 </template>
 
-<style scoped>
-footer {
-  box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.2);
-  background-size: 200% 200%;
-  animation: gradientBG 15s ease infinite;
+<script setup>
+import { ref, onMounted, onUnmounted } from 'vue'
+
+// Données réactives
+const email = ref('')
+const showBackToTop = ref(false)
+const currentYear = ref(new Date().getFullYear())
+
+// Données du footer
+const socialLinks = [
+  { name: 'LinkedIn', icon: 'fab fa-linkedin-in', url: '#' },
+  { name: 'Twitter', icon: 'fab fa-twitter', url: '#' },
+  { name: 'Facebook', icon: 'fab fa-facebook-f', url: '#' },
+  { name: 'YouTube', icon: 'fab fa-youtube', url: '#' }
+]
+
+const quickLinks = [
+  { name: 'Accueil', path: '/' },
+  { name: 'À Propos', path: '/about' },
+  { name: 'Recherche', path: '/research' },
+  { name: 'Publications', path: '/publications' },
+  { name: 'Événements', path: '/evenements' },
+  { name: 'Contact', path: '/contact' }
+]
+
+const contactInfo = [
+  { 
+    type: 'address', 
+    icon: 'fas fa-map-marker-alt', 
+    value: '123 Avenue de la Recherche', 
+    label: 'Kinshasa, RDC' 
+  },
+  { 
+    type: 'phone', 
+    icon: 'fas fa-phone', 
+    value: '+243 81 234 5678', 
+    label: 'Lun - Ven, 8h-17h' 
+  },
+  { 
+    type: 'email', 
+    icon: 'fas fa-envelope', 
+    value: 'contact@creff-pme.org', 
+    label: 'Nous répondons sous 24h' 
+  }
+]
+
+const legalLinks = [
+  { name: 'Politique de confidentialité', url: '#' },
+  { name: 'Mentions légales', url: '#' },
+  { name: 'Conditions d\'utilisation', url: '#' }
+]
+
+// Méthodes
+const subscribeNewsletter = () => {
+  if (email.value) {
+    console.log('Inscription newsletter:', email.value)
+    // Simulation d'envoi
+    alert('Merci pour votre inscription à notre newsletter !')
+    email.value = ''
+  }
 }
-@keyframes gradientBG {
-  0% {
-    background-position: 0% 50%;
+
+const scrollToTop = () => {
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth'
+  })
+}
+
+// Gestion du bouton back to top
+const handleScroll = () => {
+  showBackToTop.value = window.scrollY > 500
+}
+
+// Système d'animation
+let observer = null
+
+const initScrollAnimations = () => {
+  const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+  }
+
+  observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('animate-in')
+        observer.unobserve(entry.target)
+      }
+    })
+  }, observerOptions)
+
+  // Observer tous les éléments avec des classes d'animation
+  document.querySelectorAll('.fade-in-up, .slide-in-left, .slide-in-right, .slide-in-up, .scale-in, .expand-width').forEach(el => {
+    observer.observe(el)
+  })
+}
+
+// Cycle de vie
+onMounted(() => {
+  // Initialiser les animations
+  setTimeout(() => {
+    initScrollAnimations()
+  }, 100)
+
+  // Écouter le scroll pour le bouton back to top
+  window.addEventListener('scroll', handleScroll)
+})
+
+onUnmounted(() => {
+  if (observer) {
+    observer.disconnect()
+  }
+  window.removeEventListener('scroll', handleScroll)
+})
+</script>
+
+<style scoped>
+/* Animations d'apparition */
+.fade-in-up {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.fade-in-up.animate-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.slide-in-left {
+  opacity: 0;
+  transform: translateX(-30px);
+  transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.slide-in-left.animate-in {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.slide-in-right {
+  opacity: 0;
+  transform: translateX(30px);
+  transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.slide-in-right.animate-in {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.slide-in-up {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.slide-in-up.animate-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.scale-in {
+  opacity: 0;
+  transform: scale(0.8);
+  transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.scale-in.animate-in {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.expand-width {
+  opacity: 0;
+  transform: scaleX(0);
+  transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.expand-width.animate-in {
+  opacity: 1;
+  transform: scaleX(1);
+}
+
+/* Animations flottantes */
+@keyframes float-slow {
+  0%, 100% {
+    transform: translateY(0px);
   }
   50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
+    transform: translateY(-15px);
   }
 }
-a:hover svg {
-  filter: drop-shadow(0 2px 6px rgba(59, 130, 246, 0.4));
+
+@keyframes float-medium {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes float-fast {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.animate-float-slow {
+  animation: float-slow 6s ease-in-out infinite;
+}
+
+.animate-float-medium {
+  animation: float-medium 4s ease-in-out infinite;
+}
+
+.animate-float-fast {
+  animation: float-fast 3s ease-in-out infinite;
+}
+
+/* Animation de pulse */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.1);
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* Animation de rebond */
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-8px);
+  }
+  60% {
+    transform: translateY(-4px);
+  }
+}
+
+.animate-bounce {
+  animation: bounce 2s infinite;
+}
+
+/* Délais personnalisés */
+[data-delay="0"] { transition-delay: 0ms; }
+[data-delay="100"] { transition-delay: 100ms; }
+[data-delay="200"] { transition-delay: 200ms; }
+[data-delay="300"] { transition-delay: 300ms; }
+[data-delay="400"] { transition-delay: 400ms; }
+[data-delay="500"] { transition-delay: 500ms; }
+[data-delay="600"] { transition-delay: 600ms; }
+[data-delay="700"] { transition-delay: 700ms; }
+[data-delay="800"] { transition-delay: 800ms; }
+[data-delay="900"] { transition-delay: 900ms; }
+[data-delay="1000"] { transition-delay: 1000ms; }
+[data-delay="1100"] { transition-delay: 1100ms; }
+[data-delay="1200"] { transition-delay: 1200ms; }
+[data-delay="1300"] { transition-delay: 1300ms; }
+[data-delay="1400"] { transition-delay: 1400ms; }
+[data-delay="1500"] { transition-delay: 1500ms; }
+[data-delay="1600"] { transition-delay: 1600ms; }
+[data-delay="1700"] { transition-delay: 1700ms; }
+[data-delay="1800"] { transition-delay: 1800ms; }
+[data-delay="1900"] { transition-delay: 1900ms; }
+[data-delay="2000"] { transition-delay: 2000ms; }
+[data-delay="2100"] { transition-delay: 2100ms; }
+
+/* Support pour la réduction des animations */
+@media (prefers-reduced-motion: reduce) {
+  .fade-in-up,
+  .slide-in-left,
+  .slide-in-right,
+  .slide-in-up,
+  .scale-in,
+  .expand-width,
+  .animate-float-slow,
+  .animate-float-medium,
+  .animate-float-fast,
+  .animate-pulse,
+  .animate-bounce {
+    animation: none;
+    transition: none;
+    transform: none;
+  }
+  
+  .fade-in-up.animate-in,
+  .slide-in-left.animate-in,
+  .slide-in-right.animate-in,
+  .slide-in-up.animate-in,
+  .scale-in.animate-in,
+  .expand-width.animate-in {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Optimisations pour mobile */
+@media (max-width: 768px) {
+  .fade-in-up,
+  .slide-in-left,
+  .slide-in-right,
+  .slide-in-up {
+    transform: translateY(20px) !important;
+    transition-duration: 0.6s !important;
+  }
+  
+  .slide-in-left { transform: translateX(-20px) !important; }
+  .slide-in-right { transform: translateX(20px) !important; }
+}
+
+/* Amélioration des performances */
+.transform {
+  will-change: transform;
+}
+
+.backdrop-blur-sm {
+  backdrop-filter: blur(8px);
+}
+
+/* Effets de brillance */
+.shadow-2xl {
+  box-shadow: 
+    0 25px 50px -12px rgba(0, 0, 0, 0.25),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+/* Transition pour le bouton back to top */
+button {
+  transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 </style>
