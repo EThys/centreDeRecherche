@@ -13,8 +13,9 @@ import ActivityRecherche from "../views/ActivityRechercheView.vue";
 import AllActuality from "../views/AllActualityView.vue";
 //@ts-ignore
 import PublicationDetail from "../views/PublicationDetailView.vue";
+//@ts-ignore
 import EventDetailView from '@/views/EventDetailView.vue';
-
+import ContactView from '@/views/ContactView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -28,6 +29,11 @@ const router = createRouter({
       path: '/forum',
       name: 'forum',
       component: ForumView,
+    },
+    {
+      path: '/contact',
+      name: 'contact',
+      component: ContactView,
     },
     {
       path: '/publications',
@@ -60,8 +66,10 @@ const router = createRouter({
       name: 'activites-recherche',
       component: ActivityRecherche,
     },
-
   ],
+  scrollBehavior(to, from, savedPosition) {
+    return { top: 0, behavior: 'smooth' }
+  }
 })
 
 export default router
