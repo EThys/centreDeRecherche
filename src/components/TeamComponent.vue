@@ -57,9 +57,6 @@
             <p class="text-gray-600 text-sm leading-relaxed group-hover:text-blue-100 transition-colors duration-300 fade-in-up" data-delay="150">
               {{ member.expertise }}
             </p>
-            
-            <!-- Icônes sociales (apparaissent au survol) -->
-           
           </div>
 
           <!-- Bordure animée -->
@@ -162,11 +159,11 @@ const teamMembers = [
   }
 ]
 
-// Système d'animation
-let observer = null
+// Système d'animation - Correction des types
+let observer: IntersectionObserver | null = null
 
 const initScrollAnimations = () => {
-  const observerOptions = {
+  const observerOptions: IntersectionObserverInit = {
     threshold: 0.1,
     rootMargin: '0px 0px -50px 0px'
   }
@@ -175,14 +172,18 @@ const initScrollAnimations = () => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
         entry.target.classList.add('animate-in')
-        observer.unobserve(entry.target)
+        if (observer) {
+          observer.unobserve(entry.target)
+        }
       }
     })
   }, observerOptions)
 
   // Observer tous les éléments avec des classes d'animation
   document.querySelectorAll('.fade-in-up, .slide-in-expand, .scale-in, .stagger-item, .expand-width').forEach(el => {
-    observer.observe(el)
+    if (observer) {
+      observer.observe(el)
+    }
   })
 }
 
@@ -195,6 +196,7 @@ onMounted(() => {
 onUnmounted(() => {
   if (observer) {
     observer.disconnect()
+    observer = null
   }
 })
 </script>
