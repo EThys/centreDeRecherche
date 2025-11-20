@@ -1,6 +1,6 @@
 <template>
   <!-- Section About -->
-  <section class="py-16 lg:py-24 px-4 sm:px-6 bg-white overflow-hidden">
+  <section class="py-16 lg:py-18 px-4 sm:px-6 bg-white overflow-hidden">
     <div class="max-w-6xl mx-auto">
       <div class="flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-16">
         
@@ -40,35 +40,6 @@
             >
               Le Centre de Recherche et de Formation sur le Financement des PME (CReFF-PME) est une institution académique dédiée à la production de connaissances, au renforcement des capacités et à l'accompagnement innovant des entrepreneurs africains. Nous œuvrons pour une meilleure compréhension des défis du financement des petites et moyennes entreprises, tout en contribuant au développement des solutions adaptées au contexte local.
             </p>
-
-            <div class="flex items-center space-x-8 fade-in-up delay-300" :class="{ 'animate-enter': isVisible }">
-
-              <!-- Item 1 -->
-              <div class="flex items-center space-x-3 group">
-                <div class="w-7 h-7 bg-blue-100 rounded-full flex items-center justify-center transform group-hover:scale-110 group-hover:bg-blue-500 transition-all duration-300">
-                  <svg class="w-3.5 h-3.5 text-blue-500 group-hover:text-white transition-colors duration-300" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 01 011.414-1.414L8 12.586l7.293-7.293a1 1 01 1.414 0z" clip-rule="evenodd"/>
-                  </svg>
-                </div>
-                <span class="text-gray-700 font-semibold text-base group-hover:text-blue-600 transition-colors duration-300">
-                  🔬 Recherche Appliquée
-                </span>
-              </div>
-
-              <!-- Item 2 -->
-              <div class="flex items-center space-x-3 group">
-                <div class="w-7 h-7 bg-blue-100 rounded-full flex items-center justify-center transform group-hover:scale-110 group-hover:bg-blue-500 transition-all duration-300">
-                  <svg class="w-3.5 h-3.5 text-blue-500 group-hover:text-white transition-colors duration-300" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 01 011.414-1.414L8 12.586l7.293-7.293a1 1 01 1.414 0z" clip-rule="evenodd"/>
-                  </svg>
-                </div>
-                <span class="text-gray-700 font-semibold text-base group-hover:text-blue-600 transition-colors duration-300">
-                  👥 Équipe Pluridisciplinaire
-                </span>
-              </div>
-
-            </div>
-
           </div>
         </div>
 
