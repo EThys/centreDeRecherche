@@ -1,70 +1,162 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50/30 pt-24 pb-16">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <!-- En-tête -->
-      <div class="text-center mb-16">
-        <div class="inline-flex items-center px-4 py-2 rounded-full bg-blue-100 border border-blue-200 mb-6">
-          <span class="w-2 h-2 bg-blue-600 rounded-full mr-2"></span>
-          <span class="text-sm font-medium text-blue-700 uppercase tracking-wider">Événements Scientifiques</span>
+  <NavBarComponent/>
+<header class="relative overflow-hidden bg-gradient-to-br pt-40 pb-16 from-blue-800/90 to-blue-600/90 py-24 w-full">
+    <!-- Image de fond -->
+    <div class="absolute inset-0 overflow-hidden">
+      <img 
+        src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80"
+        alt="Événements sur le Financement des PME"
+        class="w-full h-full object-cover opacity-20"
+      />
+      <!-- Overlay et effets -->
+      <div class="absolute inset-0 bg-gradient-to-br from-blue-900/40 to-blue-500/30"></div>
+      <!-- Blobs animés -->
+      <div class="absolute top-10 left-20 w-64 h-64 bg-cyan-400/10 rounded-full mix-blend-overlay filter blur-3xl opacity-50 animate-blob-slow"></div>
+      <div class="absolute top-20 right-32 w-72 h-72 bg-blue-300/10 rounded-full mix-blend-overlay filter blur-3xl opacity-50 animate-blob-fast"></div>
+    </div>
+
+    <!-- Contenu principal -->
+    <div class="max-w-6xl mx-auto px-4 text-center relative z-10">
+
+      <!-- Titre principal avec effet de dégradé animé -->
+      <h1 class="text-5xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-white to-blue-100 animate-gradient-text">
+        <span class="block">Événements & Conférences</span>
+        <span class="block text-transparent bg-clip-text bg-gradient-to-r from-blue-300 via-cyan-400 to-blue-400 mt-2">
+          Financement des PME en RDC
+        </span>
+      </h1>
+
+      <!-- Sous-titre avec animation -->
+      <p class="text-xl text-blue-50 max-w-3xl mx-auto mb-10 animate-fade-in">
+        Participez à nos <strong class="text-white">événements exclusifs</strong>, 
+        conférences et ateliers sur le financement des petites et moyennes entreprises 
+        en République Démocratique du Congo.
+      </p>
+
+      <!-- Statistiques -->
+      <div class="flex flex-wrap justify-center gap-8 mb-8">
+        <div class="text-center">
+          <div class="text-3xl font-bold text-white">{{ upcomingEvents.length }}</div>
+          <div class="text-blue-200 text-sm">Événements à Venir</div>
         </div>
-        <h1 class="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">Événements du CReFF-PME</h1>
-        <p class="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-          Participez à nos conférences, séminaires et ateliers pour échanger avec les experts du financement des PME
-        </p>
+        <div class="text-center">
+          <div class="text-3xl font-bold text-white">{{ pastEvents.length }}</div>
+          <div class="text-blue-200 text-sm">Événements Passés</div>
+        </div>
+        <div class="text-center">
+          <div class="text-3xl font-bold text-white">{{ speakers.length }}</div>
+          <div class="text-blue-200 text-sm">Experts Invités</div>
+        </div>
       </div>
+    </div>
 
-      <!-- Filtres -->
-      <div class="flex flex-wrap gap-4 justify-center mb-12">
-        <button 
-          v-for="filter in filters" 
-          :key="filter.id"
-          @click="activeFilter = filter.id"
-          :class="[
-            'px-6 py-3 rounded-xl font-semibold transition-all duration-300 border-2',
-            activeFilter === filter.id 
-              ? 'bg-blue-600 text-white border-blue-600 shadow-lg shadow-blue-200' 
-              : 'bg-white text-gray-700 border-gray-200 hover:border-blue-300 hover:shadow-md'
-          ]"
-        >
-          {{ filter.label }}
-        </button>
-      </div>
-
-      <!-- Grille des événements -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-        <div 
-          v-for="event in filteredEvents" 
-          :key="event.id"
-          class="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 group overflow-hidden border border-gray-100"
-        >
-          <!-- Image de l'événement -->
-          <div class="relative h-48 overflow-hidden">
-            <img 
-              :src="event.image" 
-              :alt="event.title"
-              class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-            >
-            <div class="absolute top-4 left-4">
-              <span class="px-3 py-1.5 rounded-full text-xs font-semibold text-white bg-blue-600 shadow-lg">
-                {{ event.type }}
-              </span>
-            </div>
-            <div class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-lg px-3 py-2 text-center">
-              <div class="text-lg font-bold text-gray-900">{{ event.date.split(' ')[0] }}</div>
-              <div class="text-xs text-gray-600 uppercase">{{ event.date.split(' ')[1] }}</div>
+    <!-- Forme décorative en bas -->
+    <div class="absolute bottom-0 left-0 right-0 h-16 bg-white/5 transform -skew-y-3 origin-bottom-left animate-wave"></div>
+  </header>
+  <div class="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 py-8">
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <!-- Filters and Search -->
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-8">
+        <div class="flex flex-col lg:flex-row gap-4 items-center justify-between">
+          <!-- Search Bar -->
+          <div class="flex-1 w-full lg:max-w-md">
+            <div class="relative">
+              <input
+                v-model="searchQuery"
+                type="text"
+                placeholder="Rechercher des événements..."
+                class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+              >
+              <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
             </div>
           </div>
 
-          <!-- Contenu -->
+          <!-- Event Type Filter -->
+          <div class="flex flex-wrap gap-2">
+            <button
+              v-for="type in eventTypes"
+              :key="type"
+              @click="toggleEventType(type)"
+              :class="[
+                'px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300',
+                selectedEventTypes.includes(type)
+                  ? 'bg-blue-500 text-white shadow-md'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              ]"
+            >
+              {{ type }}
+            </button>
+          </div>
+
+          <!-- Status Filter -->
+          <select
+            v-model="statusFilter"
+            class="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
+          >
+            <option value="all">Tous les événements</option>
+            <option value="upcoming">À venir</option>
+            <option value="past">Passés</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Events Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+        <article
+          v-for="event in filteredEvents"
+          :key="event.id"
+          class="group bg-white rounded-2xl border border-gray-200 hover:border-blue-200 shadow-sm hover:shadow-2xl transition-all duration-500 overflow-hidden cursor-pointer"
+          @click="openEvent(event.id)"
+        >
+          <!-- Event Image -->
+          <div class="relative h-56 overflow-hidden">
+            <img
+              :src="event.image"
+              :alt="event.title"
+              class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+            />
+            <!-- Event Status Badge -->
+            <div 
+              :class="[
+                'absolute top-4 left-4 text-white text-xs font-semibold px-3 py-1.5 rounded-lg shadow-lg',
+                event.status === 'upcoming' ? 'bg-blue-500' : 
+                event.status === 'ongoing' ? 'bg-orange-500' : 'bg-gray-500'
+              ]"
+            >
+              {{ event.status === 'upcoming' ? 'À venir' : 
+                 event.status === 'ongoing' ? 'En cours' : 'Terminé' }}
+            </div>
+            <div class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm text-gray-700 text-xs font-medium px-3 py-1.5 rounded-lg">
+              {{ event.type }}
+            </div>
+            <!-- Event Date -->
+            <div class="absolute bottom-4 left-4 bg-black/50 text-white text-sm px-3 py-2 rounded-lg">
+              <div class="font-bold">{{ formatEventDate(event.date) }}</div>
+              <div class="text-xs">{{ formatEventTime(event.startTime, event.endTime) }}</div>
+            </div>
+          </div>
+          
+          <!-- Event Content -->
           <div class="p-6">
-            <div class="flex items-center gap-2 mb-3">
-              <svg class="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
-              </svg>
-              <span class="text-sm text-gray-600">{{ event.time }}</span>
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-blue-500 text-sm font-medium flex items-center">
+                <i class="fas fa-map-marker-alt mr-2"></i>
+                {{ event.location }}
+              </span>
+              <span 
+                :class="[
+                  'text-sm flex items-center font-medium',
+                  event.status === 'upcoming' ? 'text-blue-600' : 
+                  event.status === 'ongoing' ? 'text-orange-600' : 'text-gray-500'
+                ]"
+              >
+                <i class="fas fa-users mr-1"></i>
+                {{ event.attendees }}/{{ event.capacity }}
+              </span>
             </div>
             
-            <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors line-clamp-2">
+            <h3 class="text-xl font-bold text-gray-900 mb-3 line-clamp-2 group-hover:text-blue-600 transition-colors leading-tight">
               {{ event.title }}
             </h3>
             
@@ -72,109 +164,337 @@
               {{ event.description }}
             </p>
 
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-3">
-                <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
-                  <span class="text-xs font-bold text-white">{{ event.speaker.initials }}</span>
-                </div>
-                <div>
-                  <div class="text-sm font-semibold text-gray-900">{{ event.speaker.name }}</div>
-                  <div class="text-xs text-gray-500">{{ event.speaker.role }}</div>
+            <!-- Speakers -->
+            <div class="mb-4">
+              <div class="flex items-center mb-2">
+                <i class="fas fa-microphone text-blue-500 mr-2"></i>
+                <span class="text-sm font-medium text-gray-700">Intervenants:</span>
+              </div>
+              <div class="flex -space-x-2">
+                <img
+                  v-for="speaker in event.speakers.slice(0, 3)"
+                  :key="speaker.id"
+                  :src="speaker.avatar"
+                  :alt="speaker.name"
+                  class="w-8 h-8 rounded-full border-2 border-white object-cover"
+                  :title="speaker.name"
+                />
+                <div 
+                  v-if="event.speakers.length > 3"
+                  class="w-8 h-8 rounded-full bg-blue-100 border-2 border-white flex items-center justify-center text-xs font-medium text-blue-600"
+                >
+                  +{{ event.speakers.length - 3 }}
                 </div>
               </div>
-              
-              <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium text-sm">
-                S'inscrire
-              </button>
+            </div>
+            
+            <!-- Event Actions -->
+            <div class="flex items-center justify-between pt-4 border-t border-gray-100">
+              <div class="text-blue-600 font-semibold text-sm">
+                {{ event.price === 0 ? 'Gratuit' : `${event.price} $` }}
+              </div>
+              <div class="text-blue-600 font-semibold text-sm group-hover:translate-x-2 transition-transform flex items-center">
+                Voir détails
+                <i class="fas fa-arrow-right ml-2"></i>
+              </div>
             </div>
           </div>
-        </div>
+        </article>
       </div>
 
-      <!-- Section Newsletter -->
-      <div class="bg-gradient-to-r from-blue-600 to-blue-700 rounded-2xl p-8 text-center text-white">
-        <h2 class="text-2xl lg:text-3xl font-bold mb-4">Ne manquez aucun événement</h2>
-        <p class="text-blue-100 mb-6 max-w-2xl mx-auto">
-          Inscrivez-vous à notre newsletter pour recevoir les invitations et actualités de nos événements
-        </p>
-        <div class="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-          <input 
-            type="email" 
-            placeholder="Votre email professionnel"
-            class="flex-1 px-4 py-3 rounded-lg border border-blue-500 bg-white/10 placeholder-blue-200 text-white focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent"
-          >
-          <button class="px-6 py-3 bg-white text-blue-600 font-semibold rounded-lg hover:bg-gray-100 transition-colors">
-            S'abonner
-          </button>
+      <!-- Load More Button -->
+      <div v-if="showLoadMore" class="text-center mb-12">
+        <button
+          @click="loadMoreEvents"
+          class="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-8 py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+        >
+          Charger plus d'événements
+        </button>
+      </div>
+
+      <!-- No Results -->
+      <div
+        v-if="filteredEvents.length === 0"
+        class="text-center py-16 bg-white rounded-2xl shadow-sm border border-gray-200"
+      >
+        <i class="fas fa-calendar-times text-6xl text-gray-300 mb-4"></i>
+        <h3 class="text-2xl font-bold text-gray-900 mb-2">Aucun événement trouvé</h3>
+        <p class="text-gray-600 mb-6">Essayez d'ajuster votre recherche ou vos critères de filtre</p>
+        <button
+          @click="clearFilters"
+          class="bg-blue-500 hover:bg-blue-600 text-white font-medium px-6 py-3 rounded-lg transition-colors"
+        >
+          Effacer tous les filtres
+        </button>
+      </div>
+
+      <!-- Newsletter Section -->
+      <div class="bg-gradient-to-r from-blue-500 to-blue-600 rounded-2xl shadow-xl p-8 text-white mb-12">
+        <div class="max-w-4xl mx-auto text-center">
+          <h3 class="text-2xl md:text-3xl font-bold mb-4">Restez informé</h3>
+          <p class="text-blue-100 mb-6 text-lg">
+            Inscrivez-vous à notre newsletter pour ne manquer aucun événement important.
+          </p>
+          <div class="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+            <input
+              type="email"
+              placeholder="Entrez votre email"
+              class="flex-1 px-4 py-3 rounded-lg text-gray-900 focus:ring-2 focus:ring-white focus:outline-none"
+            >
+            <button class="bg-white text-blue-600 font-semibold px-6 py-3 rounded-lg hover:bg-gray-100 transition-colors">
+              S'inscrire
+            </button>
+          </div>
         </div>
       </div>
     </div>
   </div>
+  <FooterComponent/>
 </template>
 
-<script setup lang="ts">
-import { ref, computed } from 'vue'
+<script setup>
+import { ref, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 
-const activeFilter = ref('all')
+const router = useRouter()
 
-const filters = [
-  { id: 'all', label: 'Tous les événements' },
-  { id: 'conference', label: 'Conférences' },
-  { id: 'seminar', label: 'Séminaires' },
-  { id: 'workshop', label: 'Ateliers' },
-  { id: 'upcoming', label: 'À venir' }
-]
+// Reactive data
+const searchQuery = ref('')
+const selectedEventTypes = ref([])
+const statusFilter = ref('all')
+const currentPage = ref(1)
+const eventsPerPage = 9
 
-const events = [
+//@ts-ignore
+import NavBarComponent from '../components/navbar/NavBarComponent.vue'
+//@ts-ignore
+import FooterComponent from '../components/footer/FooterComponent.vue'
+
+// Sample events data
+const allEvents = ref([
   {
     id: 1,
-    title: "Financement des PME en Afrique : Défis et Opportunités",
-    description: "Conférence internationale sur les nouvelles tendances du financement des PME dans le contexte africain.",
+    title: "Conférence Nationale sur le Financement des PME",
+    description: "Une conférence majeure réunissant les acteurs clés du financement des PME en RDC pour discuter des défis et opportunités.",
+    image: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+    date: "2025-12-15",
+    startTime: "09:00",
+    endTime: "17:00",
+    location: "Kinshasa, Hôtel du Gouvernement",
     type: "Conférence",
-    date: "15 Mars 2024",
-    time: "14:00 - 17:00",
-    image: "/api/placeholder/400/200",
-    speaker: {
-      name: "Dr. Marie Koffi",
-      role: "Directrice de Recherche",
-      initials: "MK"
-    }
+    status: "upcoming",
+    price: 150,
+    capacity: 300,
+    attendees: 245,
+    speakers: [
+      { id: 1, name: "Dr. Jean Kabila", role: "Ministre des PME", avatar: "https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" },
+      { id: 2, name: "Marie Lumbu", role: "Directrice Banque Centrale", avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" }
+    ]
   },
   {
     id: 2,
-    type: "Séminaire",
-    title: "Méthodologies de recherche quantitative",
-    description: "Atelier pratique sur les méthodes avancées de collecte et d'analyse de données pour la recherche en finance.",
-    date: "22 Mars 2024",
-    time: "09:00 - 12:30",
-    image: "/api/placeholder/400/200",
-    speaker: {
-      name: "Prof. Jean Diallo",
-      role: "Expert Méthodologie",
-      initials: "JD"
-    }
+    title: "Atelier Pratique: Préparer son Business Plan",
+    description: "Session interactive pour apprendre à créer un business plan convaincant pour les investisseurs.",
+    image: "https://images.unsplash.com/photo-1515187029135-18ee286d815b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+    date: "2025-11-25",
+    startTime: "14:00",
+    endTime: "18:00",
+    location: "Lubumbashi, Centre des Affaires",
+    type: "Atelier",
+    status: "upcoming",
+    price: 50,
+    capacity: 50,
+    attendees: 32,
+    speakers: [
+      { id: 3, name: "Pierre Mbayo", role: "Consultant en Finance", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" }
+    ]
   },
   {
     id: 3,
-    type: "Atelier",
-    title: "Rédaction scientifique pour publications",
-    description: "Formation intensive sur les techniques de rédaction et de soumission d'articles dans des revues indexées.",
-    date: "5 Avril 2024",
-    time: "10:00 - 16:00",
-    image: "/api/placeholder/400/200",
-    speaker: {
-      name: "Dr. Sarah Mensah",
-      role: "Éditrice Scientifique",
-      initials: "SM"
-    }
+    title: "Table Ronde: Innovation Financière pour PME",
+    description: "Discussion sur les nouvelles solutions de financement digital et les fintech en RDC.",
+    image: "https://images.unsplash.com/photo-1559136555-9303baea8ebd?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+    date: "2025-11-20",
+    startTime: "10:00",
+    endTime: "12:30",
+    location: "En Ligne",
+    type: "Webinaire",
+    status: "upcoming",
+    price: 0,
+    capacity: 500,
+    attendees: 387,
+    speakers: [
+      { id: 4, name: "Sarah Ntumba", role: "CEO FinTech RDC", avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b786?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" },
+      { id: 5, name: "David Mukendi", role: "Expert Digital", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" }
+    ]
+  },
+  {
+    id: 4,
+    title: "Forum des Investisseurs PME 2025",
+    description: "Rencontre entre entrepreneurs et investisseurs potentiels pour des opportunités de financement.",
+    image: "https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+    date: "2025-10-30",
+    startTime: "08:30",
+    endTime: "16:00",
+    location: "Goma, Centre de Conférences",
+    type: "Forum",
+    status: "past",
+    price: 100,
+    capacity: 200,
+    attendees: 180,
+    speakers: [
+      { id: 6, name: "Luc Tshibanda", role: "Investisseur Privé", avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" }
+    ]
+  },
+  {
+    id: 5,
+    title: "Formation: Gestion de Trésorerie PME",
+    description: "Formation intensive sur les techniques de gestion de trésorerie pour les dirigeants de PME.",
+    image: "https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+    date: "2025-10-20",
+    startTime: "09:00",
+    endTime: "16:00",
+    location: "Kinshasa, Centre de Formation",
+    type: "Formation",
+    status: "past",
+    price: 75,
+    capacity: 40,
+    attendees: 35,
+    speakers: [
+      { id: 7, name: "Dr. Amina Koffi", role: "Expert Comptable", avatar: "https://images.unsplash.com/photo-1544725176-7c40e5a71c5e?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" }
+    ]
+  },
+  {
+    id: 6,
+    title: "Séminaire International Financement Agricole",
+    description: "Focus sur les solutions de financement pour les PME du secteur agricole en RDC.",
+    image: "https://images.unsplash.com/photo-1465495976277-4387d4b0e4a6?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+    date: "2025-12-05",
+    startTime: "08:00",
+    endTime: "13:00",
+    location: "Kisangani, Hôtel des Chutes",
+    type: "Séminaire",
+    status: "upcoming",
+    price: 0,
+    capacity: 150,
+    attendees: 89,
+    speakers: [
+      { id: 8, name: "Prof. Joseph Lelo", role: "Expert Agricole", avatar: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" }
+    ]
   }
-]
+])
+
+// Computed properties
+const eventTypes = computed(() => {
+  return [...new Set(allEvents.value.map(event => event.type))]
+})
+
+const upcomingEvents = computed(() => {
+  return allEvents.value.filter(event => event.status === 'upcoming')
+})
+
+const pastEvents = computed(() => {
+  return allEvents.value.filter(event => event.status === 'past')
+})
+
+const speakers = computed(() => {
+  const allSpeakers = allEvents.value.flatMap(event => event.speakers)
+  return [...new Map(allSpeakers.map(speaker => [speaker.id, speaker])).values()]
+})
 
 const filteredEvents = computed(() => {
-  if (activeFilter.value === 'all') return events
-  return events.filter(event => 
-    activeFilter.value === 'upcoming' ? true : event.type.toLowerCase() === activeFilter.value
-  )
+  let filtered = allEvents.value
+
+  // Filter by search query
+  if (searchQuery.value) {
+    const query = searchQuery.value.toLowerCase()
+    filtered = filtered.filter(event => 
+      event.title.toLowerCase().includes(query) ||
+      event.description.toLowerCase().includes(query) ||
+      event.location.toLowerCase().includes(query) ||
+      event.speakers.some(speaker => speaker.name.toLowerCase().includes(query))
+    )
+  }
+
+  // Filter by event types
+  if (selectedEventTypes.value.length > 0) {
+    filtered = filtered.filter(event => 
+      selectedEventTypes.value.includes(event.type)
+    )
+  }
+
+  // Filter by status
+  if (statusFilter.value !== 'all') {
+    filtered = filtered.filter(event => event.status === statusFilter.value)
+  }
+
+  // Sort events by date (upcoming first)
+  filtered.sort((a, b) => new Date(a.date) - new Date(b.date))
+
+  // Pagination
+  const startIndex = (currentPage.value - 1) * eventsPerPage
+  return filtered.slice(0, startIndex + eventsPerPage)
+})
+
+const showLoadMore = computed(() => {
+  const totalFiltered = allEvents.value.filter(event => {
+    const matchesSearch = !searchQuery.value || 
+      event.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+      event.description.toLowerCase().includes(searchQuery.value.toLowerCase())
+    
+    const matchesType = selectedEventTypes.value.length === 0 || 
+      selectedEventTypes.value.includes(event.type)
+    
+    const matchesStatus = statusFilter.value === 'all' || 
+      event.status === statusFilter.value
+    
+    return matchesSearch && matchesType && matchesStatus
+  }).length
+
+  return filteredEvents.value.length < totalFiltered
+})
+
+// Methods
+const toggleEventType = (type) => {
+  const index = selectedEventTypes.value.indexOf(type)
+  if (index > -1) {
+    selectedEventTypes.value.splice(index, 1)
+  } else {
+    selectedEventTypes.value.push(type)
+  }
+  currentPage.value = 1
+}
+
+const loadMoreEvents = () => {
+  currentPage.value++
+}
+
+const clearFilters = () => {
+  searchQuery.value = ''
+  selectedEventTypes.value = []
+  statusFilter.value = 'all'
+  currentPage.value = 1
+}
+
+const formatEventDate = (dateString) => {
+  const date = new Date(dateString)
+  return date.toLocaleDateString('fr-FR', {
+    day: 'numeric',
+    month: 'short'
+  })
+}
+
+const formatEventTime = (startTime, endTime) => {
+  return `${startTime} - ${endTime}`
+}
+
+const openEvent = (eventId) => {
+  router.push(`/events/${eventId}`)
+}
+
+// Lifecycle
+onMounted(() => {
+  // Initialization if needed
 })
 </script>
 
@@ -191,5 +511,72 @@ const filteredEvents = computed(() => {
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+.group:hover .group-hover\:scale-110 {
+  transform: scale(1.1);
+}
+
+.group:hover .group-hover\:translate-x-2 {
+  transform: translateX(0.5rem);
+}
+
+/* Animations */
+@keyframes blob-slow {
+  0%, 100% { transform: translate(0px, 0px) scale(1); }
+  25% { transform: translate(20px, -20px) scale(1.1); }
+  50% { transform: translate(-20px, 20px) scale(0.9); }
+  75% { transform: translate(20px, 20px) scale(1.05); }
+}
+
+@keyframes blob-fast {
+  0%, 100% { transform: translate(0px, 0px) scale(1); }
+  25% { transform: translate(-30px, 15px) scale(1.05); }
+  50% { transform: translate(15px, -30px) scale(0.95); }
+  75% { transform: translate(-15px, 30px) scale(1.1); }
+}
+
+@keyframes gradient-text {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes wave {
+  0%, 100% { transform: -skew-y-3 scaleY(1); }
+  50% { transform: -skew-y-3 scaleY(1.1); }
+}
+
+.animate-blob-slow {
+  animation: blob-slow 7s infinite;
+}
+
+.animate-blob-fast {
+  animation: blob-fast 5s infinite;
+}
+
+.animate-gradient-text {
+  background-size: 200% 200%;
+  animation: gradient-text 3s ease infinite;
+}
+
+.animate-fade-in {
+  animation: fade-in 1s ease-out;
+}
+
+.animate-wave {
+  animation: wave 3s ease-in-out infinite;
+}
+
+/* Smooth transitions */
+* {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
 }
 </style>
