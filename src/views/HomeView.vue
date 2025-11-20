@@ -7,14 +7,29 @@ import FooterComponent from '@/components/footer/FooterComponent.vue'
 //@ts-ignore
 import AboutComponent from '@/components/AboutComponent.vue'
 //@ts-ignore
+import ActualityComponent from '@/components/ActualityComponent.vue'
+//@ts-ignore
 import TeamComponent from '@/components/TeamComponent.vue'
 //@ts-ignore
+import GalleryComponent from '@/components/GalleryComponent.vue'
+//@ts-ignore
 import MissionComponent from '@/components/MissionComponent.vue'
+//@ts-ignore
+import ObjectivesComponent from '@/components/ObjectiveComponent.vue'
+//@ts-ignore
+import ImpactComponent from '@/components/ImpactComponent.vue'
+//@ts-ignore
+import TestimonialsComponent from '@/components/TestimonyComponent.vue'
 </script>
 <template>
   <HeroComponent />
   <AboutComponent/>
-  <MissionComponent/>
+  <ActualityComponent/>
+  <MissionComponent />
+
   <TeamComponent/>
+   <GalleryComponent/>
+   <FooterComponent/>
 </template>
 <style></style>
+
