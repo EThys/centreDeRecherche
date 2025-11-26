@@ -15,8 +15,12 @@ import AllActuality from "../views/AllActualityView.vue";
 import PublicationDetail from "../views/PublicationDetailView.vue";
 //@ts-ignore
 import EventDetailView from '@/views/EventDetailView.vue';
+//@ts-ignore
+import ActualityDetailView from '@/views/ActualityDetailView.vue';
 import ContactView from '@/views/ContactView.vue';
 import AuthView from '@/views/AuthView.vue';
+//@ts-ignore
+import AboutView from '@/views/AboutView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -42,6 +46,11 @@ const router = createRouter({
       component: ContactView,
     },
     {
+      path: '/about',
+      name: 'about',
+      component: AboutView,
+    },
+    {
       path: '/publications',
       name: 'publications',
       component: PublicationView,
@@ -56,6 +65,12 @@ const router = createRouter({
       path: '/actualites',
       name: 'actualites',
       component: AllActuality,
+    },
+    {
+      path: '/actualites/:id',
+      name: 'ActualityDetail',
+      component: ActualityDetailView,
+      props: true
     },
     {
       path: '/evenements',
