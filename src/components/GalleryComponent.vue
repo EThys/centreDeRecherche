@@ -4,10 +4,10 @@
       <!-- En-tête avec animations -->
       <div class="text-center mb-16">
         <div class="flex items-center justify-center mb-6 fade-in-up" data-delay="0">
-          <h1 class="text-4xl md:text-5xl font-bold text-gray-900">Galerie Photo</h1>
+          <h1 class="text-4xl md:text-5xl font-bold text-gray-900">{{ $t('gallery.title') }}</h1>
         </div>
         <p class="text-xl text-gray-600 max-w-3xl mx-auto mb-8 leading-relaxed fade-in-up" data-delay="100">
-          Captures d'exception de nos événements, installations et moments mémorables
+          {{ $t('gallery.description') }}
         </p>
         
         <!-- Filtres avec animations -->
@@ -36,7 +36,7 @@
           :key="photo.id"
           class="group relative bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 cursor-pointer border border-gray-100 stagger-item"
           :class="`delay-${300 + index * 50}`"
-          @click="openLightbox(index)"
+          @click="() => openLightbox(index)"
         >
           <div class="relative overflow-hidden aspect-square">
             <img
@@ -98,76 +98,15 @@
       </div>
     </div>
 
-    <!-- Lightbox Modal Élégant avec animations -->
-    <div
-      v-if="lightboxOpen"
-      class="fixed inset-0 bg-black/95 backdrop-blur-md z-50 flex items-center justify-center p-4 lightbox-enter"
-      @click="closeLightbox"
-    >
-      <div class="relative max-w-6xl max-h-full scale-in" data-delay="100" @click.stop>
-        <!-- Bouton fermer -->
-        <button
-          @click="closeLightbox"
-          class="absolute -top-16 right-0 text-white hover:text-blue-300 text-2xl z-10 transition-all duration-300 bg-white/10 backdrop-blur-sm w-12 h-12 rounded-full flex items-center justify-center transform hover:scale-110 fade-in-up"
-          data-delay="200"
-        >
-          <i class="fas fa-times"></i>
-        </button>
-
-        <!-- Navigation -->
-        <button
-          @click="prevImage"
-          class="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 border border-white/20 slide-in-left"
-          data-delay="300"
-        >
-          <i class="fas fa-chevron-left"></i>
-        </button>
-        
-        <button
-          @click="nextImage"
-          class="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 border border-white/20 slide-in-right"
-          data-delay="300"
-        >
-          <i class="fas fa-chevron-right"></i>
-        </button>
-
-        <!-- Container image lightbox -->
-        <div class="relative bg-white rounded-sm overflow-hidden shadow-3xl fade-in-up" data-delay="400">
-          <img
-            :src="currentLightboxImage.image"
-            :alt="currentLightboxImage.title"
-            class="max-w-full max-h-[70vh] object-contain"
-          />
-          
-          <!-- Infos lightbox -->
-          <div class="bg-gradient-to-r from-blue-600 to-blue-700 p-8 text-white">
-            <div class="flex flex-wrap items-center gap-4 mb-4">
-              <span class="bg-white/20 px-4 py-2 rounded-full text-sm font-medium backdrop-blur-sm scale-in" data-delay="500">
-                {{ currentLightboxImage.category }}
-              </span>
-              <span class="flex items-center text-blue-100 fade-in-up" data-delay="550">
-                <i class="far fa-calendar mr-2"></i>
-                {{ currentLightboxImage.date }}
-              </span>
-              <span class="flex items-center text-blue-100 fade-in-up" data-delay="600">
-                <i class="fas fa-user mr-2"></i>
-                {{ currentLightboxImage.author }}
-              </span>
-            </div>
-            
-            <h3 class="text-3xl font-bold mb-4 fade-in-up" data-delay="650">{{ currentLightboxImage.title }}</h3>
-            <p class="text-lg text-blue-100 leading-relaxed mb-6 fade-in-up" data-delay="700">{{ currentLightboxImage.description }}</p>
-          </div>
-        </div>
-
-        <!-- Compteur -->
-        <div class="absolute -bottom-16 left-0 text-white text-center w-full fade-in-up" data-delay="800">
-          <p class="text-lg bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full inline-block">
-            {{ currentLightboxIndex + 1 }} / {{ photos.length }}
-          </p>
-        </div>
-      </div>
-    </div>
+    <!-- Lightbox avec vue-easy-lightbox -->
+    <vue-easy-lightbox
+      :visible="lightboxOpen"
+      :imgs="lightboxImages"
+      :index="currentLightboxIndex"
+      @hide="closeLightbox"
+      @switch="handleLightboxSwitch"
+      :scrollDisabled="true"
+    ></vue-easy-lightbox>
 
     <!-- Éléments décoratifs animés en arrière-plan -->
     <div class="fixed inset-0 pointer-events-none z-0">
@@ -178,8 +117,14 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { useI18n } from 'vue-i18n'
+import VueEasyLightbox from 'vue-easy-lightbox'
+import 'vue-easy-lightbox/dist/external-css/vue-easy-lightbox.css'
+import type { GalleryPhoto } from '@/models'
+
+const { t } = useI18n()
 
 // États réactifs
 const activeFilter = ref('all')
@@ -189,16 +134,16 @@ const loading = ref(false)
 const displayedCount = ref(12)
 
 // Filtres
-const filters = ref([
-  { id: 'all', name: 'Toutes les photos' },
-  { id: 'evenements', name: 'Événements' },
-  { id: 'equipe', name: 'Notre équipe' },
-  { id: 'installations', name: 'Installations' },
-  { id: 'collaborations', name: 'Collaborations' }
+const filters = computed(() => [
+  { id: 'all', name: t('gallery.allPhotos') },
+  { id: 'evenements', name: t('gallery.events') },
+  { id: 'equipe', name: t('gallery.team') },
+  { id: 'installations', name: t('gallery.installations') },
+  { id: 'collaborations', name: t('gallery.collaborations') }
 ])
 
-// Données des photos (identique à votre version précédente)
-const photos = ref([
+// Données des photos
+const photos = ref<GalleryPhoto[]>([
   {
     id: 1,
     title: "Conférence Internationale 2024",
@@ -328,8 +273,16 @@ const currentLightboxImage = computed(() => {
   return photos.value[currentLightboxIndex.value]
 })
 
+const lightboxImages = computed(() => {
+  return filteredPhotos.value.map(photo => photo.image)
+})
+
+const handleLightboxSwitch = (index: number) => {
+  currentLightboxIndex.value = index
+}
+
 // Méthodes
-const setActiveFilter = (filterId) => {
+const setActiveFilter = (filterId: string) => {
   activeFilter.value = filterId
   displayedCount.value = 12
   // Réinitialiser les animations pour les nouveaux éléments
@@ -338,23 +291,13 @@ const setActiveFilter = (filterId) => {
   }, 100)
 }
 
-const openLightbox = (index) => {
+const openLightbox = (index: number) => {
   currentLightboxIndex.value = index
   lightboxOpen.value = true
 }
 
 const closeLightbox = () => {
   lightboxOpen.value = false
-}
-
-const nextImage = () => {
-  currentLightboxIndex.value = (currentLightboxIndex.value + 1) % photos.value.length
-}
-
-const prevImage = () => {
-  currentLightboxIndex.value = currentLightboxIndex.value === 0 
-    ? photos.value.length - 1 
-    : currentLightboxIndex.value - 1
 }
 
 const loadMore = async () => {
@@ -369,7 +312,7 @@ const loadMore = async () => {
 }
 
 // Système d'animation
-let observer = null
+let observer: IntersectionObserver | null = null
 
 const initScrollAnimations = () => {
   const observerOptions = {
@@ -379,7 +322,7 @@ const initScrollAnimations = () => {
 
   observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
-      if (entry.isIntersecting) {
+      if (entry.isIntersecting && observer) {
         entry.target.classList.add('animate-in')
         observer.unobserve(entry.target)
       }
@@ -388,12 +331,14 @@ const initScrollAnimations = () => {
 
   // Observer tous les éléments avec des classes d'animation
   document.querySelectorAll('.fade-in-up, .slide-in-left, .slide-in-right, .slide-in-up, .scale-in, .stagger-item').forEach(el => {
-    observer.observe(el)
+    if (observer) {
+      observer.observe(el)
+    }
   })
 }
 
 // Gestion des touches clavier
-const handleKeydown = (event) => {
+const handleKeydown = (event: KeyboardEvent) => {
   if (!lightboxOpen.value) return
   
   switch(event.key) {
@@ -401,10 +346,14 @@ const handleKeydown = (event) => {
       closeLightbox()
       break
     case 'ArrowRight':
-      nextImage()
+      if (currentLightboxIndex.value < lightboxImages.value.length - 1) {
+        currentLightboxIndex.value++
+      }
       break
     case 'ArrowLeft':
-      prevImage()
+      if (currentLightboxIndex.value > 0) {
+        currentLightboxIndex.value--
+      }
       break
   }
 }
@@ -569,19 +518,17 @@ onUnmounted(() => {
 }
 
 /* Animation d'entrée du lightbox */
-.lightbox-enter {
-  animation: lightboxFadeIn 0.3s ease-out forwards;
+.lightbox-fade-enter-active {
+  transition: opacity 0.3s ease-out;
 }
 
-@keyframes lightboxFadeIn {
-  from {
-    opacity: 0;
-    backdrop-filter: blur(0px);
-  }
-  to {
-    opacity: 1;
-    backdrop-filter: blur(12px);
-  }
+.lightbox-fade-leave-active {
+  transition: opacity 0.3s ease-in;
+}
+
+.lightbox-fade-enter-from,
+.lightbox-fade-leave-to {
+  opacity: 0;
 }
 
 /* Support pour la réduction des animations */
