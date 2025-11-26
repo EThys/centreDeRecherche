@@ -1,0 +1,239 @@
+{
+  "nav": {
+    "home": "Accueil",
+    "about": "À propos",
+    "research": "Recherche",
+    "publications": "Publications",
+    "events": "Événements",
+    "news": "Actualités",
+    "gallery": "Galerie",
+    "contact": "Contact",
+    "forum": "Forum",
+    "researchDomains": "Domaines de Recherche",
+    "researchActivities": "Activités de Recherche",
+    "memberSpace": "Espace Membre"
+  },
+  "hero": {
+    "welcome": "Bienvenue au",
+    "creff": "CReFF-PME",
+    "subtitle": "Centre de Recherche et de Formation sur le Financement des PME",
+    "description": "Une initiative de l'Université Kongo en partenariat avec l'Université libre de Bruxelles pour renforcer la recherche sur l'accès au financement des PME.",
+    "cta": "Découvrir notre mission",
+    "recruitment": {
+      "title": "Recrutement",
+      "highlight": "Assistant(e)s Chercheurs",
+      "subtitle": "Rejoignez notre équipe de recherche",
+      "description": "Participez à nos projets de recherche, bénéficiez d'un encadrement académique et d'opportunités de collaboration internationale.",
+      "cta": "Postuler maintenant"
+    },
+    "training": {
+      "title": "Formation et",
+      "highlight": "Encadrement",
+      "subtitle": "Encadrement des jeunes chercheurs",
+      "description": "Nous accompagnons les jeunes chercheurs dans l'élaboration de projets de thèse et favorisons le transfert de connaissances vers les entrepreneurs.",
+      "cta": "Nos activités"
+    },
+    "partnership": {
+      "title": "Partenariat",
+      "highlight": "International",
+      "subtitle": "Collaboration Université Kongo - ULB",
+      "description": "Un partenariat stratégique entre l'Université Kongo et l'Université libre de Bruxelles pour l'excellence en recherche sur le financement des PME.",
+      "cta": "En savoir plus"
+    }
+  },
+  "about": {
+    "header": "À PROPOS DU CENTRE",
+    "title": "Centre de Recherche et de Formation sur le",
+    "titleHighlight": "Financement des PME",
+    "description": "Le Centre de Recherche et de Formation sur le Financement des PME (CReFF-PME) est une institution académique dédiée à la production de connaissances, au renforcement des capacités et à l'accompagnement innovant des entrepreneurs africains. Nous œuvrons pour une meilleure compréhension des défis du financement des petites et moyennes entreprises, tout en contribuant au développement des solutions adaptées au contexte local.",
+    "stats": {
+      "projects": "Projets",
+      "researchers": "Chercheurs",
+      "publications": "Publications"
+    },
+    "aboutView": {
+      "heroTitle": "Centre de Recherche et de Formation",
+      "heroSubtitle": "sur le Financement des PME",
+      "heroDescription": "Un espace d'excellence pour la production scientifique, la formation et la diffusion des connaissances sur le financement des PME en Afrique",
+      "genesis": {
+        "header": "GENÈSE DU PROJET",
+        "title": "L'origine du",
+        "titleHighlight": "CReFF-PME",
+        "paragraph1": "Le Centre Creff-PME trouve son origine dans une recherche doctorale menée par M. Jean Nsonsumuna, en cotutelle entre l'ULB et l'Université Kongo, portant sur les conditions de succès du lancement de crowdfunding (financement participatif) en RDC.",
+        "paragraph2": "Face aux nombreuses contraintes d'accès au financement des PME congolaises identifiées, le CReFF a été conçu comme un espace de production scientifique, de formation et de diffusion des connaissances sur le financement des PME, tout en visant à renforcer les compétences des entrepreneurs et des chercheurs locaux."
+      },
+      "activities": {
+        "header": "NOS ACTIVITÉS",
+        "title": "Deux axes d'",
+        "titleHighlight": "intervention",
+        "description": "Les activités du CReFF-PME s'organisent autour de deux axes principaux",
+        "research": {
+          "title": "CReff Research",
+          "subtitle": "Consolidez vos compétences en Recherche sur les PME",
+          "item1": "Aide à l'élaboration des projets de thèses",
+          "item2": "Formations à la recherche",
+          "item3": "Recherche sur les PME en Afrique Centrale",
+          "item4": "Pré-école doctorale (Université Kongo - ULB)"
+        },
+        "entrepreneurs": {
+          "title": "Creff Entrepreneurs",
+          "subtitle": "Garantissez le succès de votre entreprise",
+          "item1": "Construire votre plan financier",
+          "item2": "Identifier les options de financement adaptées",
+          "item3": "Valider votre plan de financement"
+        }
+      },
+      "team": {
+        "header": "ÉQUIPE",
+        "boardTitle": "Conseil de Direction du",
+        "boardTitleHighlight": "CReFF-PME",
+        "managementTitle": "Comité de gestion du",
+        "managementTitleHighlight": "Creff"
+      }
+    }
+  },
+  "mission": {
+    "header": "Notre Raison d'Être",
+    "title": "Notre",
+    "titleHighlight": "Mission",
+    "description": "Transformer la recherche sur le financement des PME en leviers concrets de développement économique pour l'Afrique",
+    "appliedResearch": {
+      "title": "Recherche Appliquée",
+      "description": "Produire des connaissances scientifiques rigoureuses sur les mécanismes de financement des PME adaptés aux contextes africains."
+    },
+    "excellenceTraining": {
+      "title": "Formation d'Excellence",
+      "description": "Former la nouvelle génération de chercheurs et professionnels spécialisés en financement des entreprises en Afrique."
+    },
+    "strategicSupport": {
+      "title": "Accompagnement Stratégique",
+      "description": "Appuyer concrètement les entrepreneurs et institutions grâce à des outils et solutions basées sur nos recherches."
+    },
+    "stats": {
+      "researchProjects": "Projets de Recherche",
+      "publications": "Publications",
+      "partnerCountries": "Pays Partenaires",
+      "trainedProfessionals": "Professionnels Formés"
+    }
+  },
+  "vision": {
+    "header": "Notre Mission",
+    "title": "Objectifs Stratégiques",
+    "description": "Développer un écosystème financier innovant pour les PME africaines grâce à la recherche, la formation et les partenariats stratégiques.",
+    "vision2030": {
+      "title": "Vision 2030",
+      "description": "Créer un environnement où chaque PME africaine peut accéder à des solutions financières adaptées, des ressources stratégiques et un réseau de partenaires engagés."
+    },
+    "mainObjectives": "Objectifs Principaux",
+    "objectives": {
+      "1": "Développer des instruments financiers innovants pour les PME",
+      "2": "Renforcer les capacités des institutions financières locales",
+      "3": "Créer des plateformes de collaboration public-privé",
+      "4": "Produire des recherches appliquées influentes",
+      "5": "Former la nouvelle génération de leaders financiers",
+      "6": "Établir des standards de financement durables"
+    },
+    "stats": {
+      "specializedExperts": "Experts spécialisés",
+      "specializedExpertsDesc": "Chercheurs et praticiens en finance des PME",
+      "researchProjects": "Projets de recherche",
+      "researchProjectsDesc": "Études et initiatives menées depuis 2015",
+      "countriesCovered": "Pays couverts",
+      "countriesCoveredDesc": "Réseau panafricain de collaboration"
+    }
+  },
+  "actuality": {
+    "header": "ACTUALITÉS RÉCENTES",
+    "newArticles": "Nouveaux Articles",
+    "readMore": "Lire la suite",
+    "noNews": "Aucune actualité disponible",
+    "noNewsDescription": "Il n'y a actuellement aucune actualité à afficher. Revenez bientôt pour découvrir nos dernières nouvelles et articles.",
+    "viewAll": "Voir toutes les actualités",
+    "events": {
+      "header": "ÉVÉNEMENTS À VENIR",
+      "upcomingEvents": "Événements à venir",
+      "register": "S'inscrire",
+      "registering": "Inscription...",
+      "details": "Détails",
+      "noEvents": "Aucun événement à venir",
+      "noEventsDescription": "Il n'y a actuellement aucun événement programmé. Restez connecté pour être informé de nos prochains événements et conférences.",
+      "viewAll": "Voir tous les événements"
+    }
+  },
+  "team": {
+    "header": "NOTRE ÉQUIPE",
+    "title": "Rencontrez",
+    "titleHighlight": "notre équipe",
+    "description": "Une équipe d'experts passionnés, unis par l'innovation et l'excellence dans le financement des PME",
+    "highlights": "Points forts"
+  },
+  "gallery": {
+    "title": "Galerie Photo",
+    "description": "Captures d'exception de nos événements, installations et moments mémorables",
+    "allPhotos": "Toutes les photos",
+    "events": "Événements",
+    "team": "Notre équipe",
+    "installations": "Installations",
+    "collaborations": "Collaborations",
+    "loadMore": "Charger plus",
+    "noResults": "Aucune photo trouvée",
+    "adjustSearch": "Essayez d'ajuster votre recherche ou vos critères de filtre"
+  },
+  "partners": {
+    "header": "PARTENAIRES",
+    "title": "Nos",
+    "titleHighlight": "partenaires",
+    "description": "Des collaborations stratégiques pour l'excellence en recherche et formation"
+  },
+  "footer": {
+    "description": "Centre de Recherche et de Formation sur le Financement des PME en Afrique. Nous œuvrons pour le développement économique grâce à la recherche appliquée et la formation d'excellence.",
+    "quickLinks": "Liens Rapides",
+    "contact": "Contact",
+    "newsletter": "Newsletter",
+    "newsletterTitle": "Restez informé",
+    "newsletterDescription": "Abonnez-vous à notre newsletter pour recevoir les dernières actualités et événements.",
+    "subscribe": "S'abonner",
+    "emailPlaceholder": "Votre adresse email",
+    "copyright": "© 2025 CReFF-PME. Tous droits réservés.",
+    "rights": "Tous droits réservés",
+    "backToTop": "Retour en haut"
+  },
+  "contact": {
+    "title": "Prenons contact",
+    "subtitle": "pour financer votre PME",
+    "description": "Notre équipe d'experts en financement est disponible pour répondre à vos questions sous 24 heures.",
+    "callAdvisor": "Appeler un conseiller",
+    "formTitle": "Demande de financement",
+    "formDescription": "Remplissez ce formulaire pour être contacté par un de nos conseillers",
+    "name": "Nom complet",
+    "email": "Adresse email",
+    "subject": "Sujet",
+    "message": "Message",
+    "send": "Envoyer",
+    "sending": "Envoi en cours...",
+    "success": "Votre message a été envoyé avec succès ! Nous vous répondrons sous 24h.",
+    "required": "Ce champ est requis",
+    "services": "Services",
+    "servicesValue": "Financement, Accompagnement, Conseil",
+    "specialty": "Spécialité",
+    "specialtyValue": "Soutien aux PME congolaises"
+  },
+  "common": {
+    "readMore": "Lire la suite",
+    "viewAll": "Voir tout",
+    "learnMore": "En savoir plus",
+    "back": "Retour",
+    "next": "Suivant",
+    "previous": "Précédent",
+    "close": "Fermer",
+    "search": "Rechercher",
+    "filter": "Filtrer",
+    "loading": "Chargement...",
+    "noResults": "Aucun résultat",
+    "share": "Partager",
+    "download": "Télécharger",
+    "register": "S'inscrire",
+    "details": "Détails",
+    "min": "min"
+  }
+}

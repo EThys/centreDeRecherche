@@ -1,0 +1,146 @@
+{
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "research": "Research",
+    "publications": "Publications",
+    "events": "Events",
+    "news": "News",
+    "gallery": "Gallery",
+    "contact": "Contact",
+    "forum": "Forum"
+  },
+  "hero": {
+    "welcome": "Welcome to",
+    "creff": "CReFF-PME",
+    "subtitle": "Research and Training Center on SME Financing",
+    "description": "An initiative of Kongo University in partnership with the Free University of Brussels to strengthen research on SME financing access.",
+    "cta": "Discover our mission",
+    "recruitment": {
+      "title": "Recruitment",
+      "highlight": "Research Assistants",
+      "subtitle": "Join our research team",
+      "description": "Participate in our research projects, benefit from academic supervision and international collaboration opportunities.",
+      "cta": "Apply now"
+    },
+    "training": {
+      "title": "Training and",
+      "highlight": "Supervision",
+      "subtitle": "Supervision of young researchers",
+      "description": "We support young researchers in developing thesis projects and facilitate knowledge transfer to entrepreneurs.",
+      "cta": "Our activities"
+    },
+    "partnership": {
+      "title": "International",
+      "highlight": "Partnership",
+      "subtitle": "Kongo University - ULB Collaboration",
+      "description": "A strategic partnership between Kongo University and the Free University of Brussels for excellence in SME financing research.",
+      "cta": "Learn more"
+    }
+  },
+  "about": {
+    "header": "ABOUT THE CENTER",
+    "title": "Research and Training Center on",
+    "titleHighlight": "SME Financing",
+    "description": "The Research and Training Center on SME Financing (CReFF-PME) is an academic institution dedicated to knowledge production, capacity building and innovative support for African entrepreneurs. We work for a better understanding of the challenges of financing small and medium enterprises, while contributing to the development of solutions adapted to the local context.",
+    "stats": {
+      "projects": "Projects",
+      "researchers": "Researchers",
+      "publications": "Publications"
+    }
+  },
+  "actuality": {
+    "header": "RECENT NEWS",
+    "newArticles": "New Articles",
+    "readMore": "Read more",
+    "noNews": "No news available",
+    "noNewsDescription": "There is currently no news to display. Come back soon to discover our latest news and articles.",
+    "viewAll": "View all news",
+    "events": {
+      "header": "UPCOMING EVENTS",
+      "upcomingEvents": "Upcoming events",
+      "register": "Register",
+      "registering": "Registering...",
+      "details": "Details",
+      "noEvents": "No upcoming events",
+      "noEventsDescription": "There are currently no scheduled events. Stay connected to be informed of our upcoming events and conferences.",
+      "viewAll": "View all events"
+    }
+  },
+  "team": {
+    "header": "OUR TEAM",
+    "title": "Meet",
+    "titleHighlight": "our team",
+    "description": "A team of passionate experts, united by innovation and excellence in SME financing",
+    "highlights": "Highlights"
+  },
+  "gallery": {
+    "title": "Photo Gallery",
+    "description": "Exceptional captures of our events, facilities and memorable moments",
+    "allPhotos": "All photos",
+    "events": "Events",
+    "team": "Our team",
+    "installations": "Facilities",
+    "collaborations": "Collaborations",
+    "loadMore": "Load more",
+    "noResults": "No photos found",
+    "adjustSearch": "Try adjusting your search or filter criteria"
+  },
+  "partners": {
+    "header": "PARTNERS",
+    "title": "Our",
+    "titleHighlight": "partners",
+    "description": "Strategic collaborations for excellence in research and training"
+  },
+  "footer": {
+    "description": "Research and Training Center on SME Financing in Africa. We work for economic development through applied research and excellence in training.",
+    "quickLinks": "Quick Links",
+    "contact": "Contact",
+    "newsletter": "Newsletter",
+    "newsletterTitle": "Stay informed",
+    "newsletterDescription": "Subscribe to our newsletter to receive the latest news and events.",
+    "subscribe": "Subscribe",
+    "emailPlaceholder": "Your email address",
+    "copyright": "© 2025 CReFF-PME. All rights reserved.",
+    "rights": "All rights reserved",
+    "backToTop": "Back to top"
+  },
+  "contact": {
+    "title": "Let's get in touch",
+    "subtitle": "to finance your SME",
+    "description": "Our team of financing experts is available to answer your questions within 24 hours.",
+    "callAdvisor": "Call an advisor",
+    "formTitle": "Financing request",
+    "formDescription": "Fill out this form to be contacted by one of our advisors",
+    "name": "Full name",
+    "email": "Email address",
+    "subject": "Subject",
+    "message": "Message",
+    "send": "Send",
+    "sending": "Sending...",
+    "success": "Your message has been sent successfully! We will respond within 24 hours.",
+    "required": "This field is required",
+    "services": "Services",
+    "servicesValue": "Financing, Support, Consulting",
+    "specialty": "Specialty",
+    "specialtyValue": "Support for Congolese SMEs"
+  },
+  "common": {
+    "readMore": "Read more",
+    "viewAll": "View all",
+    "learnMore": "Learn more",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "close": "Close",
+    "search": "Search",
+    "filter": "Filter",
+    "loading": "Loading...",
+    "noResults": "No results",
+    "share": "Share",
+    "download": "Download",
+    "register": "Register",
+    "details": "Details",
+    "min": "min"
+  }
+}
