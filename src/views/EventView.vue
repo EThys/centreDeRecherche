@@ -419,7 +419,7 @@ const filteredEvents = computed(() => {
   }
 
   // Sort events by date (upcoming first)
-  filtered.sort((a, b) => new Date(a.startDate) - new Date(b.startDate))
+  filtered.sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime())
 
   // Pagination
   const startIndex = (currentPage.value - 1) * eventsPerPage
@@ -445,7 +445,7 @@ const showLoadMore = computed(() => {
 })
 
 // Methods
-const toggleEventType = (type) => {
+const toggleEventType = (type: string) => {
   const index = selectedEventTypes.value.indexOf(type)
   if (index > -1) {
     selectedEventTypes.value.splice(index, 1)
@@ -466,7 +466,8 @@ const clearFilters = () => {
   currentPage.value = 1
 }
 
-const formatEventDate = (dateString) => {
+const formatEventDate = (dateString: string | undefined) => {
+  if (!dateString) return ''
   const date = new Date(dateString)
   return date.toLocaleDateString('fr-FR', {
     day: 'numeric',
@@ -474,11 +475,13 @@ const formatEventDate = (dateString) => {
   })
 }
 
-const formatEventTime = (startTime, endTime) => {
+const formatEventTime = (startTime: string | undefined, endTime: string | undefined) => {
+  if (!startTime || !endTime) return ''
   return `${startTime} - ${endTime}`
 }
 
-const openEvent = (eventId) => {
+const openEvent = (eventId: string | number | undefined) => {
+  if (!eventId) return
   router.push(`/events/${eventId}`)
 }
 
