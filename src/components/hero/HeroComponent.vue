@@ -3,20 +3,21 @@
   <div class="hero-carousel h-screen relative overflow-hidden">
     <div
       class="carousel-container w-full h-full"
-      @mouseenter="stopAutoPlay"
-      @mouseleave="startAutoPlay"
+      @touchstart="handleTouchStart"
+      @touchmove="handleTouchMove"
+      @touchend="handleTouchEnd"
     >
       <!-- Carousel Slides -->
       <div
         class="slides-container flex h-full"
-        :style="{ transform: `translateX(-${currentSlide * 100}%)` }"
+        :style="{ transform: `translateX(calc(-${currentSlide * 100}% + ${touchOffset}px))` }"
       >
         <div
           v-for="(slide, index) in slides"
           :key="index"
           class="slide-item w-full h-full flex-shrink-0 relative"
         >
-          <!-- Gradient Overlay avec effet de profondeur -->
+          <!-- Gradient Overlay -->
           <div 
             class="gradient-overlay"
             :class="{ 'active-overlay': currentSlide === index }"
@@ -46,32 +47,25 @@
                   'content-exit': !isContentVisible || currentSlide !== index,
                 }"
               >
-                <!-- Badge académique avec animation -->
-                <div 
-                  class="academic-badge"
-                  :class="{ 'badge-animate': currentSlide === index }"
-                >
-                  <span class="badge-text">{{ slide.badge }}</span>
-                </div>
-                
-                <!-- Titre avec animation séquentielle -->
+                <!-- Titre principal avec animation -->
                 <div class="title-container">
-                  <h5 
-                    class="slide-pre-title"
+                  <h1 
+                    class="slide-title"
                     :class="{ 'title-enter': currentSlide === index }"
                   >
-                    {{ slide.title }} <span class="highlight-text">{{ slide.highlight }}</span>
-                  </h5>
+                    <span class="title-line">{{ slide.title }}</span>
+                    <span class="highlight-text">{{ slide.highlight }}</span>
+                  </h1>
                 </div>
 
                 <!-- Sous-titre avec animation -->
                 <div class="subtitle-container">
-                  <h4 
-                    class="slide-title"
+                  <h2 
+                    class="slide-subtitle"
                     :class="{ 'subtitle-enter': currentSlide === index }"
                   >
                     {{ slide.subtitle }}
-                  </h4>
+                  </h2>
                 </div>
 
                 <!-- Description avec animation -->
@@ -84,28 +78,26 @@
                   </p>
                 </div>
                 
-                <!-- Bouton CTA amélioré avec animation -->
+                <!-- Bouton CTA avec animation -->
                 <div 
                   class="cta-container"
                   :class="{ 'cta-enter': currentSlide === index }"
                 >
-                  <a :href="slide.ctaLink" class="cta-button">
+                  <router-link to="/about" class="cta-button">
                     <span class="button-text">{{ slide.cta }}</span>
-                    <div class="button-icon">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="cta-icon"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                      >
-                        <path
-                          fill-rule="evenodd"
-                          d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z"
-                          clip-rule="evenodd"
-                        />
-                      </svg>
-                    </div>
-                  </a>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="button-icon"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z"
+                        clip-rule="evenodd"
+                      />
+                    </svg>
+                  </router-link>
                 </div>
               </div>
             </div>
@@ -113,12 +105,42 @@
         </div>
       </div>
 
-      <!-- Contrôles du carousel -->
+      <!-- Navigation moderne avec miniatures -->
+      <div class="carousel-navigation">
+        <!-- Miniatures des slides -->
+        <div class="thumbnails-container">
+          <button
+            v-for="(slide, index) in slides"
+            :key="index"
+            :class="['thumbnail', { active: currentSlide === index }]"
+            @click="goToSlide(index)"
+            :aria-label="`Go to slide ${index + 1}`"
+          >
+            <img
+              :src="slide.image"
+              :alt="`Thumbnail ${index + 1}`"
+              class="thumbnail-image"
+            />
+            <div class="thumbnail-overlay"></div>
+          </button>
+        </div>
+
+        <!-- Indicateur de progression -->
+
+        <!-- Compteur de slides -->
+        <div class="slide-counter">
+          <span class="current-slide">{{ currentSlide + 1 }}</span>
+          <span class="separator">/</span>
+          <span class="total-slides">{{ slides.length }}</span>
+        </div>
+      </div>
+
+      <!-- Contrôles de navigation -->
       <button 
         class="carousel-control prev" 
         @click="prevSlide" 
         aria-label="Previous slide"
-        :class="{ 'control-enter': !isHovering }"
+        :class="{ 'control-visible': !isHovering }"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -137,7 +159,7 @@
         class="carousel-control next" 
         @click="nextSlide" 
         aria-label="Next slide"
-        :class="{ 'control-enter': !isHovering }"
+        :class="{ 'control-visible': !isHovering }"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -152,31 +174,13 @@
           />
         </svg>
       </button>
-
-      <!-- Indicateurs améliorés -->
-      <div 
-        class="indicators-container"
-        :class="{ 'indicators-enter': !isHovering }"
-      >
-        <div class="indicators-wrapper">
-          <button
-            v-for="(slide, index) in slides"
-            :key="index"
-            :class="['indicator', { active: currentSlide === index }]"
-            @click="goToSlide(index)"
-            :aria-label="`Go to slide ${index + 1}`"
-          >
-            <span class="indicator-label">{{ index + 1 }}</span>
-            <span class="progress-bar" v-if="currentSlide === index && !isHovering"></span>
-          </button>
-        </div>
-      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 //@ts-ignore
 import NavBarComponent from '../../components/navbar/NavBarComponent.vue'
 
@@ -185,46 +189,44 @@ import researchImage2 from '../../assets/carousel-2.jpg'
 import researchImage3 from '../../assets/carousel-3.jpg'
 import researchImage4 from '../../assets/carousel-4.jpg'
 
-const slides = ref([
+const { t } = useI18n()
+
+const slides = computed(() => [
   {
-    title: 'Bienvenue au',
-    highlight: 'CReFF-PME',
-    subtitle: 'Centre de Recherche et de Formation sur le Financement des PME',
-    description: 'Une initiative de l\'Université Kongo en partenariat avec l\'Université libre de Bruxelles pour renforcer la recherche sur l\'accès au financement des PME.',
-    cta: 'Découvrir notre mission',
-    ctaLink: '#mission',
-    image: researchImage1,
-    badge: 'Centre d\'Excellence'
+    title: t('hero.welcome'),
+    highlight: t('hero.creff'),
+    subtitle: t('hero.subtitle'),
+    description: t('hero.description'),
+    cta: t('hero.cta'),
+    ctaLink: '/about',
+    image: researchImage1
   },
   {
-    title: 'Recrutement',
-    highlight: 'Assistant(e)s Chercheurs',
-    subtitle: 'Rejoignez notre équipe de recherche',
-    description: 'Participez à nos projets de recherche, bénéficiez d\'un encadrement académique et d\'opportunités de collaboration internationale.',
-    cta: 'Postuler maintenant',
+    title: t('hero.recruitment.title'),
+    highlight: t('hero.recruitment.highlight'),
+    subtitle: t('hero.recruitment.subtitle'),
+    description: t('hero.recruitment.description'),
+    cta: t('hero.recruitment.cta'),
     ctaLink: 'Candidature_CReFF_102211.html',
-    image: researchImage2,
-    badge: 'Opportunités'
+    image: researchImage2
   },
   {
-    title: 'Formation et',
-    highlight: 'Encadrement',
-    subtitle: 'Encadrement des jeunes chercheurs',
-    description: 'Nous accompagnons les jeunes chercheurs dans l\'élaboration de projets de thèse et favorisons le transfert de connaissances vers les entrepreneurs.',
-    cta: 'Nos activités',
+    title: t('hero.training.title'),
+    highlight: t('hero.training.highlight'),
+    subtitle: t('hero.training.subtitle'),
+    description: t('hero.training.description'),
+    cta: t('hero.training.cta'),
     ctaLink: '#activites',
-    image: researchImage3,
-    badge: 'Formation'
+    image: researchImage3
   },
   {
-    title: 'Partenariat',
-    highlight: 'International',
-    subtitle: 'Collaboration Université Kongo - ULB',
-    description: 'Un partenariat stratégique entre l\'Université Kongo et l\'Université libre de Bruxelles pour l\'excellence en recherche sur le financement des PME.',
-    cta: 'En savoir plus',
+    title: t('hero.partnership.title'),
+    highlight: t('hero.partnership.highlight'),
+    subtitle: t('hero.partnership.subtitle'),
+    description: t('hero.partnership.description'),
+    cta: t('hero.partnership.cta'),
     ctaLink: '#partenariat',
-    image: researchImage4,
-    badge: 'Collaboration'
+    image: researchImage4
   }
 ])
 
@@ -232,7 +234,10 @@ const currentSlide = ref(0)
 const isHovering = ref(false)
 const isTransitioning = ref(false)
 const isContentVisible = ref(true)
-let interval: number
+const touchStartX = ref(0)
+const touchOffset = ref(0)
+const isDragging = ref(false)
+let interval: number | null = null
 
 const nextSlide = () => {
   if (isTransitioning.value) return
@@ -246,7 +251,7 @@ const nextSlide = () => {
       isTransitioning.value = false
       isContentVisible.value = true
     }, 50)
-  }, 600)
+  }, 400)
 }
 
 const prevSlide = () => {
@@ -261,7 +266,7 @@ const prevSlide = () => {
       isTransitioning.value = false
       isContentVisible.value = true
     }, 50)
-  }, 600)
+  }, 400)
 }
 
 const goToSlide = (index: number) => {
@@ -276,26 +281,73 @@ const goToSlide = (index: number) => {
       isTransitioning.value = false
       isContentVisible.value = true
     }, 50)
-  }, 600)
+  }, 400)
+}
+
+// Gestion du swipe tactile
+const handleTouchStart = (e: TouchEvent) => {
+  touchStartX.value = e.touches[0].clientX
+  isDragging.value = true
+  stopAutoPlay()
+}
+
+const handleTouchMove = (e: TouchEvent) => {
+  if (!isDragging.value) return
+  const currentX = e.touches[0].clientX
+  touchOffset.value = currentX - touchStartX.value
+}
+
+const handleTouchEnd = () => {
+  if (!isDragging.value) return
+  isDragging.value = false
+  
+  const threshold = 50
+  if (Math.abs(touchOffset.value) > threshold) {
+    if (touchOffset.value > 0) {
+      prevSlide()
+    } else {
+      nextSlide()
+    }
+  } else {
+    touchOffset.value = 0
+  }
+  
+  // Redémarrer automatiquement après un court délai
+  setTimeout(() => {
+    touchOffset.value = 0
+    if (!isDragging.value) {
+      startAutoPlay()
+    }
+  }, 800)
 }
 
 const startAutoPlay = () => {
+  if (interval) {
+    clearInterval(interval)
+  }
   isHovering.value = false
-  interval = setInterval(nextSlide, 5000)
+  interval = window.setInterval(() => {
+    if (!isTransitioning.value && !isDragging.value) {
+      nextSlide()
+    }
+  }, 5000)
 }
 
 const stopAutoPlay = () => {
-  isHovering.value = true
   if (interval) {
     clearInterval(interval)
+    interval = null
   }
 }
 
 const resetTimer = () => {
   stopAutoPlay()
-  if (!isHovering.value) {
-    startAutoPlay()
-  }
+  // Toujours redémarrer après un court délai
+  setTimeout(() => {
+    if (!isDragging.value) {
+      startAutoPlay()
+    }
+  }, 500)
 }
 
 onMounted(() => {
@@ -317,9 +369,7 @@ onUnmounted(() => {
   --tertiary-accent: #2d5bd6;
   --text-color: #ffffff;
   --light-text: #e2e8f0;
-  --card-bg: rgba(255, 255, 255, 0.05);
-  --transition-speed: 0.6s;
-  --border-radius: 8px;
+  --transition-speed: 0.5s;
 }
 
 .carousel-container {
@@ -330,6 +380,7 @@ onUnmounted(() => {
 .slides-container {
   transition: transform var(--transition-speed) cubic-bezier(0.33, 1, 0.68, 1);
   height: 100%;
+  will-change: transform;
 }
 
 .slide-item {
@@ -337,34 +388,33 @@ onUnmounted(() => {
   height: 100%;
 }
 
-/* Overlay avec animation */
+/* Gradient Overlay */
 .gradient-overlay {
   position: absolute;
   inset: 0;
   background: linear-gradient(
     135deg, 
-    rgba(26, 26, 46, 0.85) 0%,
-    rgba(22, 33, 62, 0.7) 50%,
-    rgba(15, 52, 96, 0.8) 100%
+    rgba(26, 26, 46, 0.65) 0%,
+    rgba(22, 33, 62, 0.55) 50%,
+    rgba(15, 52, 96, 0.65) 100%
   );
   z-index: 1;
   opacity: 0;
-  transition: opacity 1s ease-in-out;
+  transition: opacity 0.8s ease-in-out;
 }
 
 .gradient-overlay.active-overlay {
   opacity: 1;
 }
 
-/* Effet de profondeur supplémentaire */
 .gradient-overlay::after {
   content: '';
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
-  height: 30%;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.5), transparent);
+  height: 40%;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.4), transparent);
   z-index: 1;
 }
 
@@ -380,7 +430,7 @@ onUnmounted(() => {
   object-fit: cover;
   transform: scale(1.1);
   transition: transform 8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  filter: brightness(0.8);
+  filter: brightness(0.75);
 }
 
 .slide-image.active {
@@ -407,7 +457,7 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 10%;
+  padding: 0 5%;
 }
 
 .content-wrapper {
@@ -416,207 +466,207 @@ onUnmounted(() => {
   margin: 0 auto;
 }
 
-/* Animations pour le contenu */
 .text-content {
-  max-width: 650px;
+  max-width: 700px;
 }
 
+/* Animations du contenu améliorées */
 .content-enter {
   animation: contentSlideIn 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .content-exit {
-  animation: contentSlideOut 0.6s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards;
+  animation: contentSlideOut 0.5s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards;
 }
 
 @keyframes contentSlideIn {
   0% {
     opacity: 0;
-    transform: translateY(40px) scale(0.95);
+    transform: translateY(50px) scale(0.92) rotateX(10deg);
+    filter: blur(10px);
+  }
+  50% {
+    opacity: 0.5;
+    filter: blur(5px);
   }
   100% {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateY(0) scale(1) rotateX(0deg);
+    filter: blur(0);
   }
 }
 
 @keyframes contentSlideOut {
   0% {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateY(0) scale(1) rotateX(0deg);
+    filter: blur(0);
   }
   100% {
     opacity: 0;
-    transform: translateY(-20px) scale(0.98);
+    transform: translateY(-30px) scale(0.95) rotateX(-5deg);
+    filter: blur(8px);
   }
 }
 
-/* Animation du badge */
-.academic-badge {
-  display: inline-block;
-  padding: 0.5rem 1.25rem;
-  margin-bottom: 2rem;
-  background: rgba(57, 110, 246, 0.15);
-  border: 1px solid rgba(57, 110, 246, 0.3);
-  border-radius: 4px;
-  box-shadow: 0 2px 8px rgba(57, 110, 246, 0.2);
-  opacity: 0;
-  transform: translateY(-20px) scale(0.9);
-  transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.academic-badge.badge-animate {
-  opacity: 1;
-  transform: translateY(0) scale(1);
-  animation: badgePulse 2s infinite alternate;
-}
-
-@keyframes badgePulse {
-  0% {
-    box-shadow: 0 2px 8px rgba(57, 110, 246, 0.2);
-  }
-  100% {
-    box-shadow: 0 4px 16px rgba(57, 110, 246, 0.4);
-  }
-}
-
-.badge-text {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--accent-color);
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-}
-
-/* Animations séquentielles pour le titre */
+/* Titre principal */
 .title-container {
   overflow: hidden;
-}
-
-.slide-pre-title {
-  font-size: 1.25rem;
-  font-weight: 400;
-  color: var(--light-text);
   margin-bottom: 1.5rem;
-  letter-spacing: 0.05em;
-  opacity: 0.9;
-  opacity: 0;
-  transform: translateX(-30px);
-  transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s;
 }
 
-.slide-pre-title.title-enter {
+.slide-title {
+  font-size: 3.5rem;
+  font-weight: 800;
+  color: var(--text-color);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.title-line {
+  opacity: 0;
+  transform: translateX(-50px) translateY(20px);
+  filter: blur(8px);
+  transition: all 1s cubic-bezier(0.16, 1, 0.3, 1) 0.2s;
+}
+
+.slide-title.title-enter .title-line {
   opacity: 1;
-  transform: translateX(0);
+  transform: translateX(0) translateY(0);
+  filter: blur(0);
+  animation: titleGlow 2s ease-in-out 1.2s infinite alternate;
 }
 
 .highlight-text {
   color: var(--accent-color);
-  font-weight: 600;
+  font-weight: 800;
   display: inline-block;
   position: relative;
-}
-
-.highlight-text::after {
-  content: '';
-  position: absolute;
-  bottom: -2px;
-  left: 0;
-  width: 0;
-  height: 2px;
-  background: var(--accent-color);
-  transition: width 0.8s ease 0.5s;
-}
-
-.slide-pre-title.title-enter .highlight-text::after {
-  width: 100%;
-}
-
-/* Animation du sous-titre */
-.subtitle-container {
-  overflow: hidden;
-}
-
-.slide-title {
-  font-size: 3rem;
-  font-weight: 700;
-  color: var(--text-color);
-  margin-bottom: 1.5rem;
-  line-height: 1.2;
-  letter-spacing: -0.5px;
   opacity: 0;
-  transform: translateY(30px);
-  transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.4s;
+  transform: translateX(-50px) translateY(20px) scale(0.9);
+  filter: blur(8px);
+  transition: all 1s cubic-bezier(0.34, 1.56, 0.64, 1) 0.4s;
 }
 
-.slide-title.subtitle-enter {
+.slide-title.title-enter .highlight-text {
   opacity: 1;
-  transform: translateY(0);
-  animation: titleGlow 3s ease-in-out infinite alternate;
+  transform: translateX(0) translateY(0) scale(1);
+  filter: blur(0);
+  animation: highlightPulse 2s ease-in-out 1.4s infinite alternate;
 }
 
 @keyframes titleGlow {
   0% {
-    text-shadow: 0 0 10px rgba(57, 110, 246, 0.3);
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
   }
   100% {
-    text-shadow: 0 0 20px rgba(57, 110, 246, 0.6);
+    text-shadow: 0 0 30px rgba(255, 255, 255, 0.5), 0 0 40px rgba(57, 110, 246, 0.3);
   }
 }
 
-/* Animation de la description */
+@keyframes highlightPulse {
+  0% {
+    text-shadow: 0 0 15px rgba(57, 110, 246, 0.4);
+    transform: scale(1);
+  }
+  100% {
+    text-shadow: 0 0 25px rgba(57, 110, 246, 0.7), 0 0 35px rgba(57, 110, 246, 0.4);
+    transform: scale(1.02);
+  }
+}
+
+
+/* Sous-titre */
+.subtitle-container {
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+
+.slide-subtitle {
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: var(--light-text);
+  line-height: 1.4;
+  opacity: 0;
+  transform: translateY(30px) scale(0.95);
+  filter: blur(5px);
+  transition: all 1s cubic-bezier(0.16, 1, 0.3, 1) 0.6s;
+}
+
+.slide-subtitle.subtitle-enter {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  filter: blur(0);
+}
+
+/* Description */
 .description-container {
   overflow: hidden;
+  margin-bottom: 2.5rem;
 }
 
 .slide-description {
   font-size: 1.125rem;
   color: rgba(255, 255, 255, 0.9);
-  margin-bottom: 2.5rem;
-  line-height: 1.6;
+  line-height: 1.7;
   font-weight: 300;
   max-width: 90%;
   opacity: 0;
-  transform: translateY(20px);
-  transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.6s;
+  transform: translateY(30px) scale(0.98);
+  filter: blur(5px);
+  transition: all 1s cubic-bezier(0.16, 1, 0.3, 1) 0.8s;
 }
 
 .slide-description.description-enter {
   opacity: 1;
-  transform: translateY(0);
+  transform: translateY(0) scale(1);
+  filter: blur(0);
 }
 
-/* Animation du CTA */
+/* CTA Button */
 .cta-container {
-  display: flex;
-  align-items: center;
-  gap: 2rem;
   opacity: 0;
-  transform: translateY(20px);
-  transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.8s;
+  transform: translateY(30px) scale(0.9);
+  filter: blur(5px);
+  transition: all 1s cubic-bezier(0.34, 1.56, 0.64, 1) 1s;
 }
 
 .cta-container.cta-enter {
   opacity: 1;
-  transform: translateY(0);
+  transform: translateY(0) scale(1);
+  filter: blur(0);
+  animation: ctaBounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 1.1s;
+}
+
+@keyframes ctaBounce {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-5px) scale(1.05);
+  }
 }
 
 .cta-button {
   display: inline-flex;
   align-items: center;
+  gap: 0.75rem;
   background: linear-gradient(135deg, var(--accent-color), var(--tertiary-accent));
   color: white;
-  padding: 1rem 2rem;
-  border-radius: 4px;
-  font-weight: 500;
+  padding: 1rem 2.5rem;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 1rem;
   transition: all 0.3s ease;
   text-decoration: none;
-  font-size: 1rem;
   position: relative;
   overflow: hidden;
   border: none;
   cursor: pointer;
-  box-shadow: 0 4px 6px rgba(57, 110, 246, 0.3);
+  box-shadow: 0 4px 15px rgba(57, 110, 246, 0.4);
 }
 
 .cta-button::before {
@@ -637,14 +687,12 @@ onUnmounted(() => {
 .cta-button:hover {
   background: linear-gradient(135deg, var(--tertiary-accent), var(--accent-color));
   transform: translateY(-2px);
-  box-shadow: 0 6px 12px rgba(57, 110, 246, 0.4);
+  box-shadow: 0 6px 20px rgba(57, 110, 246, 0.5);
 }
 
 .button-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-left: 0.75rem;
+  width: 1.25rem;
+  height: 1.25rem;
   transition: transform 0.3s ease;
 }
 
@@ -652,38 +700,139 @@ onUnmounted(() => {
   transform: translateX(4px);
 }
 
-.cta-icon {
-  width: 1.25rem;
-  height: 1.25rem;
+/* Navigation moderne */
+.carousel-navigation {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  width: 90%;
+  max-width: 800px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
 }
 
-/* Animations des contrôles */
+/* Miniatures */
+.thumbnails-container {
+  display: flex;
+  gap: 0.75rem;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  padding: 0.75rem;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.thumbnail {
+  width: 80px;
+  height: 60px;
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+  opacity: 0.6;
+  background: none;
+  padding: 0;
+}
+
+.thumbnail:hover {
+  opacity: 1;
+  transform: scale(1.05);
+}
+
+.thumbnail.active {
+  opacity: 1;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 15px rgba(57, 110, 246, 0.5);
+}
+
+.thumbnail-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.thumbnail-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.3), transparent);
+}
+
+/* Indicateur de progression */
+.progress-indicator {
+  width: 100%;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-color), var(--secondary-accent));
+  border-radius: 2px;
+  transition: width 0.5s ease;
+  box-shadow: 0 0 10px rgba(57, 110, 246, 0.5);
+}
+
+/* Compteur de slides */
+.slide-counter {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: white;
+  font-size: 0.875rem;
+  font-weight: 600;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.current-slide {
+  color: var(--accent-color);
+  font-size: 1rem;
+}
+
+.separator {
+  opacity: 0.6;
+}
+
+/* Contrôles de navigation */
 .carousel-control {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background-color: rgba(57, 110, 246, 0.15);
+  background: rgba(57, 110, 246, 0.2);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(57, 110, 246, 0.4);
   color: white;
-  width: 3rem;
-  height: 3rem;
+  width: 3.5rem;
+  height: 3.5rem;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  z-index: 3;
+  z-index: 10;
   transition: all 0.3s ease;
   opacity: 0;
+  pointer-events: none;
 }
 
-.carousel-control.control-enter {
+.carousel-control.control-visible {
   opacity: 0.8;
-  animation: controlSlideIn 0.5s ease forwards;
+  pointer-events: all;
+  animation: controlFadeIn 0.5s ease forwards;
 }
 
-@keyframes controlSlideIn {
+@keyframes controlFadeIn {
   0% {
     opacity: 0;
     transform: translateY(-50%) scale(0.8);
@@ -696,8 +845,8 @@ onUnmounted(() => {
 
 .carousel-control:hover {
   opacity: 1;
-  background-color: rgba(57, 110, 246, 0.25);
-  transform: translateY(-50%) scale(1.05);
+  background: rgba(57, 110, 246, 0.3);
+  transform: translateY(-50%) scale(1.1);
   border-color: rgba(57, 110, 246, 0.6);
 }
 
@@ -710,282 +859,130 @@ onUnmounted(() => {
 }
 
 .control-icon {
-  width: 1.25rem;
-  height: 1.25rem;
-}
-
-/* Animations des indicateurs */
-.indicators-container {
-  position: absolute;
-  bottom: 2rem;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 3;
-  opacity: 0;
-}
-
-.indicators-container.indicators-enter {
-  opacity: 1;
-  animation: indicatorsSlideUp 0.5s ease 0.2s forwards;
-}
-
-@keyframes indicatorsSlideUp {
-  0% {
-    opacity: 0;
-    transform: translateX(-50%) translateY(20px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
-}
-
-.indicators-wrapper {
-  display: flex;
-  gap: 0.5rem;
-  background: rgba(57, 110, 246, 0.1);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(57, 110, 246, 0.3);
-  border-radius: 50px;
-  padding: 0.5rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.indicator {
-  width: 2.5rem;
-  height: 2.5rem;
-  background-color: transparent;
-  border: 1px solid rgba(57, 110, 246, 0.4);
-  border-radius: 50%;
-  cursor: pointer;
-  padding: 0;
-  position: relative;
-  overflow: hidden;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.indicator.active {
-  background: linear-gradient(135deg, var(--accent-color), var(--tertiary-accent));
-  border-color: var(--accent-color);
-  transform: scale(1.05);
-  box-shadow: 0 2px 8px rgba(57, 110, 246, 0.4);
-}
-
-.indicator:hover {
-  transform: scale(1.1);
-  border-color: rgba(57, 110, 246, 0.7);
-}
-
-.indicator-label {
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--light-text);
-  transition: color 0.3s ease;
-}
-
-.indicator.active .indicator-label {
-  color: white;
-}
-
-.progress-bar {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 100%;
-  background: linear-gradient(135deg, var(--accent-color), var(--secondary-accent));
-  animation: progress 5s linear forwards;
-  border-radius: 50%;
-}
-
-@keyframes progress {
-  0% {
-    clip-path: polygon(50% 50%, 50% 0%, 50% 0%, 50% 0%, 50% 0%, 50% 0%);
-  }
-  25% {
-    clip-path: polygon(50% 50%, 50% 0%, 100% 0%, 100% 100%, 50% 100%, 50% 100%);
-  }
-  50% {
-    clip-path: polygon(50% 50%, 50% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 0%);
-  }
-  75% {
-    clip-path: polygon(50% 50%, 50% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 0%);
-  }
-  100% {
-    clip-path: polygon(50% 50%, 50% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 0%);
-  }
-}
-
-/* Effets de particules subtiles */
-.slide-item::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: radial-gradient(circle at 20% 80%, rgba(57, 110, 246, 0.1) 0%, transparent 50%),
-              radial-gradient(circle at 80% 20%, rgba(77, 124, 254, 0.1) 0%, transparent 50%);
-  z-index: 1;
-  opacity: 0;
-  transition: opacity 1s ease;
-}
-
-.slide-item.active::before {
-  opacity: 1;
+  width: 1.5rem;
+  height: 1.5rem;
 }
 
 /* Responsive Design */
-@media (max-width: 1200px) {
-  .slide-title {
-    font-size: 2.5rem;
-  }
-
-  .slide-content {
-    padding: 0 8%;
-  }
-}
-
-@media (max-width: 1024px) {
-  .slide-title {
-    font-size: 2.25rem;
-  }
-
-  .slide-description {
-    font-size: 1.1rem;
-  }
-
-  .carousel-control {
-    width: 2.75rem;
-    height: 2.75rem;
-  }
-
-  .control-icon {
-    width: 1.1rem;
-    height: 1.1rem;
-  }
-}
-
 @media (max-width: 768px) {
   .slide-content {
-    padding: 0 5%;
-    text-align: center;
+    padding: 0 1.5rem;
+    padding-top: 6rem;
+    align-items: flex-start;
   }
 
-  .slide-pre-title {
-    font-size: 1.1rem;
+  .text-content {
+    max-width: 100%;
+    text-align: center;
   }
 
   .slide-title {
     font-size: 2rem;
+    gap: 0.25rem;
+  }
+
+  .slide-subtitle {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
   }
 
   .slide-description {
     font-size: 1rem;
     max-width: 100%;
+    margin-bottom: 2rem;
   }
 
-  .cta-container {
-    flex-direction: column;
-    gap: 1.5rem;
-    align-items: center;
+  .cta-button {
+    padding: 0.875rem 2rem;
+    font-size: 0.95rem;
+  }
+
+  .carousel-navigation {
+    bottom: 1rem;
+    width: 95%;
+  }
+
+  .thumbnails-container {
+    gap: 0.5rem;
+    padding: 0.5rem;
+  }
+
+  .thumbnail {
+    width: 60px;
+    height: 45px;
+  }
+
+  .carousel-control {
+    width: 2.75rem;
+    height: 2.75rem;
+    top: auto;
+    bottom: 12rem;
+  }
+
+  .carousel-control.prev {
+    left: 1rem;
+  }
+
+  .carousel-control.next {
+    right: 1rem;
+  }
+
+  .control-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .slide-title {
+    font-size: 1.75rem;
+  }
+
+  .slide-subtitle {
+    font-size: 1.1rem;
+  }
+
+  .slide-description {
+    font-size: 0.95rem;
+  }
+
+  .thumbnails-container {
+    gap: 0.4rem;
+    padding: 0.4rem;
+  }
+
+  .thumbnail {
+    width: 50px;
+    height: 38px;
   }
 
   .carousel-control {
     width: 2.5rem;
     height: 2.5rem;
-    top: auto;
-    bottom: 1.5rem;
-    transform: none;
-  }
-
-  .carousel-control.prev {
-    left: 1.5rem;
-  }
-
-  .carousel-control.next {
-    right: 1.5rem;
-  }
-
-  .indicators-container {
-    bottom: 5rem;
-  }
-  
-  .indicators-wrapper {
-    padding: 0.4rem;
-  }
-  
-  .indicator {
-    width: 2rem;
-    height: 2rem;
-  }
-
-  /* Ajustements des animations pour mobile */
-  .slide-title.subtitle-enter {
-    animation: none;
+    bottom: 10rem;
   }
 }
 
-@media (max-width: 480px) {
-  .slide-pre-title {
-    font-size: 1rem;
+@media (min-width: 1200px) {
+  .slide-title {
+    font-size: 4rem;
   }
 
-  .slide-title {
+  .slide-subtitle {
     font-size: 1.75rem;
   }
+}
 
-  .slide-description {
-    font-size: 0.9rem;
-    margin-bottom: 2rem;
-  }
-
-  .cta-button {
-    padding: 0.875rem 1.75rem;
-    font-size: 0.9rem;
-  }
-
+/* Support pour la réduction des animations */
+@media (prefers-reduced-motion: reduce) {
+  .slide-image,
+  .slide-title,
+  .slide-subtitle,
+  .slide-description,
+  .cta-container,
   .carousel-control {
-    width: 2.25rem;
-    height: 2.25rem;
-    bottom: 1.25rem;
-  }
-
-  .carousel-control.prev {
-    left: 1.25rem;
-  }
-
-  .carousel-control.next {
-    right: 1.25rem;
-  }
-
-  .control-icon {
-    width: 1rem;
-    height: 1rem;
-  }
-
-  .indicators-container {
-    bottom: 4rem;
-  }
-
-  .indicator {
-    width: 1.75rem;
-    height: 1.75rem;
-  }
-  
-  .indicator-label {
-    font-size: 0.7rem;
-  }
-  
-  .academic-badge {
-    padding: 0.4rem 1rem;
-  }
-  
-  .badge-text {
-    font-size: 0.7rem;
+    animation: none !important;
+    transition: none !important;
   }
 }
 </style>
