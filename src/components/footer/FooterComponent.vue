@@ -190,7 +190,6 @@ const socialLinks = [
 const quickLinks = [
   { name: 'Accueil', path: '/' },
   { name: 'À Propos', path: '/about' },
-  { name: 'Recherche', path: '/research' },
   { name: 'Publications', path: '/publications' },
   { name: 'Événements', path: '/evenements' },
   { name: 'Contact', path: '/contact' }
