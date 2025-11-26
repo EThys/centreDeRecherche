@@ -36,7 +36,7 @@
               CReFF-PME
             </span>
             <span class="text-xs sm:text-sm text-gray-600 font-medium leading-tight">
-              Centre de Recherche<br class="hidden md:block">Financement des PME
+              Centre de Recherche et de Formation<br class="hidden md:block">sur le Financement des PME en Afrique centrale
             </span>
           </div>
         </router-link>
@@ -64,7 +64,7 @@
           <!-- À propos -->
           <router-link
             to="/about"
-            class="relative px-4 xl:px-5 py-2.5 flex items-center font-medium text-gray-700 hover:text-blue-600 transition-all duration-300 rounded-lg group"
+            class="relative px-4 xl:px-5 py-2.5 flex items-center font-medium text-gray-700 hover:text-blue-600 transition-all duration-300 rounded-lg group whitespace-nowrap"
             :class="{ 
               'text-blue-600': route.path.includes('/about'),
             }"
@@ -260,7 +260,7 @@
                 d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
               />
             </svg>
-            <span class="relative z-10">Espace Membre</span>
+            <span class="relative z-10">Connexion</span>
           </router-link>
         </nav>
 
@@ -392,7 +392,7 @@
                 d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
               />
             </svg>
-            <span class="relative z-10">Espace Membre</span>
+            <span class="relative z-10">Connexion</span>
           </router-link>
         </div>
       </div>
