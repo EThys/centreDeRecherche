@@ -10,15 +10,14 @@
       <div class="text-center mb-20">
         <div class="inline-flex items-center gap-3 text-blue-600 mb-6">
           <div class="w-8 h-0.5 bg-blue-400 rounded-full"></div>
-          <span class="text-sm font-medium tracking-wider uppercase">Notre Mission</span>
+          <span class="text-sm font-medium tracking-wider uppercase">{{ $t('vision.header') }}</span>
           <div class="w-8 h-0.5 bg-blue-400 rounded-full"></div>
         </div>
         <h2 class="text-5xl md:text-6xl font-light text-gray-900 mb-6 tracking-tight">
-          Objectifs Stratégiques
+          {{ $t('vision.title') }}
         </h2>
         <p class="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed font-light">
-          Développer un écosystème financier innovant pour les PME africaines grâce à la recherche, 
-          la formation et les partenariats stratégiques.
+          {{ $t('vision.description') }}
         </p>
       </div>
 
@@ -33,10 +32,9 @@
                 <ChartBarIcon class="w-7 h-7 text-white" />
               </div>
               <div>
-                <h3 class="text-2xl font-medium text-gray-900 mb-3">Vision 2030</h3>
+                <h3 class="text-2xl font-medium text-gray-900 mb-3">{{ $t('vision.vision2030.title') }}</h3>
                 <p class="text-gray-600 leading-relaxed">
-                  Créer un environnement où chaque PME africaine peut accéder à des solutions financières 
-                  adaptées, des ressources stratégiques et un réseau de partenaires engagés.
+                  {{ $t('vision.vision2030.description') }}
                 </p>
               </div>
             </div>
@@ -45,7 +43,7 @@
             <div class="space-y-4">
               <h4 class="text-lg font-semibold text-gray-900 mb-6 flex items-center gap-2">
                 <span class="w-2 h-2 bg-blue-500 rounded-full"></span>
-                Objectifs Principaux
+                {{ $t('vision.mainObjectives') }}
               </h4>
               <div v-for="(objective, index) in objectives" :key="index"
                    class="flex items-start gap-4 p-4 rounded-xl hover:bg-blue-50/50 transition-all duration-300 group/item">
@@ -94,36 +92,40 @@ import {
   GlobeAltIcon,
   RocketLaunchIcon,
 } from "@heroicons/vue/24/outline";
+import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 
-const stats = [
+const { t } = useI18n()
+
+const stats = computed(() => [
   { 
     value: "50+", 
-    label: "Experts spécialisés", 
-    description: "Chercheurs et praticiens en finance des PME",
+    label: t('vision.stats.specializedExperts'), 
+    description: t('vision.stats.specializedExpertsDesc'),
     icon: UserGroupIcon
   },
   { 
     value: "120+", 
-    label: "Projets de recherche", 
-    description: "Études et initiatives menées depuis 2015",
+    label: t('vision.stats.researchProjects'), 
+    description: t('vision.stats.researchProjectsDesc'),
     icon: LightBulbIcon
   },
   { 
     value: "30+", 
-    label: "Pays couverts", 
-    description: "Réseau panafricain de collaboration",
+    label: t('vision.stats.countriesCovered'), 
+    description: t('vision.stats.countriesCoveredDesc'),
     icon: GlobeAltIcon
   }
-];
+]);
 
-const objectives = [
-  "Développer des instruments financiers innovants pour les PME",
-  "Renforcer les capacités des institutions financières locales",
-  "Créer des plateformes de collaboration public-privé",
-  "Produire des recherches appliquées influentes",
-  "Former la nouvelle génération de leaders financiers",
-  "Établir des standards de financement durables"
-];
+const objectives = computed(() => [
+  t('vision.objectives.1'),
+  t('vision.objectives.2'),
+  t('vision.objectives.3'),
+  t('vision.objectives.4'),
+  t('vision.objectives.5'),
+  t('vision.objectives.6')
+]);
 
 </script>
 
