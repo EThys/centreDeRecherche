@@ -4,7 +4,7 @@
       <!-- Image de fond -->
       <div class="absolute inset-0 overflow-hidden">
         <img 
-          src="https://images.unsplash.com/photo-1450101499163-c8848c66ca85?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80"
+          src="https://images.unsplash.com/photo-14505499163-c8848c66ca85?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80"
           alt="Centre de Recherche et de Formation sur le Financement des PME"
           class="w-full h-full object-cover opacity-20"
         />
@@ -16,7 +16,7 @@
       </div>
 
       <!-- Contenu principal -->
-      <div class="max-w-6xl mx-auto px-4 text-center relative z-10">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
 
         <!-- Titre principal avec effet de dégradé animé -->
         <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-white to-blue-100 animate-gradient-text fade-in-up">
@@ -55,7 +55,7 @@
     </header>
   <div class="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 py-8">
     <!-- Header Section -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
 
 
       <!-- Filters and Search -->
@@ -105,7 +105,7 @@
     </div>
 
     <!-- Main Content -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
       <!-- Articles Grid -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mb-12">
         <article
@@ -202,25 +202,6 @@
         </button>
       </div>
 
-      <!-- Newsletter Section -->
-      <div class="bg-gradient-to-r from-blue-500 to-blue-600 rounded-2xl shadow-xl p-6 sm:p-8 text-white mb-12 fade-in-up">
-        <div class="max-w-4xl mx-auto text-center">
-          <h3 class="text-xl sm:text-2xl md:text-3xl font-bold mb-4">Stay Updated</h3>
-          <p class="text-blue-100 mb-6 text-base sm:text-lg">
-            Subscribe to our newsletter and never miss the latest news and insights.
-          </p>
-          <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 max-w-md mx-auto">
-            <input
-              type="email"
-              placeholder="Enter your email"
-              class="flex-1 px-4 py-3 rounded-lg text-gray-900 focus:ring-2 focus:ring-white focus:outline-none text-sm sm:text-base"
-            >
-            <button class="bg-white text-blue-600 font-semibold px-5 sm:px-6 py-3 rounded-lg hover:bg-gray-100 transition-colors text-sm sm:text-base whitespace-nowrap">
-              Subscribe
-            </button>
-          </div>
-        </div>
-      </div>
     </div>
   </div>
   <FooterComponent/>
@@ -228,6 +209,9 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 // Reactive data
 const searchQuery = ref('')
@@ -240,146 +224,57 @@ const scrollObserver = ref(null)
 import NavBarComponent from '../components/navbar/NavBarComponent.vue'
 //@ts-ignore
 import FooterComponent from '../components/footer/FooterComponent.vue'
+import researchImage1 from '../assets/jean.jpeg'
 
 
-// Sample articles data
 const allArticles = ref([
   {
     id: 1,
-    title: "How to Grow Your Business in 2025",
-    excerpt: "Discover innovative strategies and data-driven approaches to scale your business in the evolving market landscape.",
-    image: "https://images.unsplash.com/photo-1551434678-e076c223a692?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-    date: "2025-11-18",
-    category: "Business",
-    readTime: "5 min read",
-    views: "1.2K",
+    title: "Étude Exclusive : Le Crowdfunding Émergent en RDC comme Solution de Financement des PME",
+    excerpt: "Une recherche approfondie de l'ULB révèle le potentiel du crowdfunding pour combler le déficit de financement des PME congolaises, malgré les défis infrastructurels.",
+    image: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+    date: "2025-05-15",
+    category: "Recherche",
+    readTime: "8 min",
+    views: "312",
     author: {
-      name: "Sarah Johnson",
-      role: "Business Strategist",
-      avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b786?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80"
+      name: "Jean Nsonsumuna",
+      role: "Chercheurs ULB",
+      avatar: researchImage1
     }
   },
   {
     id: 2,
-    title: "The Future of Digital Marketing",
-    excerpt: "Explore how AI and emerging technologies are revolutionizing customer engagement and marketing ROI.",
+    title: "Infrastructure Financière en RDC : Le Frein Majeur au Développement du Crowdfunding",
+    excerpt: "L'analyse met en lumière les défis réglementaires et infrastructurels qui entravent l'émergence des plateformes de financement participatif.",
     image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-    date: "2025-11-17",
-    category: "Technology",
-    readTime: "4 min read",
-    views: "2.4K",
+    date: "2025-05-10",
+    category: "Analyse",
+    readTime: "6 min",
+    views: "234",
     author: {
-      name: "Mike Chen",
-      role: "Tech Evangelist",
-      avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80"
+      name: "Jean Nsonsumuna",
+      role: "Chercheurs ULB",
+      avatar: researchImage1
     }
   },
   {
     id: 3,
-    title: "Remote Work Best Practices",
-    excerpt: "Learn how to build effective remote teams and maintain productivity in distributed work environments.",
-    image: "https://images.unsplash.com/photo-1521737711867-e3b97375f902?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-    date: "2025-11-15",
-    category: "Workplace",
-    readTime: "6 min read",
-    views: "3.1K",
+    title: "PME Congolaises : Besoins de Financement et Stratégies de Résilience",
+    excerpt: "Comment les petites et moyennes entreprises congolaises surmontent les obstacles d'accès au financement traditionnel.",
+    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+    date: "2025-05-05",
+    category: "PME",
+    readTime: "7 min",
+    views: "189",
     author: {
-      name: "Emma Davis",
-      role: "HR Consultant",
-      avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80"
-    }
-  },
-  {
-    id: 4,
-    title: "AI in Healthcare: Revolutionizing Patient Care",
-    excerpt: "How artificial intelligence is transforming diagnostics, treatment plans, and patient outcomes.",
-    image: "https://images.unsplash.com/photo-1559757148-5c350d0d3c56?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-    date: "2025-11-12",
-    category: "Healthcare",
-    readTime: "7 min read",
-    views: "4.5K",
-    author: {
-      name: "Dr. James Wilson",
-      role: "Medical Researcher",
-      avatar: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80"
-    }
-  },
-  {
-    id: 5,
-    title: "Sustainable Business Models for 2025",
-    excerpt: "Exploring eco-friendly and socially responsible business practices that drive long-term success.",
-    image: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-    date: "2025-11-10",
-    category: "Sustainability",
-    readTime: "5 min read",
-    views: "2.8K",
-    author: {
-      name: "Lisa Green",
-      role: "Sustainability Expert",
-      avatar: "https://images.unsplash.com/photo-1544725176-7c40e5a71c5e?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80"
-    }
-  },
-  {
-    id: 6,
-    title: "The Rise of Quantum Computing",
-    excerpt: "Understanding the potential impact of quantum computing on cryptography and complex problem-solving.",
-    image: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-    date: "2025-11-08",
-    category: "Technology",
-    readTime: "8 min read",
-    views: "5.2K",
-    author: {
-      name: "Dr. Alex Rodriguez",
-      role: "Quantum Physicist",
-      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80"
-    }
-  },
-  {
-    id: 7,
-    title: "Financial Planning in Uncertain Times",
-    excerpt: "Strategies for maintaining financial stability and growth during economic fluctuations.",
-    image: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-    date: "2025-11-05",
-    category: "Finance",
-    readTime: "6 min read",
-    views: "3.7K",
-    author: {
-      name: "Robert Kim",
-      role: "Financial Advisor",
-      avatar: "https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80"
-    }
-  },
-  {
-    id: 8,
-    title: "The Future of E-commerce",
-    excerpt: "Emerging trends and technologies shaping the next generation of online shopping experiences.",
-    image: "https://images.unsplash.com/photo-1563013544-824ae1b704d3?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-    date: "2025-11-03",
-    category: "Business",
-    readTime: "5 min read",
-    views: "4.1K",
-    author: {
-      name: "Maria Garcia",
-      role: "E-commerce Specialist",
-      avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80"
-    }
-  },
-  {
-    id: 9,
-    title: "Cybersecurity in the Digital Age",
-    excerpt: "Essential security practices to protect your business from evolving cyber threats.",
-    image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-    date: "2025-10-30",
-    category: "Technology",
-    readTime: "7 min read",
-    views: "3.9K",
-    author: {
-      name: "David Park",
-      role: "Security Analyst",
-      avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80"
+      name: "Jean Nsonsumuna",
+      role: "Chercheurs ULB",
+      avatar: researchImage1
     }
   }
 ])
+
 
 // Computed properties
 const categories = computed(() => {
@@ -475,9 +370,8 @@ const formatDate = (dateString) => {
 }
 
 const openArticle = (articleId) => {
-  console.log(`Opening article ${articleId}`)
-  // Navigation vers la page de l'article
-  // router.push(`/news/${articleId}`)
+  // Navigation vers la page de détail de l'actualité
+  router.push(`/actualites/${articleId}`)
 }
 
 // Animation on scroll
