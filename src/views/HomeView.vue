@@ -20,6 +20,8 @@ import ObjectivesComponent from '@/components/ObjectiveComponent.vue'
 import ImpactComponent from '@/components/ImpactComponent.vue'
 //@ts-ignore
 import TestimonialsComponent from '@/components/TestimonyComponent.vue'
+//@ts-ignore
+import PartnersComponent from '@/components/PartnersComponent.vue'
 </script>
 <template>
   <HeroComponent />
@@ -29,6 +31,7 @@ import TestimonialsComponent from '@/components/TestimonyComponent.vue'
 
   <TeamComponent/>
    <GalleryComponent/>
+   <PartnersComponent/>
    <FooterComponent/>
 </template>
 <style></style>
