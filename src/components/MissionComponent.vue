@@ -21,14 +21,14 @@
       <div class="text-center mb-16 fade-in-up" data-delay="0">
         <div class="inline-flex items-center gap-3 text-white mb-6">
           <div class="w-12 h-0.5 bg-blue-400 expand-width" data-delay="200"></div>
-          <span class="text-sm font-semibold tracking-wider uppercase text-blue-200 slide-in-up" data-delay="300">Notre Raison d'Être</span>
+          <span class="text-sm font-semibold tracking-wider uppercase text-blue-200 slide-in-up" data-delay="300">{{ $t('mission.header') }}</span>
           <div class="w-12 h-0.5 bg-blue-400 expand-width" data-delay="200"></div>
         </div>
         <h2 class="text-4xl lg:text-6xl font-bold text-white mb-6 fade-in-up" data-delay="400">
-          Notre <span class="text-blue-400 bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">Mission</span>
+          {{ $t('mission.title') }} <span class="text-blue-400 bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">{{ $t('mission.titleHighlight') }}</span>
         </h2>
         <p class="text-xl text-blue-100 max-w-3xl mx-auto leading-relaxed fade-in-up" data-delay="600">
-          Transformer la recherche sur le financement des PME en leviers concrets de développement économique pour l'Afrique
+          {{ $t('mission.description') }}
         </p>
       </div>
 
@@ -100,32 +100,35 @@
 
 <script setup>
 import { MagnifyingGlassIcon, AcademicCapIcon, ChartBarIcon } from '@heroicons/vue/24/outline'
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 
-const mainMissions = [
+const { t } = useI18n()
+
+const mainMissions = computed(() => [
   {
-    title: "Recherche Appliquée",
-    description: "Produire des connaissances scientifiques rigoureuses sur les mécanismes de financement des PME adaptés aux contextes africains.",
+    title: t('mission.appliedResearch.title'),
+    description: t('mission.appliedResearch.description'),
     icon: MagnifyingGlassIcon
   },
   {
-    title: "Formation d'Excellence",
-    description: "Former la nouvelle génération de chercheurs et professionnels spécialisés en financement des entreprises en Afrique.",
+    title: t('mission.excellenceTraining.title'),
+    description: t('mission.excellenceTraining.description'),
     icon: AcademicCapIcon
   },
   {
-    title: "Accompagnement Stratégique",
-    description: "Appuyer concrètement les entrepreneurs et institutions grâce à des outils et solutions basées sur nos recherches.",
+    title: t('mission.strategicSupport.title'),
+    description: t('mission.strategicSupport.description'),
     icon: ChartBarIcon
   }
-]
+])
 
-const stats = [
-  { value: "50+", label: "Projets de Recherche" },
-  { value: "200+", label: "Publications" },
-  { value: "30+", label: "Pays Partenaires" },
-  { value: "1000+", label: "Professionnels Formés" }
-]
+const stats = computed(() => [
+  { value: "50+", label: t('mission.stats.researchProjects') },
+  { value: "200+", label: t('mission.stats.publications') },
+  { value: "30+", label: t('mission.stats.partnerCountries') },
+  { value: "1000+", label: t('mission.stats.trainedProfessionals') }
+])
 
 // Système d'animation
 let observer = null
