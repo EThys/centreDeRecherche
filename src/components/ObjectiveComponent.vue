@@ -57,7 +57,7 @@
 
         </div>
 
-        <!-- Colonne de droite - Statistiques et Domaines -->
+        <!-- Colonne de droite - Statistiques et Activités -->
         <div class="space-y-8">
           <!-- Cartes de statistiques améliorées -->
           <div v-for="(stat, index) in stats" :key="index"
@@ -72,14 +72,80 @@
             <p class="text-gray-500 text-sm leading-relaxed">{{ stat.description }}</p>
           </div>
 
+          <!-- CReff Research -->
+          <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-8 border border-blue-200 shadow-sm hover:shadow-md transition-all duration-500 group">
+            <div class="mb-6">
+              <div class="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mb-4 shadow-md group-hover:shadow-lg transition-shadow duration-300">
+                <i class="fas fa-microscope text-white text-2xl"></i>
+              </div>
+              <h3 class="text-2xl font-bold text-gray-900 mb-2">{{ $t('about.aboutView.activities.research.title') }}</h3>
+              <p class="text-gray-700 text-base font-medium mb-4">{{ $t('about.aboutView.activities.research.subtitle') }}</p>
+            </div>
+            <ul class="space-y-3">
+              <li class="flex items-start gap-3">
+                <div class="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <i class="fas fa-check text-white text-xs"></i>
+                </div>
+                <span class="text-gray-700 text-sm leading-relaxed">{{ $t('about.aboutView.activities.research.item1') }}</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <div class="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <i class="fas fa-check text-white text-xs"></i>
+                </div>
+                <span class="text-gray-700 text-sm leading-relaxed">{{ $t('about.aboutView.activities.research.item2') }}</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <div class="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <i class="fas fa-check text-white text-xs"></i>
+                </div>
+                <span class="text-gray-700 text-sm leading-relaxed">{{ $t('about.aboutView.activities.research.item3') }}</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <div class="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <i class="fas fa-check text-white text-xs"></i>
+                </div>
+                <span class="text-gray-700 text-sm leading-relaxed">{{ $t('about.aboutView.activities.research.item4') }}</span>
+              </li>
+            </ul>
+          </div>
 
+          <!-- Creff Entrepreneurs -->
+          <div class="bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-2xl p-8 border border-indigo-200 shadow-sm hover:shadow-md transition-all duration-500 group">
+            <div class="mb-6">
+              <div class="w-14 h-14 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-xl flex items-center justify-center mb-4 shadow-md group-hover:shadow-lg transition-shadow duration-300">
+                <i class="fas fa-briefcase text-white text-2xl"></i>
+              </div>
+              <h3 class="text-2xl font-bold text-gray-900 mb-2">{{ $t('about.aboutView.activities.entrepreneurs.title') }}</h3>
+              <p class="text-gray-700 text-base font-medium mb-4">{{ $t('about.aboutView.activities.entrepreneurs.subtitle') }}</p>
+            </div>
+            <ul class="space-y-3">
+              <li class="flex items-start gap-3">
+                <div class="w-5 h-5 bg-indigo-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <i class="fas fa-check text-white text-xs"></i>
+                </div>
+                <span class="text-gray-700 text-sm leading-relaxed">{{ $t('about.aboutView.activities.entrepreneurs.item1') }}</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <div class="w-5 h-5 bg-indigo-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <i class="fas fa-check text-white text-xs"></i>
+                </div>
+                <span class="text-gray-700 text-sm leading-relaxed">{{ $t('about.aboutView.activities.entrepreneurs.item2') }}</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <div class="w-5 h-5 bg-indigo-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <i class="fas fa-check text-white text-xs"></i>
+                </div>
+                <span class="text-gray-700 text-sm leading-relaxed">{{ $t('about.aboutView.activities.entrepreneurs.item3') }}</span>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
   </section>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import {
   ChartBarIcon,
   CheckIcon,
