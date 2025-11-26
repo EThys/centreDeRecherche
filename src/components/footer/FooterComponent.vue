@@ -24,15 +24,17 @@
         <!-- Colonne 1: Logo et description -->
         <div class="fade-in-up" data-delay="0">
           <div class="flex items-center mb-6 slide-in-left" data-delay="100">
-            <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center mr-3 shadow-lg">
-              <i class="fas fa-university text-white text-lg"></i>
+            <div class="bg-white/10 backdrop-blur-sm p-2 sm:p-3 rounded-xl mr-3 shadow-lg border border-white/20">
+              <img 
+                :src="logoImage" 
+                alt="CReFF-PME Logo"
+                class="h-10 sm:h-12 w-auto object-contain"
+              />
             </div>
             <span class="text-xl font-bold text-white">CReFF-PME</span>
           </div>
           <p class="text-blue-100 leading-relaxed mb-6 fade-in-up" data-delay="200">
-            Centre de Recherche et de Formation sur le Financement des PME en Afrique. 
-            Nous œuvrons pour le développement économique grâce à la recherche appliquée 
-            et la formation d'excellence.
+            {{ $t('footer.description') }}
           </p>
           <div class="flex space-x-4 fade-in-up" data-delay="300">
             <a 
@@ -76,7 +78,7 @@
         <div class="fade-in-up" data-delay="800">
           <h3 class="text-lg font-semibold text-white mb-6 flex items-center slide-in-up" data-delay="900">
             <div class="w-2 h-2 bg-cyan-400 rounded-full mr-3 animate-pulse"></div>
-            Contact
+            {{ $t('footer.contact') }}
           </h3>
           <ul class="space-y-4">
             <li 
@@ -108,7 +110,7 @@
           <div class="space-y-3 fade-in-up" data-delay="1500">
             <input 
               type="email" 
-              placeholder="Votre email"
+              :placeholder="$t('footer.emailPlaceholder')"
               v-model="email"
               class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-blue-200 focus:outline-none focus:border-cyan-400 transition-all duration-300 backdrop-blur-sm"
             >
@@ -117,7 +119,7 @@
               :disabled="!email"
               class="w-full bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-medium py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center"
             >
-              <span class="mr-2">S'abonner</span>
+              <span class="mr-2">{{ $t('footer.subscribe') }}</span>
               <i class="fas fa-paper-plane text-sm"></i>
             </button>
           </div>
@@ -135,7 +137,7 @@
       <div class="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-white/20 fade-in-up" data-delay="1800">
         <!-- Copyright -->
         <div class="text-blue-200 text-sm mb-4 md:mb-0 slide-in-left" data-delay="1900">
-          <p>&copy; {{ currentYear }} CReFF-PME. Tous droits réservés.</p>
+          <p>&copy; {{ currentYear }} CReFF-PME. {{ $t('footer.rights') }}</p>
         </div>
 
         <!-- Liens légaux -->
@@ -167,6 +169,10 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
+import { useI18n } from 'vue-i18n'
+import logoImage from '../../assets/logoCreff-PME.png'
+
+const { t } = useI18n()
 
 // Données réactives
 const email = ref('')
@@ -194,19 +200,19 @@ const contactInfo = [
   { 
     type: 'address', 
     icon: 'fas fa-map-marker-alt', 
-    value: '123 Avenue de la Recherche', 
-    label: 'Kinshasa, RDC' 
+    value: 'Noki, Avenue Kimungu', 
+    label: 'Mbanza Kongo, RDC' 
   },
   { 
     type: 'phone', 
     icon: 'fas fa-phone', 
-    value: '+243 81 234 5678', 
+    value: '+243 980 49 52 73',  
     label: 'Lun - Ven, 8h-17h' 
   },
   { 
     type: 'email', 
     icon: 'fas fa-envelope', 
-    value: 'contact@creff-pme.org', 
+    value: 'creff.pme.uk@gmail.com', 
     label: 'Nous répondons sous 24h' 
   }
 ]
