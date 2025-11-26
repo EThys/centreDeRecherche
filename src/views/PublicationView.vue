@@ -10,7 +10,7 @@ const selectedYear = ref('all')
 const sortBy = ref('newest')
 const currentPage = ref(1)
 const itemsPerPage = ref(5)
-const scrollObserver = ref(null)
+const scrollObserver = ref<IntersectionObserver | null>(null)
 
 //@ts-ignore
 import NavBarComponent from '../components/navbar/NavBarComponent.vue'
@@ -30,140 +30,22 @@ const openPublication = (publicationId: number | string | undefined) => {
 const allPublications = ref<Publication[]>([
   {
     id: 1,
-    title: "Analyse des Déterminants du Financement Bancaire des PME en RDC",
-    abstract: "Cette étude examine les facteurs influençant l'accès au crédit bancaire pour les PME congolaises, avec une analyse quantitative sur un échantillon de 500 entreprises. La recherche identifie les principaux obstacles et propose des solutions pour améliorer l'accès au financement.",
-    content: "Cette étude examine les facteurs influençant l'accès au crédit bancaire pour les PME congolaises, avec une analyse quantitative sur un échantillon de 500 entreprises. La recherche identifie les principaux obstacles et propose des solutions pour améliorer l'accès au financement.",
+    title: "Tester les conditions de lancement d'une plateforme de crowdfunding en République Démocratique du Congo (RDC)",
+    abstract: "La recherche disponible sur le crowdfunding s'intéresse essentiellement aux sociétés qui font appel à ce mode de financement et suppose l'existence préalable de plateformes pour l'organiser. Malheureusement, elle ne s'intéresse que rarement aux conditions d'exploitation des plateformes et accorde peu de place au contexte local notamment dans les pays dont le système financier et légal est moins développé.L'ambition de cet article est double. En adoptant une approche de recherche qualitative à travers 47 entretiens semi-structurés, nous souhaitons analyser l'opportunité de lancement d'une plateforme de crowdfunding en République Démocratique du Congo (RDC) en utilisant le modèle de la Banque Mondiale (2013). Ce modèle distingue deux familles de conditions de succès :d'un côté, l'offre et la demande de financement et, de l'autre côté, l'état de l'infrastructure. Parallèlement, nous profitons de l'exercice pour tester l'exhaustivité du modèle. Les résultats de l'étude sur le terrain montrent que, sur le plan de la faisabilité d'une plateforme de crowdfunding en RDC, les conditions d'offre et de demande de financement sont plus satisfaisantes et montrent l'intérêt d'une telle initiative. Par contre, les conditions d'infrastructure sont moins satisfaisantes pour assurer le développement d'une plateforme notamment au niveau de cadre réglementaire, du fonctionnement des services financiers et du climat des affaires. Au niveau du modèle, il semble souhaitable de le compléter avec des conditions tant sur le plan de l'analyse de 'infrastructure que sur le plan de l'offre et de demande de financement. Il semble également souhaitable d'accorder une attention plus particulière aux conditions de mise en œuvre. Ces résultats ouvrent des pistes de recherche futures tant sur le terrain afin de faire émerger une première plateforme en RDC que sur le plan académique au niveau de l'analyse des conditions d'exploitation des plateformes.",
+    content: "La recherche disponible sur le crowdfunding s'intéresse essentiellement aux sociétés qui font appel à ce mode de financement et suppose l'existence préalable de plateformes pour l'organiser. Malheureusement, elle ne s'intéresse que rarement aux conditions d'exploitation des plateformes et accorde peu de place au contexte local notamment dans les pays dont le système financier et légal est moins développé.L'ambition de cet article est double. En adoptant une approche de recherche qualitative à travers 47 entretiens semi-structurés, nous souhaitons analyser l'opportunité de lancement d'une plateforme de crowdfunding en République Démocratique du Congo (RDC) en utilisant le modèle de la Banque Mondiale (2013). Ce modèle distingue deux familles de conditions de succès :d'un côté, l'offre et la demande de financement et, de l'autre côté, l'état de l'infrastructure. Parallèlement, nous profitons de l'exercice pour tester l'exhaustivité du modèle. Les résultats de l'étude sur le terrain montrent que, sur le plan de la faisabilité d'une plateforme de crowdfunding en RDC, les conditions d'offre et de demande de financement sont plus satisfaisantes et montrent l'intérêt d'une telle initiative. Par contre, les conditions d'infrastructure sont moins satisfaisantes pour assurer le développement d'une plateforme notamment au niveau de cadre réglementaire, du fonctionnement des services financiers et du climat des affaires. Au niveau du modèle, il semble souhaitable de le compléter avec des conditions tant sur le plan de l'analyse de 'infrastructure que sur le plan de l'offre et de demande de financement. Il semble également souhaitable d'accorder une attention plus particulière aux conditions de mise en œuvre. Ces résultats ouvrent des pistes de recherche futures tant sur le terrain afin de faire émerger une première plateforme en RDC que sur le plan académique au niveau de l'analyse des conditions d'exploitation des plateformes.",
     authors: [
-      { id: 1, name: "Dr. Jean Kabila" },
-      { id: 2, name: "Prof. Marie Lumumba" },
-      { id: 3, name: "Dr. Paul Mobutu" }
+      { id: 1, name: "Jean Nsonsumuna" },
+      { id: 2, name: "Olivier Witmeur" }
     ],
-    journal: "Journal of African Business Studies",
-    publicationDate: "2024-03-15",
+    journal: "Research Paper",
+    publicationDate: "2024-01-01",
     type: "research-paper",
-    domains: ["Finance Bancaire", "Accès au Crédit", "PME", "RDC"],
-    citations: 24,
+    domains: ["Crowdfunding", "Financement", "RDC", "PME"],
+    citations: 0,
     image: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-    doi: "10.1234/jabs.2024.12345",
-    views: 156,
-    downloads: 42
-  },
-  {
-    id: 2,
-    title: "Le Rôle des Institutions de Microfinance dans le Développement des PME Urbaines",
-    abstract: "Recherche qualitative explorant l'impact des IMF sur la croissance des petites entreprises dans les zones urbaines de la RDC. L'étude couvre 10 institutions de microfinance et 200 PME bénéficiaires.",
-    authors: ["Dr. Sophie Kengo", "Dr. Marc Tshisekedi"],
-    journal: "African Development Review",
-    publicationDate: "2024-01-20",
-    type: "article",
-    domains: ["Microfinance", "Développement Urbain", "Croissance", "IMF"],
-    citations: 18,
-    coverImage: "https://images.unsplash.com/photo-1551833086-f6d22eae3b2e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-    doi: "10.1234/adr.2024.67890"
-  },
-  {
-    id: 3,
-    title: "Financement Participatif et Innovation dans les PME Congolaises",
-    abstract: "Étude de cas sur l'émergence du crowdfunding comme alternative de financement pour les PME innovantes en RDC. Analyse de 15 plateformes et 50 projets financés avec succès.",
-    authors: ["Dr. Alain Ilunga"],
-    journal: "International Journal of Entrepreneurship",
-    publicationDate: "2023-11-10",
-    type: "conference",
-    domains: ["Finance Participatif", "Innovation", "FinTech", "Crowdfunding"],
-    citations: 12,
-    coverImage: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-    doi: "10.1234/ije.2023.54321"
-  },
-  {
-    id: 4,
-    title: "Impact des Réformes Réglementaires sur l'Écosystème Financier des PME",
-    abstract: "Analyse longitudinale des effets des réformes bancaires récentes sur l'environnement financier des petites entreprises congolaises. Période d'étude : 2018-2023.",
-    authors: ["Prof. Denise Mbuji", "Dr. Henri Kisangani"],
-    journal: "World Development",
-    publicationDate: "2023-09-05",
-    type: "article",
-    domains: ["Régulation", "Politique Publique", "Environnement Financier", "Réformes"],
-    citations: 31,
-    coverImage: "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-    doi: "10.1234/wd.2023.98765"
-  },
-  {
-    id: 5,
-    title: "Stratégies de Financement des PME Familiales en RDC",
-    abstract: "Thèse doctorale explorant les dynamiques de financement spécifiques aux entreprises familiales congolaises. Méthodologie mixte avec entretiens approfondis et analyse financière.",
-    authors: ["Dr. Chantal Nzuji"],
-    journal: "Thèse - Université de Kinshasa",
-    publicationDate: "2023-06-18",
-    type: "thesis",
-    domains: ["Entreprises Familiales", "Stratégie", "Capital", "Succession"],
-    citations: 8,
-    coverImage: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-    doi: "10.1234/thesis.2023.13579"
-  },
-  {
-    id: 6,
-    title: "Digitalisation des Services Financiers et Inclusion des PME Rurales",
-    abstract: "Évaluation de l'impact des services financiers digitaux sur l'inclusion financière des PME dans les zones rurales de la RDC. Étude couvrant 5 provinces et 300 entreprises.",
-    authors: ["Dr. Pascal Kabila", "Dr. Anne Matondo"],
-    journal: "Journal of Development Economics",
-    publicationDate: "2023-04-22",
-    type: "article",
-    domains: ["Digitalisation", "Inclusion Financière", "Zones Rurales", "Mobile Banking"],
-    citations: 27,
-    coverImage: "https://images.unsplash.com/photo-1563013544-824ae1b704d3?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-    doi: "10.1234/jde.2023.24680"
-  },
-  {
-    id: 7,
-    title: "Résilience Financière des PME Face aux Chocs Économiques",
-    abstract: "Document de travail analysant les stratégies de résilience financière des PME congolaises pendant les périodes de crise économique. Focus sur la pandémie COVID-19.",
-    authors: ["Dr. Samuel Lubamba"],
-    journal: "Working Paper - CRFPME",
-    publicationDate: "2023-02-14",
-    type: "working-paper",
-    domains: ["Résilience", "Gestion de Crise", "Stratégie Financière", "COVID-19"],
-    citations: 15,
-    coverImage: "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-    doi: "10.1234/wp.2023.11223"
-  },
-  {
-    id: 8,
-    title: "Capital-Risque et Développement des Startups Technologiques",
-    abstract: "Étude sur l'émergence du capital-risque dans le financement des startups technologiques en RDC. Analyse de 20 investissements et leur impact sur la croissance.",
-    authors: ["Dr. Eric Tshilombo", "Prof. Grace Kasaï"],
-    journal: "Venture Capital Journal",
-    publicationDate: "2022-12-08",
-    type: "article",
-    domains: ["Capital-Risque", "Startups", "Technologie", "Innovation"],
-    citations: 22,
-    coverImage: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-    doi: "10.1234/vcj.2022.44556"
-  },
-  {
-    id: 9,
-    title: "Financement par la Diaspora et Entrepreneuriat en RDC",
-    abstract: "Analyse du rôle des transferts de fonds de la diaspora dans le financement des projets entrepreneuriaux. Enquête auprès de 150 entrepreneurs de la diaspora.",
-    authors: ["Dr. Michel Ngbanda"],
-    journal: "Diaspora Studies Quarterly",
-    publicationDate: "2022-10-30",
-    type: "article",
-    domains: ["Diaspora", "Transferts", "Entrepreneuriat", "Investissement"],
-    citations: 19,
-    coverImage: "https://images.unsplash.com/photo-1533750349088-cd871a92f312?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-    doi: "10.1234/dsq.2022.77889"
-  },
-  {
-    id: 10,
-    title: "Évaluation de l'Impact des Programmes de Garantie de Prêts",
-    abstract: "Étude d'impact des programmes gouvernementaux de garantie de prêts sur l'accès au financement des PME congolaises. Analyse coût-bénéfice sur 3 ans.",
-    authors: ["Dr. Lucie Mbayo", "Dr. Robert Kany"],
-    journal: "Public Policy Review",
-    publicationDate: "2022-08-15",
-    type: "article",
-    domains: ["Garantie de Prêts", "Politique Publique", "Évaluation d'Impact", "Gouvernement"],
-    citations: 14,
-    coverImage: "https://images.unsplash.com/photo-1553877522-43269d4ea984?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-    doi: "10.1234/ppr.2022.33445"
+    doi: "",
+    views: 0,
+    downloads: 0
   }
 ])
 
@@ -173,9 +55,10 @@ const showAdvancedFilters = ref(false)
 const publicationTypes = [
   { value: 'all', label: 'Tous', icon: 'fas fa-layer-group' },
   { value: 'article', label: 'Articles', icon: 'fas fa-newspaper' },
-  { value: 'thesis', label: 'Thèses', icon: 'fas fa-graduation-cap' },
-  { value: 'conference', label: 'Conférences', icon: 'fas fa-microphone' },
-  { value: 'working-paper', label: 'Documents', icon: 'fas fa-file-contract' }
+  { value: 'research-paper', label: 'Documents de recherche', icon: 'fas fa-file-contract' },
+  { value: 'book', label: 'Livres', icon: 'fas fa-book' },
+  { value: 'report', label: 'Rapports', icon: 'fas fa-file-alt' },
+  { value: 'other', label: 'Autres', icon: 'fas fa-layer-group' }
 ]
 
 // Propriétés calculées
@@ -216,7 +99,7 @@ const activeFiltersCount = computed(() => {
 })
 
 // Méthodes
-const toggleDomain = (domain) => {
+const toggleDomain = (domain: string) => {
   const index = selectedDomains.value.indexOf(domain)
   if (index > -1) {
     selectedDomains.value.splice(index, 1)
@@ -243,15 +126,15 @@ const applyFilters = () => {
   resetPagination()
 }
 
-const getTypeLabel = (type) => {
+const getTypeLabel = (type: string) => {
   const typeObj = publicationTypes.find(t => t.value === type)
   return typeObj ? typeObj.label : type
 }
 
 const researchers = computed(() => {
-  const researchersSet = new Set()
+  const researchersSet = new Set<string>()
   allPublications.value.forEach(pub => {
-    pub.authors.forEach(author => researchersSet.add(author))
+    pub.authors.forEach(author => researchersSet.add(author.name))
   })
   return Array.from(researchersSet)
 })
@@ -269,8 +152,8 @@ const filteredPublications = computed(() => {
     filtered = filtered.filter(pub => 
       pub.title.toLowerCase().includes(query) ||
       pub.abstract.toLowerCase().includes(query) ||
-      pub.authors.some(author => author.toLowerCase().includes(query)) ||
-      pub.journal.toLowerCase().includes(query)
+      pub.authors.some(author => author.name.toLowerCase().includes(query)) ||
+      (pub.journal && pub.journal.toLowerCase().includes(query))
     )
   }
 
@@ -296,16 +179,16 @@ const filteredPublications = computed(() => {
   // Tri
   switch (sortBy.value) {
     case 'newest':
-      filtered.sort((a, b) => new Date(b.publicationDate) - new Date(a.publicationDate))
+      filtered.sort((a, b) => new Date(b.publicationDate).getTime() - new Date(a.publicationDate).getTime())
       break
     case 'oldest':
-      filtered.sort((a, b) => new Date(a.publicationDate) - new Date(b.publicationDate))
+      filtered.sort((a, b) => new Date(a.publicationDate).getTime() - new Date(b.publicationDate).getTime())
       break
     case 'title':
       filtered.sort((a, b) => a.title.localeCompare(b.title))
       break
     case 'citations':
-      filtered.sort((a, b) => b.citations - a.citations)
+      filtered.sort((a, b) => (b.citations || 0) - (a.citations || 0))
       break
   }
 
@@ -363,11 +246,11 @@ const nextPage = () => {
   }
 }
 
-const goToPage = (page) => {
+const goToPage = (page: number) => {
   currentPage.value = page
 }
 
-const formatDate = (dateString) => {
+const formatDate = (dateString: string) => {
   const date = new Date(dateString)
   return date.toLocaleDateString('fr-FR', {
     day: 'numeric',
@@ -393,7 +276,9 @@ const initScrollAnimations = () => {
 
   // Observe all elements with fade-in-up class
   document.querySelectorAll('.fade-in-up').forEach(el => {
+    if (scrollObserver.value) {
     scrollObserver.value.observe(el)
+    }
   })
 }
 
@@ -740,7 +625,7 @@ onUnmounted(() => {
             <!-- Image de couverture -->
             <div class="lg:w-48 lg:h-48 h-40 relative overflow-hidden">
               <img
-                :src="publication.coverImage"
+                :src="publication.image"
                 :alt="publication.title"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
@@ -749,8 +634,9 @@ onUnmounted(() => {
                 <span :class="[
                   'text-xs font-semibold px-2 py-1 rounded-full shadow-sm',
                   publication.type === 'article' ? 'bg-green-500 text-white' :
-                  publication.type === 'thesis' ? 'bg-purple-500 text-white' :
-                  publication.type === 'conference' ? 'bg-orange-500 text-white' :
+                  publication.type === 'research-paper' ? 'bg-purple-500 text-white' :
+                  publication.type === 'book' ? 'bg-orange-500 text-white' :
+                  publication.type === 'report' ? 'bg-indigo-500 text-white' :
                   'bg-blue-500 text-white'
                 ]">
                   {{ getTypeLabel(publication.type) }}
@@ -781,7 +667,7 @@ onUnmounted(() => {
                 <!-- Auteurs -->
                 <div class="mb-3">
                   <p class="text-sm text-gray-600 line-clamp-1">
-                    {{ publication.authors.join(', ') }}
+                    {{ publication.authors.map(a => a.name).join(', ') }}
                   </p>
                 </div>
                 
@@ -915,25 +801,7 @@ onUnmounted(() => {
         </button>
       </div>
 
-      <!-- Section Newsletter -->
-      <div class="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-xl shadow-lg p-6 sm:p-8 text-white fade-in-up">
-        <div class="max-w-4xl mx-auto text-center">
-          <h3 class="text-xl sm:text-2xl font-bold mb-4">Restez Informé</h3>
-          <p class="text-blue-100 mb-6 text-sm sm:text-base">
-            Abonnez-vous à notre newsletter pour recevoir les dernières publications et recherches.
-          </p>
-          <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 max-w-md mx-auto">
-            <input
-              type="email"
-              placeholder="Entrez votre email"
-              class="flex-1 px-4 py-3 rounded-lg text-gray-900 focus:ring-2 focus:ring-white focus:outline-none text-sm sm:text-base"
-            >
-            <button class="bg-white text-blue-600 font-semibold px-5 sm:px-6 py-3 rounded-lg hover:bg-gray-100 transition-colors text-sm sm:text-base whitespace-nowrap">
-              S'abonner
-            </button>
-          </div>
-        </div>
-      </div>
+
     </div>
   </div>
   <FooterComponent/>
