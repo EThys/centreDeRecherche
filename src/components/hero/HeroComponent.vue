@@ -867,7 +867,7 @@ onUnmounted(() => {
 @media (max-width: 768px) {
   .slide-content {
     padding: 0 1.5rem;
-    padding-top: 6rem;
+    padding-top: 8rem;
     align-items: flex-start;
   }
 
