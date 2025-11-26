@@ -294,7 +294,7 @@
                   </p>
                   <p class="leading-relaxed flex items-start">
                     <i class="fas fa-check-circle mr-2 mt-1 text-blue-400 flex-shrink-0"></i>
-                    <span>Co-fondateur du Centre CReFF-PME</span>
+                    <span>Co-fondateur du Centre de Recherche et de Formation sur le Financement des PME en Afrique centrale</span>
                   </p>
                   <p class="leading-relaxed flex items-start">
                     <i class="fas fa-check-circle mr-2 mt-1 text-blue-400 flex-shrink-0"></i>
@@ -314,7 +314,7 @@
         <div class="fade-in-up" data-animate>
           <div class="text-center mb-12 sm:mb-16">
             <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 sm:mb-6 leading-tight">
-              Comité de gestion du <span class="text-blue-600">Creff</span>
+              Comité de gestion du <span class="text-blue-600">CReFF-PME</span>
             </h2>
           </div>
 
@@ -340,7 +340,7 @@
                 <h3 class="text-2xl sm:text-3xl font-bold mb-2 group-hover:text-blue-300 transition-colors duration-300">
                   Jean Nsonsumuna
                 </h3>
-                <p class="text-blue-200 text-sm sm:text-base font-medium mb-4">Directeur du Creff-PME</p>
+                <p class="text-blue-200 text-sm sm:text-base font-medium mb-4">Directeur du Centre de Recherche et de Formation sur le Financement des PME en Afrique centrale</p>
                 
                 <div class="space-y-2 text-sm sm:text-base text-gray-200 border-t border-white/20 pt-4">
                   <p class="leading-relaxed">Chargé des cours en sciences de gestion</p>
@@ -371,7 +371,7 @@
                 <h3 class="text-2xl sm:text-3xl font-bold mb-2 group-hover:text-indigo-300 transition-colors duration-300">
                   Eunice KIKADILU AWAZI
                 </h3>
-                <p class="text-indigo-200 text-sm sm:text-base font-medium mb-4">Secrétaire du Creff-PME</p>
+                <p class="text-indigo-200 text-sm sm:text-base font-medium mb-4">Secrétaire du Centre de Recherche et de Formation sur le Financement des PME en Afrique centrale</p>
                 
                 <div class="space-y-2 text-sm sm:text-base text-gray-200 border-t border-white/20 pt-4">
                   <p class="leading-relaxed">Titulaire d'un diplôme de licence (Bac+5) en droit (2023)</p>
