@@ -16,7 +16,7 @@
   "hero": {
     "welcome": "Bienvenue au",
     "creff": "CReFF-PME",
-    "subtitle": "Centre de Recherche et de Formation sur le Financement des PME",
+    "subtitle": "Centre de Recherche et de Formation sur le Financement des PME en Afrique centrale",
     "description": "Une initiative de l'Université Kongo en partenariat avec l'Université libre de Bruxelles pour renforcer la recherche sur l'accès au financement des PME.",
     "cta": "Découvrir notre mission",
     "recruitment": {
@@ -44,8 +44,8 @@
   "about": {
     "header": "À PROPOS DU CENTRE",
     "title": "Centre de Recherche et de Formation sur le",
-    "titleHighlight": "Financement des PME",
-    "description": "Le Centre de Recherche et de Formation sur le Financement des PME (CReFF-PME) est une institution académique dédiée à la production de connaissances, au renforcement des capacités et à l'accompagnement innovant des entrepreneurs africains. Nous œuvrons pour une meilleure compréhension des défis du financement des petites et moyennes entreprises, tout en contribuant au développement des solutions adaptées au contexte local.",
+    "titleHighlight": "Financement des PME en Afrique centrale",
+    "description": "Le Centre de Recherche et de Formation sur le Financement des PME en Afrique centrale (CReFF-PME) est une institution académique dédiée à la production de connaissances, au renforcement des capacités et à l'accompagnement innovant des entrepreneurs africains. Nous œuvrons pour une meilleure compréhension des défis du financement des petites et moyennes entreprises, tout en contribuant au développement des solutions adaptées au contexte local.",
     "stats": {
       "projects": "Projets",
       "researchers": "Chercheurs",
@@ -53,8 +53,8 @@
     },
     "aboutView": {
       "heroTitle": "Centre de Recherche et de Formation",
-      "heroSubtitle": "sur le Financement des PME",
-      "heroDescription": "Un espace d'excellence pour la production scientifique, la formation et la diffusion des connaissances sur le financement des PME en Afrique",
+      "heroSubtitle": "sur le Financement des PME en Afrique centrale",
+      "heroDescription": "Un espace d'excellence pour la production scientifique, la formation et la diffusion des connaissances sur le financement des PME en Afrique centrale",
       "genesis": {
         "header": "GENÈSE DU PROJET",
         "title": "L'origine du",
@@ -186,7 +186,7 @@
     "description": "Des collaborations stratégiques pour l'excellence en recherche et formation"
   },
   "footer": {
-    "description": "Centre de Recherche et de Formation sur le Financement des PME en Afrique. Nous œuvrons pour le développement économique grâce à la recherche appliquée et la formation d'excellence.",
+    "description": "Centre de Recherche et de Formation sur le Financement des PME en Afrique centrale. Nous œuvrons pour le développement économique grâce à la recherche appliquée et la formation d'excellence.",
     "quickLinks": "Liens Rapides",
     "contact": "Contact",
     "newsletter": "Newsletter",

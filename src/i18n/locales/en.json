@@ -13,7 +13,7 @@
   "hero": {
     "welcome": "Welcome to",
     "creff": "CReFF-PME",
-    "subtitle": "Research and Training Center on SME Financing",
+    "subtitle": "Research and Training Center on SME Financing in Central Africa",
     "description": "An initiative of Kongo University in partnership with the Free University of Brussels to strengthen research on SME financing access.",
     "cta": "Discover our mission",
     "recruitment": {
@@ -41,12 +41,52 @@
   "about": {
     "header": "ABOUT THE CENTER",
     "title": "Research and Training Center on",
-    "titleHighlight": "SME Financing",
-    "description": "The Research and Training Center on SME Financing (CReFF-PME) is an academic institution dedicated to knowledge production, capacity building and innovative support for African entrepreneurs. We work for a better understanding of the challenges of financing small and medium enterprises, while contributing to the development of solutions adapted to the local context.",
+    "titleHighlight": "SME Financing in Central Africa",
+    "description": "The Research and Training Center on SME Financing in Central Africa (CReFF-PME) is an academic institution dedicated to knowledge production, capacity building and innovative support for African entrepreneurs. We work for a better understanding of the challenges of financing small and medium enterprises, while contributing to the development of solutions adapted to the local context.",
     "stats": {
       "projects": "Projects",
       "researchers": "Researchers",
       "publications": "Publications"
+    },
+    "aboutView": {
+      "heroTitle": "Research and Training Center",
+      "heroSubtitle": "on SME Financing in Central Africa",
+      "heroDescription": "An excellence space for scientific production, training and knowledge dissemination on SME financing in Central Africa",
+      "genesis": {
+        "header": "PROJECT GENESIS",
+        "title": "The origin of",
+        "titleHighlight": "CReFF-PME",
+        "paragraph1": "The CReFF-PME Center finds its origin in doctoral research conducted by Mr. Jean Nsonsumuna, in co-supervision between ULB and Kongo University, on the success conditions for launching crowdfunding (participatory financing) in DRC.",
+        "paragraph2": "Faced with the many constraints on access to financing for Congolese SMEs identified, CReFF was designed as a space for scientific production, training and knowledge dissemination on SME financing, while aiming to strengthen the skills of local entrepreneurs and researchers."
+      },
+      "activities": {
+        "header": "OUR ACTIVITIES",
+        "title": "Two axes of",
+        "titleHighlight": "intervention",
+        "description": "CReFF-PME activities are organized around two main axes",
+        "research": {
+          "title": "CReff Research",
+          "subtitle": "Strengthen your skills in SME Research",
+          "item1": "Assistance in developing thesis projects",
+          "item2": "Research training",
+          "item3": "Research on SMEs in Central Africa",
+          "item4": "Pre-doctoral school (Kongo University - ULB)"
+        },
+        "entrepreneurs": {
+          "title": "Creff Entrepreneurs",
+          "subtitle": "Guarantee the success of your business",
+          "item1": "Build your financial plan",
+          "item2": "Identify suitable financing options",
+          "item3": "Validate your financing plan"
+        }
+      },
+      "team": {
+        "header": "TEAM",
+        "boardTitle": "Board of Directors of",
+        "boardTitleHighlight": "CReFF-PME",
+        "managementTitle": "Management Committee of",
+        "managementTitleHighlight": "Creff"
+      }
     }
   },
   "actuality": {
@@ -93,7 +133,7 @@
     "description": "Strategic collaborations for excellence in research and training"
   },
   "footer": {
-    "description": "Research and Training Center on SME Financing in Africa. We work for economic development through applied research and excellence in training.",
+    "description": "Research and Training Center on SME Financing in Central Africa. We work for economic development through applied research and excellence in training.",
     "quickLinks": "Quick Links",
     "contact": "Contact",
     "newsletter": "Newsletter",
