@@ -1,186 +1,182 @@
 <template>
-  <section class="py-20 bg-gradient-to-br from-blue-50 to-blue-100/50 relative overflow-hidden">
+  <section class="py-10 sm:py-14 lg:py-20 bg-gradient-to-br from-white via-blue-50/30 to-indigo-100/20 relative overflow-hidden">
     <!-- Éléments décoratifs animés -->
-    <div class="absolute top-10 left-10 w-20 h-20 bg-blue-300/30 rounded-full blur-xl animate-float-slow"></div>
-    <div class="absolute bottom-10 right-10 w-32 h-32 bg-blue-400/20 rounded-full blur-xl animate-float-medium"></div>
-    <div class="absolute top-1/2 left-1/4 w-16 h-16 bg-blue-200/40 rounded-full blur-lg animate-float-fast"></div>
+    <div class="absolute top-10 left-10 w-32 h-32 sm:w-48 sm:h-48 bg-blue-200/20 rounded-full blur-3xl animate-float-slow"></div>
+    <div class="absolute bottom-10 right-10 w-40 h-40 sm:w-64 sm:h-64 bg-blue-300/15 rounded-full blur-3xl animate-float-medium"></div>
+    <div class="absolute top-1/2 left-1/4 w-24 h-24 sm:w-32 sm:h-32 bg-indigo-200/10 rounded-full blur-2xl animate-float-fast"></div>
     
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
       <!-- En-tête -->
-      <div class="text-center mb-16 fade-in-up" data-delay="0">
-        <div class="inline-flex items-center gap-2 text-blue-700 mb-4 slide-in-expand" data-delay="100">
-          <div class="w-8 h-0.5 bg-blue-600 expand-width" data-delay="150"></div>
-          <span class="text-sm font-semibold tracking-wider">NOTRE ÉQUIPE</span>
-          <div class="w-8 h-0.5 bg-blue-600 expand-width" data-delay="150"></div>
-        </div>
-        <h2 class="text-4xl lg:text-5xl font-bold text-gray-900 mb-6 fade-in-up" data-delay="200">
-          Rencontrez <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-blue-800">notre équipe</span>
+      <div class="text-center mb-10 sm:mb-12 lg:mb-16 fade-in-up" data-animate>
+          <div class="inline-flex items-center gap-2 text-blue-600 mb-4">
+            <div class="w-8 sm:w-12 h-0.5 bg-blue-500"></div>
+            <span class="text-xs sm:text-sm font-semibold tracking-wider uppercase">{{ $t('team.header') }}</span>
+            <div class="w-8 sm:w-12 h-0.5 bg-blue-500"></div>
+          </div>
+        <h2 class="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-gray-900 mb-4 sm:mb-6">
+          {{ $t('team.title') }} <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-blue-500 to-blue-700">{{ $t('team.titleHighlight') }}</span>
         </h2>
-        <p class="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed fade-in-up" data-delay="300">
-          Une équipe multiculturelle de chercheurs passionnés, unis par l'innovation et l'excellence scientifique
+        <p class="text-base sm:text-lg lg:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+          {{ $t('team.description') }}
         </p>
       </div>
 
       <!-- Grille des membres -->
-      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 lg:gap-10">
         <!-- Carte membre -->
         <div
           v-for="(member, index) in teamMembers"
           :key="index"
-          class="group relative bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 stagger-item"
-          :class="`delay-${400 + index * 100}`"
+          class="group relative bg-white rounded-2xl sm:rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 fade-in-up stagger-item"
+          :style="{ animationDelay: `${index * 150}ms` }"
+          data-animate
         >
-          <!-- Overlay au survol -->
-          <div class="absolute inset-0 bg-gradient-to-t from-blue-900/90 via-blue-800/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10"></div>
-          
-          <!-- Photo -->
-          <div class="relative overflow-hidden">
+          <!-- Photo avec overlay -->
+          <div class="relative h-64 sm:h-72 lg:h-80 overflow-hidden">
             <img
               :src="member.photo"
               :alt="member.name"
-              class="w-full h-72 object-cover group-hover:scale-110 transition-transform duration-700"
+              class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
             />
+            <!-- Overlay gradient au survol -->
+            <div class="absolute inset-0 bg-gradient-to-t from-blue-900/80 via-blue-800/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            
             <!-- Badge de rôle -->
-            <div class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full scale-in" data-delay="100">
-              <span class="text-xs font-semibold text-blue-600">{{ member.role }}</span>
+            <div class="absolute top-4 right-4 bg-white/95 backdrop-blur-sm px-3 sm:px-4 py-1.5 sm:py-2 rounded-full sm:rounded-xl shadow-lg z-10">
+              <span class="text-xs sm:text-sm font-bold text-blue-600">{{ member.role }}</span>
+            </div>
+
+            <!-- Icône décorative -->
+            <div class="absolute bottom-4 left-4 w-12 h-12 bg-blue-500/90 backdrop-blur-sm rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-y-4 group-hover:translate-y-0">
+              <i class="fas fa-user-tie text-white text-lg"></i>
             </div>
           </div>
 
           <!-- Contenu -->
-          <div class="p-6 relative z-20">
-            <h3 class="text-xl font-bold text-gray-900 mb-2 group-hover:text-white transition-colors duration-300 fade-in-up" data-delay="50">
+          <div class="p-5 sm:p-6 lg:p-8 relative">
+            <!-- Nom -->
+            <h3 class="text-xl sm:text-2xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors duration-300">
               {{ member.name }}
             </h3>
-            <p class="text-blue-600 font-medium mb-3 group-hover:text-blue-200 transition-colors duration-300 fade-in-up" data-delay="100">
+            
+            <!-- Position -->
+            <p class="text-blue-600 font-semibold text-sm sm:text-base mb-4 flex items-center">
+              <i class="fas fa-briefcase mr-2 text-xs"></i>
               {{ member.position }}
             </p>
-            <p class="text-gray-600 text-sm leading-relaxed group-hover:text-blue-100 transition-colors duration-300 fade-in-up" data-delay="150">
-              {{ member.expertise }}
-            </p>
+
+            <!-- Education -->
+            <div class="mb-4 pb-4 border-b border-gray-100">
+              <p class="text-gray-600 text-xs sm:text-sm flex items-center">
+                <i class="fas fa-graduation-cap mr-2 text-blue-500"></i>
+                {{ member.education }}
+              </p>
+            </div>
+
+            <!-- Highlights -->
+            <div class="space-y-2">
+              <p class="text-xs sm:text-sm font-semibold text-gray-700 mb-2">{{ $t('team.highlights') }} :</p>
+              <ul class="space-y-2">
+                <li 
+                  v-for="(highlight, hIndex) in member.highlights"
+                  :key="hIndex"
+                  class="text-xs sm:text-sm text-gray-600 flex items-start"
+                >
+                  <i class="fas fa-check-circle text-blue-500 mr-2 mt-0.5 flex-shrink-0 text-xs"></i>
+                  <span class="leading-relaxed">{{ highlight }}</span>
+                </li>
+              </ul>
+            </div>
+
+            <!-- Bordure animée -->
+            <div class="absolute inset-0 rounded-2xl sm:rounded-3xl border-2 border-transparent group-hover:border-blue-400 transition-all duration-500 pointer-events-none"></div>
           </div>
 
-          <!-- Bordure animée -->
-          <div class="absolute inset-0 rounded-2xl border-2 border-transparent bg-gradient-to-r from-blue-500 to-blue-600 bg-clip-padding opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10">
-            <div class="absolute inset-[2px] rounded-2xl bg-white z-0"></div>
-          </div>
-
-          <!-- Points décoratifs -->
-          <div class="absolute top-3 left-3 w-2 h-2 bg-blue-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-200"></div>
-          <div class="absolute bottom-3 right-3 w-2 h-2 bg-blue-400 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-300"></div>
+          <!-- Effet de brillance au survol -->
+          <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 transform -translate-x-full group-hover:translate-x-full pointer-events-none"></div>
         </div>
       </div>
 
-      <!-- Section CTA -->
-      <div class="text-center mt-16 fade-in-up" data-delay="800">
-        <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-8 border border-blue-200/50 shadow-lg">
-          <h3 class="text-2xl lg:text-3xl font-bold text-gray-900 mb-4">
-            Rejoignez notre équipe de recherche
-          </h3>
-          <p class="text-gray-600 mb-6 max-w-2xl mx-auto">
-            Participez à des projets innovants et contribuez au développement du financement des PME en Afrique
-          </p>
-          <div class="flex flex-col sm:flex-row gap-4 justify-center">
-            <button class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-3 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
-              Postuler maintenant
-            </button>
-            <button class="border border-blue-600 text-blue-600 hover:bg-blue-50 font-semibold px-8 py-3 rounded-xl transition-all duration-300 transform hover:scale-105">
-              Voir les offres
-            </button>
-          </div>
-        </div>
-      </div>
+   
+
     </div>
   </section>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
-import researchImage1 from '../../src/assets/jean.jpeg'
+import { useI18n } from 'vue-i18n'
+import type { TeamMember } from '@/models'
+import researchImage1 from '../assets/jean.jpeg'
+import researchImage2 from '../assets/president.jpeg'
+import researchImage3 from '../assets/vp.jpeg'
 
-// Icônes sociales comme composants
-const TwitterIcon = {
-  template: `
-    <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
-      <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
-    </svg>
-  `
-}
+const { t } = useI18n()
 
-const LinkedInIcon = {
-  template: `
-    <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
-      <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
-    </svg>
-  `
-}
-
-const GithubIcon = {
-  template: `
-    <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
-      <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-    </svg>
-  `
-}
-
-const socialIcons = [
-  { name: 'Twitter', icon: TwitterIcon },
-  { name: 'LinkedIn', icon: LinkedInIcon },
-  { name: 'GitHub', icon: GithubIcon }
-]
-
-const teamMembers = [
+const teamMembers = ref<TeamMember[]>([
   {
-    name: "Prof. Jean Nsonsumuna",
-    position: "Directeur du Centre",
-    expertise: "Financement des PME, Économie du développement",
+    id: 1,
+    name: "Olivier Witmeur",
+    position: "Président du Conseil de Direction",
+    role: "Président",
+    photo: researchImage2,
+    highlights: [
+      "Professeur d'Entrepreneuriat à Solvay Brussels School",
+      "Vice-Doyen de l'ULB",
+      "Fondateur de StartLAB.Brussels"
+    ],
+    education: "Doctorat en Entrepreneuriat (2008)",
+    email: "olivier.witmeur@ulb.be"
+  },
+  {
+    id: 2,
+    name: "Justin Kamavuako",
+    position: "Vice-Président du Conseil de Direction", 
+    role: "Vice-Président",
+    photo: researchImage3,
+    highlights: [
+      "Professeur des Universités",
+      "Expert en sciences de gestion",
+      "Spécialiste en entrepreneuriat"
+    ],
+    education: "Doctorat en sciences de gestion (2009)",
+    email: "justin.kamavuako@university.edu"
+  },
+  {
+    id: 3,
+    name: "Jean Nsonsumuna",
+    position: "Secrétaire du Conseil de Direction",
+    role: "Secrétaire",
     photo: researchImage1,
-    role: "Direction"
-  },
-  {
-    name: "Pr. Sophie Lambert",
-    position: "Co-directrice (ULB)",
-    expertise: "Systèmes financiers, Analyse économique",
-    photo: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&h=400&q=80",
-    role: "Co-direction"
-  },
-  {
-    name: "Dr. Alain Kabamba",
-    position: "Chercheur principal",
-    expertise: "Innovation financière, Technologies FinTech",
-    photo: "https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&h=400&q=80",
-    role: "Recherche"
-  },
-  {
-    name: "Dr. Marie Ndongala",
-    position: "Chercheuse associée",
-    expertise: "Entrepreneuriat, Croissance des PME",
-    photo: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&h=400&q=80",
-    role: "Recherche"
+    highlights: [
+      "Chargé de cours en Sciences de gestion",
+      "Co-fondateur du Centre CReFF-PME",
+      "Expert en financement des PME"
+    ],
+    education: "Doctorat ULB (2024)",
+    email: "jean.nsonsumuna@creff-pme.org"
   }
-]
+])
 
-// Système d'animation - Correction des types
 let observer: IntersectionObserver | null = null
 
 const initScrollAnimations = () => {
-  const observerOptions: IntersectionObserverInit = {
+  const observerOptions = {
     threshold: 0.1,
     rootMargin: '0px 0px -50px 0px'
   }
 
   observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
-      if (entry.isIntersecting) {
+      if (entry.isIntersecting && observer) {
         entry.target.classList.add('animate-in')
-        if (observer) {
-          observer.unobserve(entry.target)
-        }
+        observer.unobserve(entry.target)
       }
     })
   }, observerOptions)
 
-  // Observer tous les éléments avec des classes d'animation
-  document.querySelectorAll('.fade-in-up, .slide-in-expand, .scale-in, .stagger-item, .expand-width').forEach(el => {
+  // Observer tous les éléments avec data-animate
+  document.querySelectorAll('[data-animate]').forEach(el => {
     if (observer) {
       observer.observe(el)
     }
@@ -196,7 +192,6 @@ onMounted(() => {
 onUnmounted(() => {
   if (observer) {
     observer.disconnect()
-    observer = null
   }
 })
 </script>
@@ -206,7 +201,7 @@ onUnmounted(() => {
 .fade-in-up {
   opacity: 0;
   transform: translateY(30px);
-  transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .fade-in-up.animate-in {
@@ -214,37 +209,15 @@ onUnmounted(() => {
   transform: translateY(0);
 }
 
-.slide-in-expand {
+.stagger-item {
   opacity: 0;
-  transform: scaleX(0);
-  transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transform: translateY(30px);
+  transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.slide-in-expand.animate-in {
+.stagger-item.animate-in {
   opacity: 1;
-  transform: scaleX(1);
-}
-
-.scale-in {
-  opacity: 0;
-  transform: scale(0.8);
-  transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-.scale-in.animate-in {
-  opacity: 1;
-  transform: scale(1);
-}
-
-.expand-width {
-  opacity: 0;
-  transform: scaleX(0);
-  transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-.expand-width.animate-in {
-  opacity: 1;
-  transform: scaleX(1);
+  transform: translateY(0);
 }
 
 /* Animations flottantes */
@@ -253,7 +226,7 @@ onUnmounted(() => {
     transform: translateY(0px);
   }
   50% {
-    transform: translateY(-15px);
+    transform: translateY(-20px);
   }
 }
 
@@ -262,7 +235,7 @@ onUnmounted(() => {
     transform: translateY(0px);
   }
   50% {
-    transform: translateY(-10px);
+    transform: translateY(-15px);
   }
 }
 
@@ -271,120 +244,47 @@ onUnmounted(() => {
     transform: translateY(0px);
   }
   50% {
-    transform: translateY(-8px);
+    transform: translateY(-10px);
   }
 }
 
 .animate-float-slow {
-  animation: float-slow 6s ease-in-out infinite;
+  animation: float-slow 8s ease-in-out infinite;
 }
 
 .animate-float-medium {
-  animation: float-medium 4s ease-in-out infinite;
+  animation: float-medium 6s ease-in-out infinite;
 }
 
 .animate-float-fast {
-  animation: float-fast 3s ease-in-out infinite;
-}
-
-/* Système de délais pour les animations en cascade */
-.stagger-item {
-  opacity: 0;
-  transform: translateY(30px);
-  transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-.stagger-item.animate-in {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* Délais personnalisés */
-[data-delay="0"] { transition-delay: 0ms; }
-[data-delay="50"] { transition-delay: 50ms; }
-[data-delay="100"] { transition-delay: 100ms; }
-[data-delay="150"] { transition-delay: 150ms; }
-[data-delay="200"] { transition-delay: 200ms; }
-[data-delay="300"] { transition-delay: 300ms; }
-[data-delay="400"] { transition-delay: 400ms; }
-[data-delay="500"] { transition-delay: 500ms; }
-[data-delay="600"] { transition-delay: 600ms; }
-[data-delay="700"] { transition-delay: 700ms; }
-[data-delay="800"] { transition-delay: 800ms; }
-
-.delay-400 { transition-delay: 400ms; }
-.delay-500 { transition-delay: 500ms; }
-.delay-600 { transition-delay: 600ms; }
-.delay-700 { transition-delay: 700ms; }
-
-/* Amélioration des transitions */
-.group:hover .group-hover\:scale-110 {
-  transform: scale(1.1);
-}
-
-.group:hover .group-hover\:translate-y-0 {
-  transform: translateY(0);
+  animation: float-fast 4s ease-in-out infinite;
 }
 
 /* Support pour la réduction des animations */
 @media (prefers-reduced-motion: reduce) {
   .fade-in-up,
-  .slide-in-expand,
-  .scale-in,
   .stagger-item,
-  .expand-width,
   .animate-float-slow,
   .animate-float-medium,
-  .animate-float-fast,
-  .group-hover\:scale-110,
-  .group-hover\:translate-y-0 {
-    animation: none;
-    transition: none;
-    transform: none;
+  .animate-float-fast {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
   }
   
   .fade-in-up.animate-in,
-  .slide-in-expand.animate-in,
-  .scale-in.animate-in,
-  .stagger-item.animate-in,
-  .expand-width.animate-in {
+  .stagger-item.animate-in {
     opacity: 1;
     transform: none;
   }
 }
 
-/* Optimisations pour mobile */
-@media (max-width: 768px) {
+/* Responsive adjustments */
+@media (max-width: 640px) {
   .fade-in-up,
   .stagger-item {
     transform: translateY(20px);
     transition-duration: 0.6s;
   }
-  
-  .slide-in-expand {
-    transform: scaleX(0.8);
-  }
-}
-
-/* Amélioration des performances */
-.transform {
-  will-change: transform;
-}
-
-.backdrop-blur-sm {
-  backdrop-filter: blur(8px);
-}
-
-/* Effets de brillance */
-.shadow-2xl {
-  box-shadow: 
-    0 25px 50px -12px rgba(0, 0, 0, 0.15),
-    0 0 0 1px rgba(255, 255, 255, 0.1);
-}
-
-.hover\:shadow-2xl:hover {
-  box-shadow: 
-    0 35px 60px -12px rgba(59, 130, 246, 0.2),
-    0 0 0 1px rgba(59, 130, 246, 0.1);
 }
 </style>
