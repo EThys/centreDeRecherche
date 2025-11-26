@@ -4,7 +4,7 @@
     <NavBarComponent />
 
     <!-- Hero Section avec image de fond -->
-    <section class="relative pt-32 sm:pt-40 lg:pt-48 pb-20 sm:pb-24 lg:pb-32 min-h-[60vh] sm:min-h-[70vh] flex items-center overflow-hidden">
+    <section class="relative pt-20 sm:pt-32 lg:pt-40 pb-12 sm:pb-16 lg:pb-24 min-h-[50vh] sm:min-h-[60vh] lg:min-h-[70vh] flex items-center overflow-hidden">
       <!-- Image de fond -->
       <div class="absolute inset-0 z-0">
         <img 
@@ -21,7 +21,7 @@
       <!-- Contenu -->
       <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
         <div class="text-center fade-in-up" data-animate>
-          <h1 class="text-2xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-white mb-4 sm:mb-6 lg:mb-8 leading-tight">
+          <h1 class="text-2xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-white mb-3 sm:mb-4 lg:mb-6 leading-tight">
             {{ $t('about.aboutView.heroTitle') }}<br class="hidden sm:block" />
             <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 via-blue-200 to-blue-400">{{ $t('about.aboutView.heroSubtitle') }}</span>
         </h1>
