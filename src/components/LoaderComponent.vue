@@ -16,7 +16,7 @@
         <!-- Cercles flottants animés -->
         <div class="absolute top-1/4 left-1/4 w-64 h-64 bg-blue-200/30 rounded-full blur-3xl animate-blob-slow"></div>
         <div class="absolute top-1/3 right-1/4 w-72 h-72 bg-indigo-200/30 rounded-full blur-3xl animate-blob-medium"></div>
-        <div class="absolute bottom-1/4 left-1/3 w-56 h-56 bg-purple-200/30 rounded-full blur-3xl animate-blob-fast"></div>
+        <div class="absolute bottom-1/4 left-1/3 w-56 h-56 bg-blue-200/30 rounded-full blur-3xl animate-blob-fast"></div>
       </div>
 
       <!-- Contenu principal -->
@@ -31,7 +31,7 @@
             <div class="w-40 h-40 border-2 border-indigo-300/50 rounded-full animate-spin-reverse"></div>
           </div>
           <div class="absolute inset-0 flex items-center justify-center">
-            <div class="w-32 h-32 border-2 border-purple-300/50 rounded-full animate-spin-slow"></div>
+            <div class="w-32 h-32 border-2 border-blue-300/50 rounded-full animate-spin-slow"></div>
           </div>
           
           <!-- Logo avec effet glassmorphism -->
@@ -47,21 +47,21 @@
             <!-- Points animés autour du logo -->
             <div class="absolute -top-2 -right-2 w-3 h-3 bg-blue-500 rounded-full animate-ping"></div>
             <div class="absolute -bottom-2 -left-2 w-3 h-3 bg-indigo-500 rounded-full animate-ping" style="animation-delay: 0.5s"></div>
-            <div class="absolute top-1/2 -left-4 w-2 h-2 bg-purple-500 rounded-full animate-ping" style="animation-delay: 1s"></div>
+            <div class="absolute top-1/2 -left-4 w-2 h-2 bg-blue-500 rounded-full animate-ping" style="animation-delay: 1s"></div>
             <div class="absolute top-1/2 -right-4 w-2 h-2 bg-blue-500 rounded-full animate-ping" style="animation-delay: 1.5s"></div>
           </div>
         </div>
         
         <!-- Texte de chargement avec animation -->
         <div class="text-center space-y-3">
-          <h2 class="text-3xl font-bold bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent animate-gradient-text">
+          <h2 class="text-3xl font-bold bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-600 bg-clip-text text-transparent animate-gradient-text">
             CReFF-PME
           </h2>
           <div class="flex items-center justify-center space-x-2">
             <div class="flex space-x-1">
               <div class="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style="animation-delay: 0s"></div>
               <div class="w-2 h-2 bg-indigo-500 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
-              <div class="w-2 h-2 bg-purple-500 rounded-full animate-bounce" style="animation-delay: 0.4s"></div>
+              <div class="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style="animation-delay: 0.4s"></div>
             </div>
             <p class="text-sm font-medium text-gray-600 ml-2">Chargement en cours</p>
           </div>
