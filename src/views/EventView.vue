@@ -132,7 +132,7 @@
             </div>
             <!-- Event Date -->
             <div class="absolute bottom-4 left-4 bg-black/50 text-white text-sm px-3 py-2 rounded-lg">
-              <div class="font-bold">{{ formatEventDate(event.date) }}</div>
+              <div class="font-bold">{{ formatEventDate(event.startDate) }}</div>
               <div class="text-xs">{{ formatEventTime(event.startTime, event.endTime) }}</div>
             </div>
           </div>
@@ -152,7 +152,7 @@
                 ]"
               >
                 <i class="fas fa-users mr-1"></i>
-                {{ event.attendees }}/{{ event.capacity }}
+                {{ event.currentAttendees || 0 }}/{{ event.maxAttendees || 0 }}
               </span>
             </div>
             
@@ -165,7 +165,7 @@
             </p>
 
             <!-- Speakers -->
-            <div class="mb-4">
+            <div v-if="event.speakers && event.speakers.length > 0" class="mb-4">
               <div class="flex items-center mb-2">
                 <i class="fas fa-microphone text-blue-500 mr-2"></i>
                 <span class="text-sm font-medium text-gray-700">Intervenants:</span>
@@ -174,7 +174,7 @@
                 <img
                   v-for="speaker in event.speakers.slice(0, 3)"
                   :key="speaker.id"
-                  :src="speaker.avatar"
+                  :src="speaker.photo"
                   :alt="speaker.name"
                   class="w-8 h-8 rounded-full border-2 border-white object-cover"
                   :title="speaker.name"
@@ -191,7 +191,7 @@
             <!-- Event Actions -->
             <div class="flex items-center justify-between pt-4 border-t border-gray-100">
               <div class="text-blue-600 font-semibold text-sm">
-                {{ event.price === 0 ? 'Gratuit' : `${event.price} $` }}
+                {{ !event.price || event.price === 0 ? 'Gratuit' : `${event.price} ${event.currency || 'USD'}` }}
               </div>
               <div class="text-blue-600 font-semibold text-sm group-hover:translate-x-2 transition-transform flex items-center">
                 Voir détails
@@ -228,39 +228,22 @@
         </button>
       </div>
 
-      <!-- Newsletter Section -->
-      <div class="bg-gradient-to-r from-blue-500 to-blue-600 rounded-2xl shadow-xl p-8 text-white mb-12">
-        <div class="max-w-4xl mx-auto text-center">
-          <h3 class="text-2xl md:text-3xl font-bold mb-4">Restez informé</h3>
-          <p class="text-blue-100 mb-6 text-lg">
-            Inscrivez-vous à notre newsletter pour ne manquer aucun événement important.
-          </p>
-          <div class="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-            <input
-              type="email"
-              placeholder="Entrez votre email"
-              class="flex-1 px-4 py-3 rounded-lg text-gray-900 focus:ring-2 focus:ring-white focus:outline-none"
-            >
-            <button class="bg-white text-blue-600 font-semibold px-6 py-3 rounded-lg hover:bg-gray-100 transition-colors">
-              S'inscrire
-            </button>
-          </div>
-        </div>
-      </div>
+
     </div>
   </div>
   <FooterComponent/>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import type { Event } from '@/models'
 
 const router = useRouter()
 
 // Reactive data
 const searchQuery = ref('')
-const selectedEventTypes = ref([])
+const selectedEventTypes = ref<string[]>([])
 const statusFilter = ref('all')
 const currentPage = ref(1)
 const eventsPerPage = 9
@@ -271,117 +254,124 @@ import NavBarComponent from '../components/navbar/NavBarComponent.vue'
 import FooterComponent from '../components/footer/FooterComponent.vue'
 
 // Sample events data
-const allEvents = ref([
-  {
-    id: 1,
-    title: "Conférence Nationale sur le Financement des PME",
-    description: "Une conférence majeure réunissant les acteurs clés du financement des PME en RDC pour discuter des défis et opportunités.",
-    image: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-    date: "2025-12-15",
-    startTime: "09:00",
-    endTime: "17:00",
-    location: "Kinshasa, Hôtel du Gouvernement",
-    type: "Conférence",
-    status: "upcoming",
-    price: 150,
-    capacity: 300,
-    attendees: 245,
-    speakers: [
-      { id: 1, name: "Dr. Jean Kabila", role: "Ministre des PME", avatar: "https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" },
-      { id: 2, name: "Marie Lumbu", role: "Directrice Banque Centrale", avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" }
-    ]
-  },
-  {
-    id: 2,
-    title: "Atelier Pratique: Préparer son Business Plan",
-    description: "Session interactive pour apprendre à créer un business plan convaincant pour les investisseurs.",
-    image: "https://images.unsplash.com/photo-1515187029135-18ee286d815b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-    date: "2025-11-25",
-    startTime: "14:00",
-    endTime: "18:00",
-    location: "Lubumbashi, Centre des Affaires",
-    type: "Atelier",
-    status: "upcoming",
-    price: 50,
-    capacity: 50,
-    attendees: 32,
-    speakers: [
-      { id: 3, name: "Pierre Mbayo", role: "Consultant en Finance", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" }
-    ]
-  },
-  {
-    id: 3,
-    title: "Table Ronde: Innovation Financière pour PME",
-    description: "Discussion sur les nouvelles solutions de financement digital et les fintech en RDC.",
-    image: "https://images.unsplash.com/photo-1559136555-9303baea8ebd?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-    date: "2025-11-20",
-    startTime: "10:00",
-    endTime: "12:30",
-    location: "En Ligne",
-    type: "Webinaire",
-    status: "upcoming",
-    price: 0,
-    capacity: 500,
-    attendees: 387,
-    speakers: [
-      { id: 4, name: "Sarah Ntumba", role: "CEO FinTech RDC", avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b786?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" },
-      { id: 5, name: "David Mukendi", role: "Expert Digital", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" }
-    ]
-  },
-  {
-    id: 4,
-    title: "Forum des Investisseurs PME 2025",
-    description: "Rencontre entre entrepreneurs et investisseurs potentiels pour des opportunités de financement.",
-    image: "https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-    date: "2025-10-30",
-    startTime: "08:30",
-    endTime: "16:00",
-    location: "Goma, Centre de Conférences",
-    type: "Forum",
-    status: "past",
-    price: 100,
-    capacity: 200,
-    attendees: 180,
-    speakers: [
-      { id: 6, name: "Luc Tshibanda", role: "Investisseur Privé", avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" }
-    ]
-  },
-  {
-    id: 5,
-    title: "Formation: Gestion de Trésorerie PME",
-    description: "Formation intensive sur les techniques de gestion de trésorerie pour les dirigeants de PME.",
-    image: "https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-    date: "2025-10-20",
-    startTime: "09:00",
-    endTime: "16:00",
-    location: "Kinshasa, Centre de Formation",
-    type: "Formation",
-    status: "past",
-    price: 75,
-    capacity: 40,
-    attendees: 35,
-    speakers: [
-      { id: 7, name: "Dr. Amina Koffi", role: "Expert Comptable", avatar: "https://images.unsplash.com/photo-1544725176-7c40e5a71c5e?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" }
-    ]
-  },
-  {
-    id: 6,
-    title: "Séminaire International Financement Agricole",
-    description: "Focus sur les solutions de financement pour les PME du secteur agricole en RDC.",
-    image: "https://images.unsplash.com/photo-1465495976277-4387d4b0e4a6?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-    date: "2025-12-05",
-    startTime: "08:00",
-    endTime: "13:00",
-    location: "Kisangani, Hôtel des Chutes",
-    type: "Séminaire",
-    status: "upcoming",
-    price: 0,
-    capacity: 150,
-    attendees: 89,
-    speakers: [
-      { id: 8, name: "Prof. Joseph Lelo", role: "Expert Agricole", avatar: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" }
-    ]
-  }
+const allEvents = ref<Event[]>([
+  // {
+  //   id: 1,
+  //   title: "Conférence Nationale sur le Financement des PME",
+  //   description: "Une conférence majeure réunissant les acteurs clés du financement des PME en RDC pour discuter des défis et opportunités.",
+  //   content: "Une conférence majeure réunissant les acteurs clés du financement des PME en RDC pour discuter des défis et opportunités. Cette conférence abordera les enjeux actuels du financement des PME.",
+  //   image: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+  //   startDate: "2025-12-15",
+  //   startTime: "09:00",
+  //   endTime: "17:00",
+  //   location: "Kinshasa, Hôtel du Gouvernement",
+  //   address: "Hôtel du Gouvernement, Kinshasa",
+  //   type: "conference",
+  //   status: "upcoming",
+  //   price: 150,
+  //   currency: "USD",
+  //   maxAttendees: 300,
+  //   currentAttendees: 245,
+  //   registrationRequired: true,
+  //   speakers: [
+  //     { id: 1, name: "Dr. Jean Kabila", position: "Ministre des PME", photo: "https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" },
+  //     { id: 2, name: "Marie Lumbu", position: "Directrice Banque Centrale", photo: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" }
+  //   ]
+  // },
+  // {
+  //   id: 2,
+  //   title: "Atelier Pratique: Préparer son Business Plan",
+  //   description: "Session interactive pour apprendre à créer un business plan convaincant pour les investisseurs.",
+  //   image: "https://images.unsplash.com/photo-1515187029135-18ee286d815b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+  //   startDate: "2025-11-25",
+  //   startTime: "14:00",
+  //   endTime: "18:00",
+  //   location: "Lubumbashi, Centre des Affaires",
+  //   type: "workshop",
+  //   status: "upcoming",
+  //   price: 50,
+  //   maxAttendees: 50,
+  //   currentAttendees: 32,
+  //   speakers: [
+  //     { id: 3, name: "Pierre Mbayo", position: "Consultant en Finance", photo: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" }
+  //   ]
+  // },
+  // {
+  //   id: 3,
+  //   title: "Table Ronde: Innovation Financière pour PME",
+  //   description: "Discussion sur les nouvelles solutions de financement digital et les fintech en RDC.",
+  //   image: "https://images.unsplash.com/photo-1559136555-9303baea8ebd?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+  //   startDate: "2025-11-20",
+  //   startTime: "10:00",
+  //   endTime: "12:30",
+  //   location: "En Ligne",
+  //   type: "webinar",
+  //   status: "upcoming",
+  //   price: 0,
+  //   maxAttendees: 500,
+  //   currentAttendees: 387,
+  //   speakers: [
+  //     { id: 4, name: "Sarah Ntumba", position: "CEO FinTech RDC", photo: "https://images.unsplash.com/photo-1494790108755-2616b612b786?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" },
+  //     { id: 5, name: "David Mukendi", position: "Expert Digital", photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" }
+  //   ]
+  // },
+  // {
+  //   id: 4,
+  //   title: "Forum des Investisseurs PME 2025",
+  //   description: "Rencontre entre entrepreneurs et investisseurs potentiels pour des opportunités de financement.",
+  //   image: "https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+  //   startDate: "2025-10-30",
+  //   startTime: "08:30",
+  //   endTime: "16:00",
+  //   location: "Goma, Centre de Conférences",
+  //   type: "other",
+  //   status: "completed",
+  //   price: 100,
+  //   maxAttendees: 200,
+  //   currentAttendees: 180,
+  //   registrationRequired: true,
+  //   speakers: [
+  //     { id: 6, name: "Luc Tshibanda", position: "Investisseur Privé", photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" }
+  //   ]
+  // },
+  // {
+  //   id: 5,
+  //   title: "Formation: Gestion de Trésorerie PME",
+  //   description: "Formation intensive sur les techniques de gestion de trésorerie pour les dirigeants de PME.",
+  //   image: "https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+  //   startDate: "2025-10-20",
+  //   startTime: "09:00",
+  //   endTime: "16:00",
+  //   location: "Kinshasa, Centre de Formation",
+  //   type: "workshop",
+  //   status: "completed",
+  //   price: 75,
+  //   maxAttendees: 40,
+  //   currentAttendees: 35,
+  //   registrationRequired: true,
+  //   speakers: [
+  //     { id: 7, name: "Dr. Amina Koffi", position: "Expert Comptable", photo: "https://images.unsplash.com/photo-1544725176-7c40e5a71c5e?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" }
+  //   ]
+  // },
+  // {
+  //   id: 6,
+  //   title: "Séminaire International Financement Agricole",
+  //   description: "Focus sur les solutions de financement pour les PME du secteur agricole en RDC.",
+  //   image: "https://images.unsplash.com/photo-1465495976277-4387d4b0e4a6?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+  //   startDate: "2025-12-05",
+  //   startTime: "08:00",
+  //   endTime: "13:00",
+  //   location: "Kisangani, Hôtel des Chutes",
+  //   type: "seminar",
+  //   status: "upcoming",
+  //   price: 0,
+  //   maxAttendees: 150,
+  //   currentAttendees: 89,
+  //   registrationRequired: false,
+  //   speakers: [
+  //     { id: 8, name: "Prof. Joseph Lelo", position: "Expert Agricole", photo: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" }
+  //   ]
+  // }
 ])
 
 // Computed properties
@@ -394,11 +384,11 @@ const upcomingEvents = computed(() => {
 })
 
 const pastEvents = computed(() => {
-  return allEvents.value.filter(event => event.status === 'past')
+  return allEvents.value.filter(event => event.status === 'completed')
 })
 
 const speakers = computed(() => {
-  const allSpeakers = allEvents.value.flatMap(event => event.speakers)
+  const allSpeakers = allEvents.value.flatMap(event => event.speakers || [])
   return [...new Map(allSpeakers.map(speaker => [speaker.id, speaker])).values()]
 })
 
@@ -412,7 +402,7 @@ const filteredEvents = computed(() => {
       event.title.toLowerCase().includes(query) ||
       event.description.toLowerCase().includes(query) ||
       event.location.toLowerCase().includes(query) ||
-      event.speakers.some(speaker => speaker.name.toLowerCase().includes(query))
+      (event.speakers && event.speakers.some(speaker => speaker.name.toLowerCase().includes(query)))
     )
   }
 
@@ -429,7 +419,7 @@ const filteredEvents = computed(() => {
   }
 
   // Sort events by date (upcoming first)
-  filtered.sort((a, b) => new Date(a.date) - new Date(b.date))
+  filtered.sort((a, b) => new Date(a.startDate) - new Date(b.startDate))
 
   // Pagination
   const startIndex = (currentPage.value - 1) * eventsPerPage
