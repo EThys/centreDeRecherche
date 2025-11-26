@@ -5,7 +5,7 @@
       <div class="absolute inset-0 overflow-hidden">
         <img 
           src="https://images.unsplash.com/photo-14505499163-c8848c66ca85?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80"
-          alt="Centre de Recherche et de Formation sur le Financement des PME"
+          alt="Centre de Recherche et de Formation sur le Financement des PME en Afrique centrale"
           class="w-full h-full object-cover opacity-20"
         />
         <!-- Overlay et effets -->
