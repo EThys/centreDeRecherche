@@ -1,9 +1,11 @@
 <template>
+  <LoaderComponent />
   <router-view />
 </template>
 
 <script setup lang="ts">
-// Votre code script ici si nécessaire
+//@ts-ignore
+import LoaderComponent from './components/LoaderComponent.vue'
 </script>
 
 <style>
