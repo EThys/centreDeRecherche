@@ -1,104 +1,80 @@
 <template>
   <header
-    class="fixed w-full z-50 transition-all duration-500"
+    class="fixed w-full z-50 transition-all duration-500 ease-out"
     :class="{
-      'bg-white/95 backdrop-blur-xl shadow-2xl shadow-blue-900/10 border-b border-blue-200/30': isScrolled,
-      'bg-white/90 backdrop-blur-lg': !isScrolled && !isMobileMenuOpen,
-      'bg-white': isMobileMenuOpen,
+      'bg-white/95 backdrop-blur-xl shadow-lg border-b border-gray-200/60': isScrolled,
+      'bg-white/90 backdrop-blur-lg border-b border-transparent': !isScrolled && !isMobileMenuOpen,
+      'bg-white border-b border-gray-200': isMobileMenuOpen,
     }"
   >
-    <div class="max-w-7xl mx-auto px-6 lg:px-8">
-      <div class="flex justify-between items-center h-20">
-        <!-- Logo CReFF-PME -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-20 lg:h-24">
+        <!-- Logo CReFF-PME avec texte -->
         <router-link 
           to="/" 
-          class="flex items-center space-x-3 z-60 group"
+          class="flex items-center gap-3 sm:gap-4 z-60 group relative"
           @click="closeMobileMenu"
         >
+          <!-- Conteneur logo premium avec effets visuels -->
           <div
-            class="w-12 h-12 bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl flex items-center justify-center shadow-lg ring-2 ring-white/20 group-hover:shadow-xl group-hover:scale-105 transition-all duration-300"
+            class="relative w-14 h-14 sm:w-16 sm:h-16 lg:w-18 lg:h-18 bg-white rounded-2xl flex items-center justify-center shadow-xl ring-2 ring-gray-100/80 group-hover:shadow-2xl group-hover:ring-blue-400/60 group-hover:scale-105 transition-all duration-500 ease-out p-2 sm:p-2.5 overflow-hidden flex-shrink-0"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="w-7 h-7 text-white"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="M12 2L2 7l10 5 10-5-10-5z" />
-              <path d="M2 17l10 5 10-5" />
-              <path d="M2 12l10 5 10-5" />
-              <path d="M9 10h6" />
-              <path d="M9 14h6" />
-            </svg>
+            <!-- Effet de brillance animé -->
+            <div class="absolute inset-0 bg-gradient-to-br from-white via-blue-50/30 to-white rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            <!-- Effet de lumière au survol -->
+            <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out"></div>
+            <!-- Logo PNG avec fond transparent -->
+            <img
+              :src="logoImage"
+              alt="CReFF-PME Logo"
+              class="relative z-10 w-full h-full object-contain drop-shadow-md group-hover:drop-shadow-lg transition-all duration-500"
+            />
           </div>
-          <div class="flex flex-col">
-            <span class="font-bold text-xl text-blue-800 tracking-tight group-hover:text-blue-700 transition-colors">
+          <!-- Nom du centre -->
+          <div class="hidden sm:flex flex-col">
+            <span class="font-bold text-base sm:text-lg lg:text-xl text-gray-900 group-hover:text-blue-600 transition-colors leading-tight">
               CReFF-PME
             </span>
-            <span class="text-xs text-blue-600 font-medium -mt-1 leading-tight">
-              Centre de Recherche<br>Financement des PME
+            <span class="text-xs sm:text-sm text-gray-600 font-medium leading-tight">
+              Centre de Recherche<br class="hidden md:block">Financement des PME
             </span>
           </div>
         </router-link>
 
         <!-- Desktop Navigation -->
-        <nav v-if="!isMobile" class="flex items-center space-x-1">
+        <nav v-if="!isMobile" class="hidden lg:flex items-center space-x-1 xl:space-x-2">
           <!-- Accueil -->
           <router-link
             to="/"
-            class="px-5 py-2.5 flex items-center font-semibold text-gray-700 hover:text-blue-600 transition-all duration-300 rounded-xl group relative"
+            class="relative px-4 xl:px-5 py-2.5 flex items-center font-medium text-gray-700 hover:text-blue-600 transition-all duration-300 rounded-lg group"
             :class="{ 
-              'text-blue-600 bg-blue-50/80 shadow-sm': route.path === '/',
-              'hover:bg-blue-50/50': route.path !== '/'
+              'text-blue-600': route.path === '/',
             }"
           >
-            <div class="w-2 h-2 bg-blue-500 rounded-full mr-3 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="w-5 h-5 mr-2 text-gray-400 group-hover:text-blue-600 transition-colors"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-              />
-            </svg>
-            Accueil
+            <span class="relative z-10">{{ $t('nav.home') }}</span>
+            <!-- Indicateur actif animé -->
+            <span 
+              v-if="route.path === '/'"
+              class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full animate-slide-in"
+            ></span>
+            <!-- Effet de fond au survol -->
+            <span class="absolute inset-0 bg-blue-50/50 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-0"></span>
           </router-link>
 
           <!-- À propos -->
           <router-link
-            to="/a-propos"
-            class="px-5 py-2.5 flex items-center font-semibold text-gray-700 hover:text-blue-600 transition-all duration-300 rounded-xl group relative"
+            to="/about"
+            class="relative px-4 xl:px-5 py-2.5 flex items-center font-medium text-gray-700 hover:text-blue-600 transition-all duration-300 rounded-lg group"
             :class="{ 
-              'text-blue-600 bg-blue-50/80 shadow-sm': route.path.includes('/a-propos'),
-              'hover:bg-blue-50/50': !route.path.includes('/a-propos')
+              'text-blue-600': route.path.includes('/about'),
             }"
           >
-            <div class="w-2 h-2 bg-blue-400 rounded-full mr-3 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="w-5 h-5 mr-2 text-gray-400 group-hover:text-blue-600 transition-colors"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-              />
-            </svg>
-            À propos
+            <span class="relative z-10">{{ $t('nav.about') }}</span>
+            <span 
+              v-if="route.path.includes('/about')"
+              class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full animate-slide-in"
+            ></span>
+            <span class="absolute inset-0 bg-blue-50/50 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-0"></span>
           </router-link>
 
           <!-- Recherche Dropdown -->
@@ -108,31 +84,15 @@
             @mouseleave="activeDropdown = null"
           >
             <button
-              class="px-5 py-2.5 flex items-center font-semibold text-gray-700 hover:text-blue-600 transition-all duration-300 rounded-xl group"
+              class="relative px-4 xl:px-5 py-2.5 flex items-center font-medium text-gray-700 hover:text-blue-600 transition-all duration-300 rounded-lg"
               :class="{ 
-                'text-blue-600 bg-blue-50/80 shadow-sm': route.path.includes('/recherche') || activeDropdown === 'recherche',
-                'hover:bg-blue-50/50': !route.path.includes('/recherche')
+                'text-blue-600': route.path.includes('/recherche') || activeDropdown === 'recherche',
               }"
             >
-              <div class="w-2 h-2 bg-blue-500 rounded-full mr-3 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              <span class="relative z-10">Recherche</span>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                class="w-5 h-5 mr-2 text-gray-400 group-hover:text-blue-600 transition-colors"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
-                />
-              </svg>
-              Recherche
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="w-4 h-4 ml-2 transition-transform duration-300 text-gray-400 group-hover:text-blue-600"
+                class="w-4 h-4 ml-1.5 transition-transform duration-300"
                 :class="{ 'rotate-180': activeDropdown === 'recherche' }"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -145,88 +105,74 @@
                   d="M19 9l-7 7-7-7"
                 />
               </svg>
+              <span 
+                v-if="route.path.includes('/recherche') || activeDropdown === 'recherche'"
+                class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full animate-slide-in"
+              ></span>
+              <span class="absolute inset-0 bg-blue-50/50 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-0"></span>
             </button>
 
-            <!-- Dropdown Menu -->
+            <!-- Dropdown Menu Premium -->
             <transition
-              enter-active-class="transition duration-300 ease-out transform"
-              enter-from-class="opacity-0 -translate-y-2"
-              enter-to-class="opacity-100 translate-y-0"
-              leave-active-class="transition duration-200 ease-in transform"
-              leave-from-class="opacity-100 translate-y-0"
-              leave-to-class="opacity-0 -translate-y-2"
+              enter-active-class="transition duration-300 ease-out"
+              enter-from-class="opacity-0 -translate-y-4 scale-95"
+              enter-to-class="opacity-100 translate-y-0 scale-100"
+              leave-active-class="transition duration-200 ease-in"
+              leave-from-class="opacity-100 translate-y-0 scale-100"
+              leave-to-class="opacity-0 -translate-y-4 scale-95"
             >
               <div
                 v-if="activeDropdown === 'recherche'"
-                class="absolute top-full left-0 w-80 bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl shadow-blue-900/10 border border-blue-200/30 mt-3 py-3 z-50"
+                class="absolute top-full left-0 w-80 bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-gray-200/60 mt-3 py-3 z-50 overflow-hidden"
               >
-                <div class="px-4 py-2 border-b border-blue-100/30">
-                  <span class="text-xs font-semibold text-blue-600 uppercase tracking-wider">Domaines de Recherche</span>
+                <!-- Effet de brillance en haut -->
+                <div class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-200 to-transparent"></div>
+                
+                <div class="px-5 py-3 border-b border-gray-100/80">
+                  <span class="text-xs font-bold text-gray-500 uppercase tracking-widest">Domaines de Recherche</span>
                 </div>
                 
-                <router-link
-                  to="/forum"
-                  class="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50/80 hover:text-blue-600 transition-all duration-300 group/item border-b border-blue-100/30 last:border-b-0"
-                  @click="closeDropdowns"
-                >
-                  <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center mr-3 shadow-sm">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a2 2 0 01-2-2v-1" />
-                    </svg>
-                  </div>
-                  <div>
-                    <div class="font-semibold text-sm">Forum de Recherche</div>
-                    <div class="text-xs text-blue-500 mt-0.5">Échanges et discussions académiques</div>
-                  </div>
-                </router-link>
-                
-                <router-link
-                  to="/activites-recherche"
-                  class="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50/80 hover:text-blue-600 transition-all duration-300 group/item border-b border-blue-100/30 last:border-b-0"
-                  @click="closeDropdowns"
-                >
-                  <div class="w-8 h-8 bg-gradient-to-br from-blue-400 to-blue-500 rounded-lg flex items-center justify-center mr-3 shadow-sm">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                    </svg>
-                  </div>
-                  <div>
-                    <div class="font-semibold text-sm">Activités de Recherche</div>
-                    <div class="text-xs text-blue-500 mt-0.5">Projets et initiatives en cours</div>
-                  </div>
-                </router-link>
-                
-                <router-link
-                  to="/evenements"
-                  class="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50/80 hover:text-blue-600 transition-all duration-300 group/item border-b border-blue-100/30 last:border-b-0"
-                  @click="closeDropdowns"
-                >
-                  <div class="w-8 h-8 bg-gradient-to-br from-blue-600 to-blue-700 rounded-lg flex items-center justify-center mr-3 shadow-sm">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <div class="font-semibold text-sm">Événements</div>
-                    <div class="text-xs text-blue-500 mt-0.5">Conférences et séminaires</div>
-                  </div>
-                </router-link>
-                
-                <router-link
-                  to="/publications"
-                  class="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50/80 hover:text-blue-600 transition-all duration-300 group/item border-b border-blue-100/30 last:border-b-0"
-                  @click="closeDropdowns"
-                >
-                  <div class="w-8 h-8 bg-gradient-to-br from-blue-700 to-blue-800 rounded-lg flex items-center justify-center mr-3 shadow-sm">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                    </svg>
-                  </div>
-                  <div>
-                    <div class="font-semibold text-sm">Publications</div>
-                    <div class="text-xs text-blue-500 mt-0.5">Articles et recherches publiées</div>
-                  </div>
-                </router-link>
+                <div class="py-2">
+                  <router-link
+                    to="/forum"
+                    class="flex items-center px-5 py-3 text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-transparent hover:text-blue-600 transition-all duration-300 group/item relative"
+                    @click="closeDropdowns"
+                  >
+                    <div class="absolute left-0 top-0 bottom-0 w-1 bg-blue-600 rounded-r-full opacity-0 group-hover/item:opacity-100 transition-opacity duration-300"></div>
+                    <div class="w-2 h-2 bg-blue-600 rounded-full mr-4 opacity-0 group-hover/item:opacity-100 transition-all duration-300 transform scale-0 group-hover/item:scale-100"></div>
+                    <span class="text-sm font-semibold relative z-10">{{ $t('nav.forum') }}</span>
+                  </router-link>
+                  
+                  <router-link
+                    to="/activites-recherche"
+                    class="flex items-center px-5 py-3 text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-transparent hover:text-blue-600 transition-all duration-300 group/item relative"
+                    @click="closeDropdowns"
+                  >
+                    <div class="absolute left-0 top-0 bottom-0 w-1 bg-blue-600 rounded-r-full opacity-0 group-hover/item:opacity-100 transition-opacity duration-300"></div>
+                    <div class="w-2 h-2 bg-blue-600 rounded-full mr-4 opacity-0 group-hover/item:opacity-100 transition-all duration-300 transform scale-0 group-hover/item:scale-100"></div>
+                    <span class="text-sm font-semibold relative z-10">Activités de Recherche</span>
+                  </router-link>
+                  
+                  <router-link
+                    to="/evenements"
+                    class="flex items-center px-5 py-3 text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-transparent hover:text-blue-600 transition-all duration-300 group/item relative"
+                    @click="closeDropdowns"
+                  >
+                    <div class="absolute left-0 top-0 bottom-0 w-1 bg-blue-600 rounded-r-full opacity-0 group-hover/item:opacity-100 transition-opacity duration-300"></div>
+                    <div class="w-2 h-2 bg-blue-600 rounded-full mr-4 opacity-0 group-hover/item:opacity-100 transition-all duration-300 transform scale-0 group-hover/item:scale-100"></div>
+                    <span class="text-sm font-semibold relative z-10">{{ $t('nav.events') }}</span>
+                  </router-link>
+                  
+                  <router-link
+                    to="/publications"
+                    class="flex items-center px-5 py-3 text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-transparent hover:text-blue-600 transition-all duration-300 group/item relative"
+                    @click="closeDropdowns"
+                  >
+                    <div class="absolute left-0 top-0 bottom-0 w-1 bg-blue-600 rounded-r-full opacity-0 group-hover/item:opacity-100 transition-opacity duration-300"></div>
+                    <div class="w-2 h-2 bg-blue-600 rounded-full mr-4 opacity-0 group-hover/item:opacity-100 transition-all duration-300 transform scale-0 group-hover/item:scale-100"></div>
+                    <span class="text-sm font-semibold relative z-10">{{ $t('nav.publications') }}</span>
+                  </router-link>
+                </div>
               </div>
             </transition>
           </div>
@@ -234,39 +180,83 @@
           <!-- Contact -->
           <router-link
             to="/contact"
-            class="px-5 py-2.5 flex items-center font-semibold text-gray-700 hover:text-blue-600 transition-all duration-300 rounded-xl group relative"
+            class="relative px-4 xl:px-5 py-2.5 flex items-center font-medium text-gray-700 hover:text-blue-600 transition-all duration-300 rounded-lg group"
             :class="{ 
-              'text-blue-600 bg-blue-50/80 shadow-sm': route.path.includes('/contact'),
-              'hover:bg-blue-50/50': !route.path.includes('/contact')
+              'text-blue-600': route.path.includes('/contact'),
             }"
           >
-            <div class="w-2 h-2 bg-blue-300 rounded-full mr-3 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="w-5 h-5 mr-2 text-gray-400 group-hover:text-blue-600 transition-colors"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-              />
-            </svg>
-            Contact
+            <span class="relative z-10">{{ $t('nav.contact') }}</span>
+            <span 
+              v-if="route.path.includes('/contact')"
+              class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full animate-slide-in"
+            ></span>
+            <span class="absolute inset-0 bg-blue-50/50 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-0"></span>
           </router-link>
 
-          <!-- Bouton Espace Membre -->
+          <!-- Séparateur élégant -->
+          <div class="h-8 w-px bg-gradient-to-b from-transparent via-gray-300 to-transparent mx-2 xl:mx-3"></div>
+
+          <!-- Bouton Espace Membre Premium -->
+          <!-- Sélecteur de langue -->
+          <div class="relative group mr-4 language-selector">
+            <button
+              @click.stop="toggleLanguageMenu"
+              class="relative px-4 py-2.5 flex items-center font-medium text-gray-700 hover:text-blue-600 transition-all duration-300 rounded-lg group"
+            >
+              <i class="fas fa-globe mr-2"></i>
+              <span class="uppercase text-sm">{{ currentLocale }}</span>
+              <i class="fas fa-chevron-down ml-2 text-xs transition-transform duration-300" :class="{ 'rotate-180': showLanguageMenu }"></i>
+            </button>
+            
+            <!-- Menu déroulant des langues -->
+            <transition
+              enter-active-class="transition duration-200 ease-out"
+              enter-from-class="opacity-0 scale-95 translate-y-2"
+              enter-to-class="opacity-100 scale-100 translate-y-0"
+              leave-active-class="transition duration-150 ease-in"
+              leave-from-class="opacity-100 scale-100 translate-y-0"
+              leave-to-class="opacity-0 scale-95 translate-y-2"
+            >
+              <div
+                v-if="showLanguageMenu"
+                class="absolute right-0 mt-2 w-40 bg-white rounded-xl shadow-xl border border-gray-200 py-2 z-50"
+                @click.stop
+              >
+                <button
+                  @click="changeLanguage('fr')"
+                  class="w-full px-4 py-2.5 text-left hover:bg-blue-50 transition-colors flex items-center justify-between"
+                  :class="{ 'bg-blue-50 text-blue-600': currentLocale === 'fr' }"
+                >
+                  <span class="flex items-center">
+                    <span class="text-lg mr-2">🇫🇷</span>
+                    <span>Français</span>
+                  </span>
+                  <i v-if="currentLocale === 'fr'" class="fas fa-check text-blue-600"></i>
+                </button>
+                <button
+                  @click="changeLanguage('en')"
+                  class="w-full px-4 py-2.5 text-left hover:bg-blue-50 transition-colors flex items-center justify-between"
+                  :class="{ 'bg-blue-50 text-blue-600': currentLocale === 'en' }"
+                >
+                  <span class="flex items-center">
+                    <span class="text-lg mr-2">🇬🇧</span>
+                    <span>English</span>
+                  </span>
+                  <i v-if="currentLocale === 'en'" class="fas fa-check text-blue-600"></i>
+                </button>
+              </div>
+            </transition>
+          </div>
+
           <router-link
             to="/authentification"
-            class="ml-2 px-6 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300 flex items-center group relative overflow-hidden"
+            class="relative px-5 xl:px-6 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl hover:shadow-blue-500/30 transform hover:-translate-y-0.5 transition-all duration-300 flex items-center overflow-hidden group/btn"
           >
-            <div class="absolute inset-0 bg-gradient-to-r from-blue-500 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            <!-- Effet de brillance animé -->
+            <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover/btn:translate-x-full transition-transform duration-1000"></div>
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              class="w-5 h-5 mr-2 relative z-10"
+              class="w-4 h-4 mr-2 relative z-10"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -286,27 +276,28 @@
         <button
           v-if="isMobile"
           @click="isMobileMenuOpen = !isMobileMenuOpen"
-          class="p-3 rounded-xl text-gray-700 hover:bg-blue-50/50 transition-all duration-300 z-60 group relative"
-          :class="{ 'bg-blue-50/80 text-blue-600': isMobileMenuOpen }"
+          class="lg:hidden p-2.5 rounded-xl text-gray-700 hover:bg-gray-100 active:bg-gray-200 transition-all duration-300 z-60 relative"
+          :class="{ 'bg-blue-50 text-blue-600': isMobileMenuOpen }"
+          aria-label="Toggle menu"
         >
           <div class="w-6 h-6 relative">
             <span
-              class="absolute top-1/2 left-1/2 w-5 h-0.5 bg-gray-600 transform -translate-x-1/2 -translate-y-1/2 transition-all duration-300"
+              class="absolute top-1/2 left-1/2 w-5 h-0.5 bg-current transform -translate-x-1/2 -translate-y-1/2 transition-all duration-300 rounded-full"
               :class="{
-                'rotate-45 bg-blue-600': isMobileMenuOpen,
+                'rotate-45 translate-y-0': isMobileMenuOpen,
                 '-translate-y-2': !isMobileMenuOpen
               }"
             ></span>
             <span
-              class="absolute top-1/2 left-1/2 w-5 h-0.5 bg-gray-600 transform -translate-x-1/2 -translate-y-1/2 transition-all duration-300"
+              class="absolute top-1/2 left-1/2 w-5 h-0.5 bg-current transform -translate-x-1/2 -translate-y-1/2 transition-all duration-300 rounded-full"
               :class="{
                 'opacity-0': isMobileMenuOpen
               }"
             ></span>
             <span
-              class="absolute top-1/2 left-1/2 w-5 h-0.5 bg-gray-600 transform -translate-x-1/2 -translate-y-1/2 transition-all duration-300"
+              class="absolute top-1/2 left-1/2 w-5 h-0.5 bg-current transform -translate-x-1/2 -translate-y-1/2 transition-all duration-300 rounded-full"
               :class="{
-                '-rotate-45 bg-blue-600': isMobileMenuOpen,
+                '-rotate-45 translate-y-0': isMobileMenuOpen,
                 'translate-y-2': !isMobileMenuOpen
               }"
             ></span>
@@ -315,193 +306,107 @@
       </div>
     </div>
 
-    <!-- Mobile Menu -->
+    <!-- Mobile Menu Premium -->
     <transition
-      enter-active-class="transition duration-500 ease-out transform"
-      enter-from-class="opacity-0 -translate-y-8"
+      enter-active-class="transition duration-500 ease-out"
+      enter-from-class="opacity-0 -translate-y-10"
       enter-to-class="opacity-100 translate-y-0"
-      leave-active-class="transition duration-300 ease-in transform"
+      leave-active-class="transition duration-300 ease-in"
       leave-from-class="opacity-100 translate-y-0"
-      leave-to-class="opacity-0 -translate-y-8"
+      leave-to-class="opacity-0 -translate-y-10"
     >
       <div
         v-if="isMobile && isMobileMenuOpen"
-        class="lg:hidden bg-white/95 backdrop-blur-xl border-t border-blue-200/30 shadow-2xl shadow-blue-900/10 absolute top-20 inset-x-0 pb-8 pt-6 max-h-[80vh] overflow-y-auto custom-scrollbar"
+        class="lg:hidden bg-white/98 backdrop-blur-xl border-t border-gray-200 shadow-2xl absolute top-20 sm:top-24 inset-x-0 pb-8 pt-6 max-h-[85vh] overflow-y-auto custom-scrollbar"
       >
-        <div class="px-6 space-y-2">
+        <div class="px-4 sm:px-6 space-y-1">
           <!-- Accueil Mobile -->
           <router-link
             to="/"
-            class="flex items-center px-5 py-4 text-gray-700 rounded-xl hover:bg-blue-50/80 hover:text-blue-600 transition-all duration-300 font-semibold group"
-            :class="{ 'bg-blue-50/80 text-blue-600 shadow-sm': route.path === '/' }"
+            class="flex items-center px-5 py-4 text-gray-700 rounded-xl hover:bg-gradient-to-r hover:from-blue-50 hover:to-transparent hover:text-blue-600 transition-all duration-300 font-semibold group relative"
+            :class="{ 'bg-blue-50 text-blue-600': route.path === '/' }"
             @click="closeMobileMenu"
           >
-            <div class="w-2 h-2 bg-blue-500 rounded-full mr-4 group-hover:scale-125 transition-transform"></div>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="w-5 h-5 mr-3 text-gray-400 group-hover:text-blue-600"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-              />
-            </svg>
-            Accueil
+            <div class="absolute left-0 top-0 bottom-0 w-1 bg-blue-600 rounded-r-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" :class="{ 'opacity-100': route.path === '/' }"></div>
+            <span class="relative z-10 ml-2">{{ $t('nav.home') }}</span>
           </router-link>
 
           <!-- À propos Mobile -->
           <router-link
-            to="/a-propos"
-            class="flex items-center px-5 py-4 text-gray-700 rounded-xl hover:bg-blue-50/80 hover:text-blue-600 transition-all duration-300 font-semibold group"
-            :class="{ 'bg-blue-50/80 text-blue-600 shadow-sm': route.path.includes('/a-propos') }"
+            to="/about"
+            class="flex items-center px-5 py-4 text-gray-700 rounded-xl hover:bg-gradient-to-r hover:from-blue-50 hover:to-transparent hover:text-blue-600 transition-all duration-300 font-semibold group relative"
+            :class="{ 'bg-blue-50 text-blue-600': route.path.includes('/about') }"
             @click="closeMobileMenu"
           >
-            <div class="w-2 h-2 bg-blue-400 rounded-full mr-4 group-hover:scale-125 transition-transform"></div>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="w-5 h-5 mr-3 text-gray-400 group-hover:text-blue-600"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-              />
-            </svg>
-            À propos
+            <div class="absolute left-0 top-0 bottom-0 w-1 bg-blue-600 rounded-r-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" :class="{ 'opacity-100': route.path.includes('/about') }"></div>
+            <span class="relative z-10 ml-2">{{ $t('nav.about') }}</span>
           </router-link>
 
           <!-- Section Recherche Mobile -->
-          <div class="pt-2 pb-4">
-            <div class="px-5 py-3 text-xs font-bold text-blue-600 uppercase tracking-wider border-b border-blue-100/30 flex items-center">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="w-4 h-4 mr-2 text-blue-500"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
-                />
-              </svg>
-              Recherche
+          <div class="pt-3 pb-2">
+            <div class="px-5 py-3 text-xs font-bold text-gray-500 uppercase tracking-widest border-b border-gray-200">
+              {{ $t('nav.research') }}
             </div>
-            <div class="mt-3 space-y-2">
+            <div class="mt-3 space-y-1">
               <router-link
                 to="/forum"
-                class="flex items-center px-8 py-3.5 text-gray-600 hover:bg-blue-50/60 hover:text-blue-600 transition-all duration-300 rounded-xl group"
+                class="flex items-center px-8 py-3.5 text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-transparent hover:text-blue-600 transition-all duration-300 rounded-xl group relative"
                 @click="closeMobileMenu"
               >
-                <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center mr-3 shadow-sm">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a2 2 0 01-2-2v-1" />
-                  </svg>
-                </div>
-                <div>
-                  <span class="font-semibold block">Forum</span>
-                  <span class="text-xs text-blue-500 mt-0.5">Échanges académiques</span>
-                </div>
+                <div class="absolute left-0 top-0 bottom-0 w-1 bg-blue-600 rounded-r-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <span class="text-sm font-semibold relative z-10 ml-2">{{ $t('nav.forum') }}</span>
               </router-link>
               
               <router-link
                 to="/activites-recherche"
-                class="flex items-center px-8 py-3.5 text-gray-600 hover:bg-blue-50/60 hover:text-blue-600 transition-all duration-300 rounded-xl group"
+                class="flex items-center px-8 py-3.5 text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-transparent hover:text-blue-600 transition-all duration-300 rounded-xl group relative"
                 @click="closeMobileMenu"
               >
-                <div class="w-8 h-8 bg-gradient-to-br from-blue-400 to-blue-500 rounded-lg flex items-center justify-center mr-3 shadow-sm">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                  </svg>
-                </div>
-                <div>
-                  <span class="font-semibold block">Activités de recherche</span>
-                  <span class="text-xs text-blue-500 mt-0.5">Projets en cours</span>
-                </div>
+                <div class="absolute left-0 top-0 bottom-0 w-1 bg-blue-600 rounded-r-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <span class="text-sm font-semibold relative z-10 ml-2">Activités de recherche</span>
               </router-link>
               
               <router-link
                 to="/evenements"
-                class="flex items-center px-8 py-3.5 text-gray-600 hover:bg-blue-50/60 hover:text-blue-600 transition-all duration-300 rounded-xl group"
+                class="flex items-center px-8 py-3.5 text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-transparent hover:text-blue-600 transition-all duration-300 rounded-xl group relative"
                 @click="closeMobileMenu"
               >
-                <div class="w-8 h-8 bg-gradient-to-br from-blue-600 to-blue-700 rounded-lg flex items-center justify-center mr-3 shadow-sm">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
-                </div>
-                <div>
-                  <span class="font-semibold block">Événements</span>
-                  <span class="text-xs text-blue-500 mt-0.5">Conférences et séminaires</span>
-                </div>
+                <div class="absolute left-0 top-0 bottom-0 w-1 bg-blue-600 rounded-r-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <span class="text-sm font-semibold relative z-10 ml-2">{{ $t('nav.events') }}</span>
               </router-link>
               
               <router-link
                 to="/publications"
-                class="flex items-center px-8 py-3.5 text-gray-600 hover:bg-blue-50/60 hover:text-blue-600 transition-all duration-300 rounded-xl group"
+                class="flex items-center px-8 py-3.5 text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-transparent hover:text-blue-600 transition-all duration-300 rounded-xl group relative"
                 @click="closeMobileMenu"
               >
-                <div class="w-8 h-8 bg-gradient-to-br from-blue-700 to-blue-800 rounded-lg flex items-center justify-center mr-3 shadow-sm">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                  </svg>
-                </div>
-                <div>
-                  <span class="font-semibold block">Publications</span>
-                  <span class="text-xs text-blue-500 mt-0.5">Articles et recherches</span>
-                </div>
+                <div class="absolute left-0 top-0 bottom-0 w-1 bg-blue-600 rounded-r-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <span class="text-sm font-semibold relative z-10 ml-2">{{ $t('nav.publications') }}</span>
               </router-link>
             </div>
           </div>
 
-
-
           <!-- Contact Mobile -->
           <router-link
             to="/contact"
-            class="flex items-center px-5 py-4 text-gray-700 rounded-xl hover:bg-blue-50/80 hover:text-blue-600 transition-all duration-300 font-semibold group"
-            :class="{ 'bg-blue-50/80 text-blue-600 shadow-sm': route.path.includes('/contact') }"
+            class="flex items-center px-5 py-4 text-gray-700 rounded-xl hover:bg-gradient-to-r hover:from-blue-50 hover:to-transparent hover:text-blue-600 transition-all duration-300 font-semibold group relative"
+            :class="{ 'bg-blue-50 text-blue-600': route.path.includes('/contact') }"
             @click="closeMobileMenu"
           >
-            <div class="w-2 h-2 bg-blue-300 rounded-full mr-4 group-hover:scale-125 transition-transform"></div>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="w-5 h-5 mr-3 text-gray-400 group-hover:text-blue-600"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-              />
-            </svg>
-            Contact
+            <div class="absolute left-0 top-0 bottom-0 w-1 bg-blue-600 rounded-r-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" :class="{ 'opacity-100': route.path.includes('/contact') }"></div>
+            <span class="relative z-10 ml-2">{{ $t('nav.contact') }}</span>
           </router-link>
 
-          <!-- Bouton Espace Membre Mobile -->
+          <!-- Bouton Espace Membre Mobile Premium -->
           <router-link
             to="/authentification"
-            class="flex items-center justify-center px-5 py-4 mt-6 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300 group relative overflow-hidden"
+            class="flex items-center justify-center px-5 py-4 mt-6 mx-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl hover:shadow-blue-500/30 transform hover:-translate-y-0.5 transition-all duration-300 relative overflow-hidden group/btn"
             @click="closeMobileMenu"
           >
-            <div class="absolute inset-0 bg-gradient-to-r from-blue-500 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover/btn:translate-x-full transition-transform duration-1000"></div>
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              class="w-5 h-5 mr-3 relative z-10"
+              class="w-5 h-5 mr-2 relative z-10"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -524,12 +429,30 @@
 <script lang="ts" setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
+// Import du logo depuis assets
+import logoImage from '../../assets/logoCreff-PME.png'
 
 const route = useRoute()
+const { locale } = useI18n()
+
 const isScrolled = ref(false)
 const windowWidth = ref(window.innerWidth)
 const isMobileMenuOpen = ref(false)
 const activeDropdown = ref<string | null>(null)
+const showLanguageMenu = ref(false)
+
+const currentLocale = computed(() => locale.value)
+
+const toggleLanguageMenu = () => {
+  showLanguageMenu.value = !showLanguageMenu.value
+}
+
+const changeLanguage = (lang: 'fr' | 'en') => {
+  locale.value = lang
+  localStorage.setItem('locale', lang)
+  showLanguageMenu.value = false
+}
 
 const isMobile = computed(() => windowWidth.value < 1024)
 
@@ -549,8 +472,13 @@ const toggleDropdown = (menu: string) => {
   activeDropdown.value = activeDropdown.value === menu ? null : menu
 }
 
-const closeDropdowns = () => {
+const closeDropdowns = (event?: Event) => {
+  // Ne pas fermer si le clic est sur le sélecteur de langue
+  if (event && (event.target as HTMLElement).closest('.language-selector')) {
+    return
+  }
   activeDropdown.value = null
+  showLanguageMenu.value = false
 }
 
 const closeMobileMenu = () => {
@@ -572,72 +500,84 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 header {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
-/* Smooth scrolling for anchor links */
+/* Smooth scrolling */
 html {
   scroll-behavior: smooth;
 }
 
 /* Custom scrollbar for mobile menu */
 .custom-scrollbar::-webkit-scrollbar {
-  width: 4px;
+  width: 6px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: #f8fafc;
-  border-radius: 2px;
+  background: #f9fafb;
+  border-radius: 3px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #bfdbfe;
-  border-radius: 2px;
+  background: linear-gradient(to bottom, #cbd5e1, #94a3b8);
+  border-radius: 3px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #93c5fd;
+  background: linear-gradient(to bottom, #94a3b8, #64748b);
 }
 
-/* Enhanced hover effects */
-.router-link-active {
-  position: relative;
+/* Animation pour l'indicateur actif */
+@keyframes slide-in {
+  from {
+    transform: scaleX(0);
+    opacity: 0;
+  }
+  to {
+    transform: scaleX(1);
+    opacity: 1;
+  }
 }
 
-.router-link-active::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 3px;
-  height: 60%;
-  background: linear-gradient(to bottom, #3b82f6, #1d4ed8);
-  border-radius: 0 2px 2px 0;
+.animate-slide-in {
+  animation: slide-in 0.3s ease-out;
 }
 
-/* Glass morphism effect enhancement */
-.backdrop-blur-xl {
-  backdrop-filter: blur(20px);
-}
-
-/* Smooth transitions for all interactive elements */
+/* Amélioration des transitions */
 * {
-  transition-property: color, background-color, border-color, transform, box-shadow;
-  transition-duration: 200ms;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Professional gradient effects */
-.professional-gradient {
-  background: linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #60a5fa 100%);
+/* Effet de glassmorphism amélioré */
+.backdrop-blur-xl {
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
 }
 
-/* Subtle shadow enhancements */
-.shadow-professional {
-  box-shadow: 0 10px 40px rgba(30, 64, 175, 0.1), 0 5px 15px rgba(30, 64, 175, 0.05);
+/* Amélioration des ombres */
+.shadow-2xl {
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.05);
+}
+
+/* Responsive breakpoints améliorés */
+@media (max-width: 640px) {
+  header {
+    font-size: 0.9rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  nav {
+    gap: 0.25rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  nav {
+    gap: 0.5rem;
+  }
 }
 </style>
