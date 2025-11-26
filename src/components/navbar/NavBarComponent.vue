@@ -84,6 +84,7 @@
             @mouseleave="activeDropdown = null"
           >
             <button
+              @click="toggleDropdown('recherche')"
               class="relative px-4 xl:px-5 py-2.5 flex items-center font-medium text-gray-700 hover:text-blue-600 transition-all duration-300 rounded-lg"
               :class="{ 
                 'text-blue-600': route.path.includes('/recherche') || activeDropdown === 'recherche',
@@ -124,6 +125,7 @@
               <div
                 v-if="activeDropdown === 'recherche'"
                 class="absolute top-full left-0 w-80 bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-gray-200/60 mt-3 py-3 z-50 overflow-hidden"
+                @click.stop
               >
                 <!-- Effet de brillance en haut -->
                 <div class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-200 to-transparent"></div>
@@ -134,23 +136,13 @@
                 
                 <div class="py-2">
                   <router-link
-                    to="/forum"
+                    to="/actualites"
                     class="flex items-center px-5 py-3 text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-transparent hover:text-blue-600 transition-all duration-300 group/item relative"
                     @click="closeDropdowns"
                   >
                     <div class="absolute left-0 top-0 bottom-0 w-1 bg-blue-600 rounded-r-full opacity-0 group-hover/item:opacity-100 transition-opacity duration-300"></div>
                     <div class="w-2 h-2 bg-blue-600 rounded-full mr-4 opacity-0 group-hover/item:opacity-100 transition-all duration-300 transform scale-0 group-hover/item:scale-100"></div>
-                    <span class="text-sm font-semibold relative z-10">{{ $t('nav.forum') }}</span>
-                  </router-link>
-                  
-                  <router-link
-                    to="/activites-recherche"
-                    class="flex items-center px-5 py-3 text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-transparent hover:text-blue-600 transition-all duration-300 group/item relative"
-                    @click="closeDropdowns"
-                  >
-                    <div class="absolute left-0 top-0 bottom-0 w-1 bg-blue-600 rounded-r-full opacity-0 group-hover/item:opacity-100 transition-opacity duration-300"></div>
-                    <div class="w-2 h-2 bg-blue-600 rounded-full mr-4 opacity-0 group-hover/item:opacity-100 transition-all duration-300 transform scale-0 group-hover/item:scale-100"></div>
-                    <span class="text-sm font-semibold relative z-10">Activités de Recherche</span>
+                    <span class="text-sm font-semibold relative z-10">{{ $t('nav.news') }}</span>
                   </router-link>
                   
                   <router-link
@@ -349,24 +341,6 @@
             </div>
             <div class="mt-3 space-y-1">
               <router-link
-                to="/forum"
-                class="flex items-center px-8 py-3.5 text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-transparent hover:text-blue-600 transition-all duration-300 rounded-xl group relative"
-                @click="closeMobileMenu"
-              >
-                <div class="absolute left-0 top-0 bottom-0 w-1 bg-blue-600 rounded-r-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                <span class="text-sm font-semibold relative z-10 ml-2">{{ $t('nav.forum') }}</span>
-              </router-link>
-              
-              <router-link
-                to="/activites-recherche"
-                class="flex items-center px-8 py-3.5 text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-transparent hover:text-blue-600 transition-all duration-300 rounded-xl group relative"
-                @click="closeMobileMenu"
-              >
-                <div class="absolute left-0 top-0 bottom-0 w-1 bg-blue-600 rounded-r-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                <span class="text-sm font-semibold relative z-10 ml-2">Activités de recherche</span>
-              </router-link>
-              
-              <router-link
                 to="/evenements"
                 class="flex items-center px-8 py-3.5 text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-transparent hover:text-blue-600 transition-all duration-300 rounded-xl group relative"
                 @click="closeMobileMenu"
@@ -469,14 +443,33 @@ const handleResize = () => {
 }
 
 const toggleDropdown = (menu: string) => {
-  activeDropdown.value = activeDropdown.value === menu ? null : menu
+  // Pour les écrans tactiles, basculer l'état
+  if (activeDropdown.value === menu) {
+    activeDropdown.value = null
+  } else {
+    activeDropdown.value = menu
+  }
 }
 
 const closeDropdowns = (event?: Event) => {
-  // Ne pas fermer si le clic est sur le sélecteur de langue
-  if (event && (event.target as HTMLElement).closest('.language-selector')) {
+  if (!event) {
+    activeDropdown.value = null
+    showLanguageMenu.value = false
     return
   }
+  
+  const target = event.target as HTMLElement
+  
+  // Ne pas fermer si le clic est sur le sélecteur de langue
+  if (target.closest('.language-selector')) {
+    return
+  }
+  
+  // Ne pas fermer si le clic est sur le bouton du dropdown ou dans le dropdown
+  if (target.closest('.relative.group') || target.closest('.absolute.top-full')) {
+    return
+  }
+  
   activeDropdown.value = null
   showLanguageMenu.value = false
 }
