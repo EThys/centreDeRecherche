@@ -175,83 +175,12 @@ const photos = ref<GalleryPhoto[]>([
     id: 4,
     title: "Signature de Partenariat",
     description: "Cérémonie officielle de collaboration stratégique",
-    image: "https://images.unsplash.com/photo-1515168833906-d2d02d9820b2?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+    image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
     category: "collaborations",
     date: "05 Nov 2024",
     author: "CReFF Presse"
   },
-  {
-    id: 5,
-    title: "Atelier Innovation",
-    description: "Session créative de développement de solutions",
-    image: "https://images.unsplash.com/photo-1551836026-d5c8c1a6cb64?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-    category: "evenements",
-    date: "02 Nov 2024",
-    author: "Creative Studio"
-  },
-  {
-    id: 6,
-    title: "Rencontre Internationale",
-    description: "Échanges fructueux avec nos partenaires mondiaux",
-    image: "https://images.unsplash.com/photo-1552664688-cf412ec27db2?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-    category: "collaborations",
-    date: "28 Oct 2024",
-    author: "Global Vision"
-  },
-  {
-    id: 7,
-    title: "Centre de Recherche",
-    description: "Vue aérienne de notre campus de recherche",
-    image: "https://images.unsplash.com/photo-1586220742613-b731f66f7743?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-    category: "installations",
-    date: "25 Oct 2024",
-    author: "Aerial Pro"
-  },
-  {
-    id: 8,
-    title: "Équipe en Action",
-    description: "Collaboration et innovation au quotidien",
-    image: "https://images.unsplash.com/photo-1517502884422-41eaead166d4?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-    category: "equipe",
-    date: "20 Oct 2024",
-    author: "Action Photo"
-  },
-  {
-    id: 9,
-    title: "Séminaire Expert",
-    description: "Présentation de recherches avancées",
-    image: "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-    category: "evenements",
-    date: "18 Oct 2024",
-    author: "Event Capture"
-  },
-  {
-    id: 10,
-    title: "Innovation Technologique",
-    description: "Démonstration de nos dernières avancées",
-    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-    category: "installations",
-    date: "15 Oct 2024",
-    author: "Tech Vision"
-  },
-  {
-    id: 11,
-    title: "Réseautage Professionnel",
-    description: "Échanges lors de notre événement annuel",
-    image: "https://images.unsplash.com/photo-1543269865-cbf427effbad?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-    category: "evenements",
-    date: "12 Oct 2024",
-    author: "Network Pro"
-  },
-  {
-    id: 12,
-    title: "Visite Officielle",
-    description: "Accueil de délégation internationale",
-    image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-    category: "collaborations",
-    date: "10 Oct 2024",
-    author: "Diplomatic Photo"
-  }
+
 ])
 
 // Computed
