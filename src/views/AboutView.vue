@@ -21,11 +21,11 @@
       <!-- Contenu -->
       <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
         <div class="text-center fade-in-up" data-animate>
-          <h1 class="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-white mb-6 sm:mb-8 leading-tight">
+          <h1 class="text-2xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-white mb-4 sm:mb-6 lg:mb-8 leading-tight">
             {{ $t('about.aboutView.heroTitle') }}<br class="hidden sm:block" />
             <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 via-blue-200 to-blue-400">{{ $t('about.aboutView.heroSubtitle') }}</span>
         </h1>
-          <p class="text-lg sm:text-xl lg:text-2xl text-gray-200 max-w-4xl mx-auto leading-relaxed font-light">
+          <p class="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl text-gray-200 max-w-4xl mx-auto leading-relaxed font-light px-2 sm:px-0">
             {{ $t('about.aboutView.heroDescription') }}
           </p>
         </div>
