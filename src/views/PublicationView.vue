@@ -1,9 +1,10 @@
-<script setup>
+<script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
+import type { Publication } from '@/models'
 
 // Données réactives
 const searchQuery = ref('')
-const selectedDomains = ref([])
+const selectedDomains = ref<string[]>([])
 const selectedType = ref('all')
 const selectedYear = ref('all')
 const sortBy = ref('newest')
@@ -20,24 +21,32 @@ import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
-const openPublication = (publicationId) => {
+const openPublication = (publicationId: number | string | undefined) => {
+  if (!publicationId) return
   router.push(`/publications/${publicationId}`)
 }
 
 // Données des publications de recherche
-const allPublications = ref([
+const allPublications = ref<Publication[]>([
   {
     id: 1,
     title: "Analyse des Déterminants du Financement Bancaire des PME en RDC",
     abstract: "Cette étude examine les facteurs influençant l'accès au crédit bancaire pour les PME congolaises, avec une analyse quantitative sur un échantillon de 500 entreprises. La recherche identifie les principaux obstacles et propose des solutions pour améliorer l'accès au financement.",
-    authors: ["Dr. Jean Kabila", "Prof. Marie Lumumba", "Dr. Paul Mobutu"],
+    content: "Cette étude examine les facteurs influençant l'accès au crédit bancaire pour les PME congolaises, avec une analyse quantitative sur un échantillon de 500 entreprises. La recherche identifie les principaux obstacles et propose des solutions pour améliorer l'accès au financement.",
+    authors: [
+      { id: 1, name: "Dr. Jean Kabila" },
+      { id: 2, name: "Prof. Marie Lumumba" },
+      { id: 3, name: "Dr. Paul Mobutu" }
+    ],
     journal: "Journal of African Business Studies",
     publicationDate: "2024-03-15",
-    type: "article",
+    type: "research-paper",
     domains: ["Finance Bancaire", "Accès au Crédit", "PME", "RDC"],
     citations: 24,
-    coverImage: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-    doi: "10.1234/jabs.2024.12345"
+    image: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+    doi: "10.1234/jabs.2024.12345",
+    views: 156,
+    downloads: 42
   },
   {
     id: 2,
