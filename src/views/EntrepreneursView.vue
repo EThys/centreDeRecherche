@@ -21,11 +21,11 @@
       <!-- Contenu -->
       <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
         <div class="text-center fade-in-up" data-animate>
-          <h1 class="text-lg sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-white mb-3 sm:mb-4 lg:mb-6 leading-tight">
+          <h1 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-3 sm:mb-4 lg:mb-6 leading-tight">
             {{ $t('entrepreneurs.hero.title') }}<br class="hidden sm:block" />
             <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 via-blue-200 to-blue-400">{{ $t('entrepreneurs.hero.subtitle') }}</span>
           </h1>
-          <p class="text-[10px] sm:text-base md:text-lg lg:text-xl xl:text-2xl text-gray-200 max-w-4xl mx-auto leading-relaxed font-light px-2 sm:px-0">
+          <p class="text-sm sm:text-base md:text-lg text-gray-200 max-w-4xl mx-auto leading-relaxed font-light px-2 sm:px-0">
             {{ $t('entrepreneurs.hero.description') }}
           </p>
         </div>
@@ -41,10 +41,10 @@
             <div class="mb-6">
               <span class="text-blue-600 text-xs font-semibold tracking-[0.15em] uppercase">{{ $t('entrepreneurs.mission.header') }}</span>
             </div>
-            <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-6 sm:mb-8 leading-tight">
+            <h2 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-6 sm:mb-8 leading-tight">
               {{ $t('entrepreneurs.mission.title') }} <span class="text-blue-600">{{ $t('entrepreneurs.mission.titleHighlight') }}</span>
             </h2>
-            <div class="space-y-5 text-gray-700 leading-relaxed text-base sm:text-lg">
+            <div class="space-y-4 text-gray-700 leading-relaxed text-sm sm:text-base">
               <p class="font-light">
                 {{ $t('entrepreneurs.mission.paragraph1') }}
               </p>
@@ -81,137 +81,415 @@
           <div class="mb-6">
             <span class="text-blue-600 text-xs font-semibold tracking-[0.15em] uppercase">{{ $t('entrepreneurs.activities.header') }}</span>
           </div>
-          <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 sm:mb-6 leading-tight">
+          <h2 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-4 sm:mb-6 leading-tight">
             {{ $t('entrepreneurs.activities.title') }}<span class="text-blue-600">{{ $t('entrepreneurs.activities.titleHighlight') }}</span>
           </h2>
-          <p class="text-gray-600 text-lg sm:text-xl max-w-3xl mx-auto font-light">
+          <p class="text-gray-600 text-sm sm:text-base max-w-3xl mx-auto font-light">
             {{ $t('entrepreneurs.activities.description') }}
           </p>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-10 lg:gap-12">
           <!-- Formation 1 -->
-          <div class="bg-white rounded-lg p-8 sm:p-10 lg:p-12 shadow-md hover:shadow-xl border border-gray-100 transition-all duration-300 fade-in-up stagger-item" data-animate>
-            <div class="mb-8">
-              <div class="w-16 h-16 bg-blue-600 rounded-lg flex items-center justify-center mb-6">
-                <i class="fas fa-chalkboard-teacher text-white text-2xl"></i>
-              </div>
-              <h3 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">{{ $t('entrepreneurs.activities.training1.title') }}</h3>
-              <p class="text-gray-600 text-base">{{ $t('entrepreneurs.activities.training1.subtitle') }}</p>
+          <div class="bg-white rounded-xl p-6 sm:p-8 shadow-md hover:shadow-xl border border-gray-100 transition-all duration-300 fade-in-up stagger-item" data-animate>
+            <div class="mb-6">
+              <h3 class="text-xl sm:text-2xl font-bold text-gray-900 mb-2">{{ $t('entrepreneurs.activities.training1.title') }}</h3>
+              <p class="text-gray-600 text-sm">{{ $t('entrepreneurs.activities.training1.subtitle') }}</p>
             </div>
-            <ul class="space-y-4">
+            <ul class="space-y-3">
               <li class="flex items-start">
-                <div class="w-6 h-6 bg-blue-50 rounded-full flex items-center justify-center mr-4 mt-0.5 flex-shrink-0">
-                  <i class="fas fa-check text-blue-600 text-xs"></i>
-                </div>
-                <span class="text-gray-700 text-base leading-relaxed">{{ $t('entrepreneurs.activities.training1.item1') }}</span>
+                <div class="w-1.5 h-1.5 bg-blue-600 rounded-full mr-3 mt-2 flex-shrink-0"></div>
+                <span class="text-gray-700 text-sm leading-relaxed">{{ $t('entrepreneurs.activities.training1.item1') }}</span>
               </li>
               <li class="flex items-start">
-                <div class="w-6 h-6 bg-blue-50 rounded-full flex items-center justify-center mr-4 mt-0.5 flex-shrink-0">
-                  <i class="fas fa-check text-blue-600 text-xs"></i>
-                </div>
-                <span class="text-gray-700 text-base leading-relaxed">{{ $t('entrepreneurs.activities.training1.item2') }}</span>
+                <div class="w-1.5 h-1.5 bg-blue-600 rounded-full mr-3 mt-2 flex-shrink-0"></div>
+                <span class="text-gray-700 text-sm leading-relaxed">{{ $t('entrepreneurs.activities.training1.item2') }}</span>
               </li>
               <li class="flex items-start">
-                <div class="w-6 h-6 bg-blue-50 rounded-full flex items-center justify-center mr-4 mt-0.5 flex-shrink-0">
-                  <i class="fas fa-check text-blue-600 text-xs"></i>
-                </div>
-                <span class="text-gray-700 text-base leading-relaxed">{{ $t('entrepreneurs.activities.training1.item3') }}</span>
+                <div class="w-1.5 h-1.5 bg-blue-600 rounded-full mr-3 mt-2 flex-shrink-0"></div>
+                <span class="text-gray-700 text-sm leading-relaxed">{{ $t('entrepreneurs.activities.training1.item3') }}</span>
               </li>
             </ul>
           </div>
 
           <!-- Formation 2 -->
-          <div class="bg-white rounded-lg p-8 sm:p-10 lg:p-12 shadow-md hover:shadow-xl border border-gray-100 transition-all duration-300 fade-in-up stagger-item" :style="{ animationDelay: '150ms' }" data-animate>
-            <div class="mb-8">
-              <div class="w-16 h-16 bg-indigo-600 rounded-lg flex items-center justify-center mb-6">
-                <i class="fas fa-handshake text-white text-2xl"></i>
-              </div>
-              <h3 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">{{ $t('entrepreneurs.activities.training2.title') }}</h3>
-              <p class="text-gray-600 text-base">{{ $t('entrepreneurs.activities.training2.subtitle') }}</p>
+          <div class="bg-white rounded-xl p-6 sm:p-8 shadow-md hover:shadow-xl border border-gray-100 transition-all duration-300 fade-in-up stagger-item" :style="{ animationDelay: '150ms' }" data-animate>
+            <div class="mb-6">
+              <h3 class="text-xl sm:text-2xl font-bold text-gray-900 mb-2">{{ $t('entrepreneurs.activities.training2.title') }}</h3>
+              <p class="text-gray-600 text-sm">{{ $t('entrepreneurs.activities.training2.subtitle') }}</p>
             </div>
-            <ul class="space-y-4">
+            <ul class="space-y-3">
               <li class="flex items-start">
-                <div class="w-6 h-6 bg-indigo-50 rounded-full flex items-center justify-center mr-4 mt-0.5 flex-shrink-0">
-                  <i class="fas fa-check text-indigo-600 text-xs"></i>
-                </div>
-                <span class="text-gray-700 text-base leading-relaxed">{{ $t('entrepreneurs.activities.training2.item1') }}</span>
+                <div class="w-1.5 h-1.5 bg-blue-600 rounded-full mr-3 mt-2 flex-shrink-0"></div>
+                <span class="text-gray-700 text-sm leading-relaxed">{{ $t('entrepreneurs.activities.training2.item1') }}</span>
               </li>
               <li class="flex items-start">
-                <div class="w-6 h-6 bg-indigo-50 rounded-full flex items-center justify-center mr-4 mt-0.5 flex-shrink-0">
-                  <i class="fas fa-check text-indigo-600 text-xs"></i>
-                </div>
-                <span class="text-gray-700 text-base leading-relaxed">{{ $t('entrepreneurs.activities.training2.item2') }}</span>
+                <div class="w-1.5 h-1.5 bg-blue-600 rounded-full mr-3 mt-2 flex-shrink-0"></div>
+                <span class="text-gray-700 text-sm leading-relaxed">{{ $t('entrepreneurs.activities.training2.item2') }}</span>
               </li>
               <li class="flex items-start">
-                <div class="w-6 h-6 bg-indigo-50 rounded-full flex items-center justify-center mr-4 mt-0.5 flex-shrink-0">
-                  <i class="fas fa-check text-indigo-600 text-xs"></i>
-                </div>
-                <span class="text-gray-700 text-base leading-relaxed">{{ $t('entrepreneurs.activities.training2.item3') }}</span>
+                <div class="w-1.5 h-1.5 bg-blue-600 rounded-full mr-3 mt-2 flex-shrink-0"></div>
+                <span class="text-gray-700 text-sm leading-relaxed">{{ $t('entrepreneurs.activities.training2.item3') }}</span>
               </li>
             </ul>
           </div>
 
           <!-- Formation 3 -->
-          <div class="bg-white rounded-lg p-8 sm:p-10 lg:p-12 shadow-md hover:shadow-xl border border-gray-100 transition-all duration-300 fade-in-up stagger-item" :style="{ animationDelay: '300ms' }" data-animate>
-            <div class="mb-8">
-              <div class="w-16 h-16 bg-cyan-600 rounded-lg flex items-center justify-center mb-6">
-                <i class="fas fa-lightbulb text-white text-2xl"></i>
-              </div>
-              <h3 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">{{ $t('entrepreneurs.activities.training3.title') }}</h3>
-              <p class="text-gray-600 text-base">{{ $t('entrepreneurs.activities.training3.subtitle') }}</p>
+          <div class="bg-white rounded-xl p-6 sm:p-8 shadow-md hover:shadow-xl border border-gray-100 transition-all duration-300 fade-in-up stagger-item" :style="{ animationDelay: '300ms' }" data-animate>
+            <div class="mb-6">
+              <h3 class="text-xl sm:text-2xl font-bold text-gray-900 mb-2">{{ $t('entrepreneurs.activities.training3.title') }}</h3>
+              <p class="text-gray-600 text-sm">{{ $t('entrepreneurs.activities.training3.subtitle') }}</p>
             </div>
-            <ul class="space-y-4">
+            <ul class="space-y-3">
               <li class="flex items-start">
-                <div class="w-6 h-6 bg-cyan-50 rounded-full flex items-center justify-center mr-4 mt-0.5 flex-shrink-0">
-                  <i class="fas fa-check text-cyan-600 text-xs"></i>
-                </div>
-                <span class="text-gray-700 text-base leading-relaxed">{{ $t('entrepreneurs.activities.training3.item1') }}</span>
+                <div class="w-1.5 h-1.5 bg-blue-600 rounded-full mr-3 mt-2 flex-shrink-0"></div>
+                <span class="text-gray-700 text-sm leading-relaxed">{{ $t('entrepreneurs.activities.training3.item1') }}</span>
               </li>
               <li class="flex items-start">
-                <div class="w-6 h-6 bg-cyan-50 rounded-full flex items-center justify-center mr-4 mt-0.5 flex-shrink-0">
-                  <i class="fas fa-check text-cyan-600 text-xs"></i>
-                </div>
-                <span class="text-gray-700 text-base leading-relaxed">{{ $t('entrepreneurs.activities.training3.item2') }}</span>
+                <div class="w-1.5 h-1.5 bg-blue-600 rounded-full mr-3 mt-2 flex-shrink-0"></div>
+                <span class="text-gray-700 text-sm leading-relaxed">{{ $t('entrepreneurs.activities.training3.item2') }}</span>
               </li>
               <li class="flex items-start">
-                <div class="w-6 h-6 bg-cyan-50 rounded-full flex items-center justify-center mr-4 mt-0.5 flex-shrink-0">
-                  <i class="fas fa-check text-cyan-600 text-xs"></i>
-                </div>
-                <span class="text-gray-700 text-base leading-relaxed">{{ $t('entrepreneurs.activities.training3.item3') }}</span>
+                <div class="w-1.5 h-1.5 bg-blue-600 rounded-full mr-3 mt-2 flex-shrink-0"></div>
+                <span class="text-gray-700 text-sm leading-relaxed">{{ $t('entrepreneurs.activities.training3.item3') }}</span>
               </li>
             </ul>
           </div>
 
           <!-- Formation 4 -->
-          <div class="bg-white rounded-lg p-8 sm:p-10 lg:p-12 shadow-md hover:shadow-xl border border-gray-100 transition-all duration-300 fade-in-up stagger-item" :style="{ animationDelay: '450ms' }" data-animate>
-            <div class="mb-8">
-              <div class="w-16 h-16 bg-purple-600 rounded-lg flex items-center justify-center mb-6">
-                <i class="fas fa-network-wired text-white text-2xl"></i>
-              </div>
-              <h3 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">{{ $t('entrepreneurs.activities.training4.title') }}</h3>
-              <p class="text-gray-600 text-base">{{ $t('entrepreneurs.activities.training4.subtitle') }}</p>
+          <div class="bg-white rounded-xl p-6 sm:p-8 shadow-md hover:shadow-xl border border-gray-100 transition-all duration-300 fade-in-up stagger-item" :style="{ animationDelay: '450ms' }" data-animate>
+            <div class="mb-6">
+              <h3 class="text-xl sm:text-2xl font-bold text-gray-900 mb-2">{{ $t('entrepreneurs.activities.training4.title') }}</h3>
+              <p class="text-gray-600 text-sm">{{ $t('entrepreneurs.activities.training4.subtitle') }}</p>
             </div>
-            <ul class="space-y-4">
+            <ul class="space-y-3">
               <li class="flex items-start">
-                <div class="w-6 h-6 bg-purple-50 rounded-full flex items-center justify-center mr-4 mt-0.5 flex-shrink-0">
-                  <i class="fas fa-check text-purple-600 text-xs"></i>
-                </div>
-                <span class="text-gray-700 text-base leading-relaxed">{{ $t('entrepreneurs.activities.training4.item1') }}</span>
+                <div class="w-1.5 h-1.5 bg-blue-600 rounded-full mr-3 mt-2 flex-shrink-0"></div>
+                <span class="text-gray-700 text-sm leading-relaxed">{{ $t('entrepreneurs.activities.training4.item1') }}</span>
               </li>
               <li class="flex items-start">
-                <div class="w-6 h-6 bg-purple-50 rounded-full flex items-center justify-center mr-4 mt-0.5 flex-shrink-0">
-                  <i class="fas fa-check text-purple-600 text-xs"></i>
-                </div>
-                <span class="text-gray-700 text-base leading-relaxed">{{ $t('entrepreneurs.activities.training4.item2') }}</span>
+                <div class="w-1.5 h-1.5 bg-blue-600 rounded-full mr-3 mt-2 flex-shrink-0"></div>
+                <span class="text-gray-700 text-sm leading-relaxed">{{ $t('entrepreneurs.activities.training4.item2') }}</span>
               </li>
               <li class="flex items-start">
-                <div class="w-6 h-6 bg-purple-50 rounded-full flex items-center justify-center mr-4 mt-0.5 flex-shrink-0">
-                  <i class="fas fa-check text-purple-600 text-xs"></i>
-                </div>
-                <span class="text-gray-700 text-base leading-relaxed">{{ $t('entrepreneurs.activities.training4.item3') }}</span>
+                <div class="w-1.5 h-1.5 bg-blue-600 rounded-full mr-3 mt-2 flex-shrink-0"></div>
+                <span class="text-gray-700 text-sm leading-relaxed">{{ $t('entrepreneurs.activities.training4.item3') }}</span>
               </li>
             </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section Statistiques -->
+    <section class="py-10 sm:py-14 lg:py-20 bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 relative overflow-hidden">
+      <div class="absolute inset-0">
+        <img 
+          src="../assets/carousel-2.jpg" 
+          alt="Background"
+          class="w-full h-full object-cover opacity-20"
+        />
+        <div class="absolute inset-0 bg-gradient-to-br from-blue-900/80 via-blue-800/70 to-blue-900/80"></div>
+      </div>
+      
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div class="text-center mb-10 sm:mb-12 fade-in-up" data-animate>
+          <h2 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-4 sm:mb-6">
+            {{ $t('entrepreneurs.stats.title') }}
+          </h2>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
+          <div class="text-center fade-in-up stagger-item" data-animate>
+            <div class="bg-white/10 backdrop-blur-sm rounded-xl p-5 sm:p-6 border border-white/20 hover:bg-white/15 transition-all duration-300">
+              <div class="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-2">{{ $t('entrepreneurs.stats.stat1.value') }}</div>
+              <div class="text-blue-100 text-xs sm:text-sm font-medium">{{ $t('entrepreneurs.stats.stat1.label') }}</div>
+            </div>
+          </div>
+          <div class="text-center fade-in-up stagger-item" :style="{ animationDelay: '150ms' }" data-animate>
+            <div class="bg-white/10 backdrop-blur-sm rounded-xl p-5 sm:p-6 border border-white/20 hover:bg-white/15 transition-all duration-300">
+              <div class="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-2">{{ $t('entrepreneurs.stats.stat2.value') }}</div>
+              <div class="text-blue-100 text-xs sm:text-sm font-medium">{{ $t('entrepreneurs.stats.stat2.label') }}</div>
+            </div>
+          </div>
+          <div class="text-center fade-in-up stagger-item" :style="{ animationDelay: '300ms' }" data-animate>
+            <div class="bg-white/10 backdrop-blur-sm rounded-xl p-5 sm:p-6 border border-white/20 hover:bg-white/15 transition-all duration-300">
+              <div class="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-2">{{ $t('entrepreneurs.stats.stat3.value') }}</div>
+              <div class="text-blue-100 text-xs sm:text-sm font-medium">{{ $t('entrepreneurs.stats.stat3.label') }}</div>
+            </div>
+          </div>
+          <div class="text-center fade-in-up stagger-item" :style="{ animationDelay: '450ms' }" data-animate>
+            <div class="bg-white/10 backdrop-blur-sm rounded-xl p-5 sm:p-6 border border-white/20 hover:bg-white/15 transition-all duration-300">
+              <div class="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-2">{{ $t('entrepreneurs.stats.stat4.value') }}</div>
+              <div class="text-blue-100 text-xs sm:text-sm font-medium">{{ $t('entrepreneurs.stats.stat4.label') }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section Témoignages -->
+    <section class="py-10 sm:py-14 lg:py-20 bg-white relative">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-10 sm:mb-12 fade-in-up" data-animate>
+          <div class="mb-4">
+            <span class="text-blue-600 text-xs font-semibold tracking-[0.15em] uppercase">{{ $t('entrepreneurs.testimonials.header') }}</span>
+          </div>
+          <h2 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-4 sm:mb-6">
+            {{ $t('entrepreneurs.testimonials.title') }}
+          </h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+          <div 
+            v-for="(testimonial, index) in testimonials" 
+            :key="index"
+            class="group relative bg-white rounded-xl p-6 sm:p-8 shadow-md hover:shadow-xl border border-gray-100 transition-all duration-500 fade-in-up stagger-item overflow-hidden"
+            :style="{ animationDelay: `${index * 150}ms` }"
+            data-animate
+          >
+            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-blue-600"></div>
+            <div class="relative">
+              <div class="mb-4">
+                <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-lg mb-4">
+                  {{ testimonial.initials }}
+                </div>
+              </div>
+              <p class="text-gray-700 text-sm leading-relaxed mb-6 relative">
+                <span class="absolute -top-2 -left-2 text-blue-200 text-4xl font-serif leading-none">"</span>
+                <span class="relative z-10">{{ testimonial.text }}</span>
+              </p>
+              <div class="pt-4 border-t border-gray-100">
+                <div class="font-semibold text-gray-900 text-sm mb-1">{{ testimonial.name }}</div>
+                <div class="text-xs text-gray-500">{{ testimonial.role }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section Programmes à venir -->
+    <section class="py-10 sm:py-14 lg:py-20 bg-gradient-to-br from-blue-50/50 via-white to-indigo-50/30 relative overflow-hidden">
+      <div class="absolute top-0 left-0 w-full h-full">
+        <div class="absolute top-20 right-20 w-32 h-32 bg-blue-200/10 rounded-full blur-2xl"></div>
+        <div class="absolute bottom-20 left-20 w-40 h-40 bg-indigo-200/10 rounded-full blur-2xl"></div>
+      </div>
+      
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div class="text-center mb-12 sm:mb-16 fade-in-up" data-animate>
+          <div class="mb-6">
+            <span class="text-blue-600 text-xs font-semibold tracking-[0.15em] uppercase">{{ $t('entrepreneurs.upcoming.header') }}</span>
+          </div>
+          <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 sm:mb-6">
+            {{ $t('entrepreneurs.upcoming.title') }}
+          </h2>
+        </div>
+
+        <div class="space-y-6">
+          <div 
+            v-for="(program, index) in upcomingPrograms" 
+            :key="index"
+            class="bg-white rounded-xl p-6 sm:p-8 shadow-md hover:shadow-xl border border-gray-100 transition-all duration-300 fade-in-up stagger-item"
+            :style="{ animationDelay: `${index * 150}ms` }"
+            data-animate
+          >
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+              <div class="flex-1">
+                <div class="flex items-center gap-3 mb-3">
+                  <div class="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center">
+                    <i :class="program.icon" class="text-white text-xl"></i>
+                  </div>
+                  <div>
+                    <h3 class="text-xl sm:text-2xl font-bold text-gray-900">{{ program.title }}</h3>
+                    <p class="text-gray-600 text-sm sm:text-base">{{ program.description }}</p>
+                  </div>
+                </div>
+                <div class="flex flex-wrap gap-4 text-sm text-gray-600">
+                  <div class="flex items-center">
+                    <i class="fas fa-calendar-alt mr-2 text-blue-600"></i>
+                    {{ program.date }}
+                  </div>
+                  <div class="flex items-center">
+                    <i class="fas fa-clock mr-2 text-blue-600"></i>
+                    {{ program.duration }}
+                  </div>
+                  <div class="flex items-center">
+                    <i class="fas fa-users mr-2 text-blue-600"></i>
+                    {{ program.participants }}
+                  </div>
+                </div>
+              </div>
+              <div class="flex-shrink-0">
+                <button class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-all duration-300 transform hover:scale-105">
+                  {{ $t('entrepreneurs.upcoming.register') }}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section FAQ -->
+    <section class="py-10 sm:py-14 lg:py-20 bg-white relative">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12 sm:mb-16 fade-in-up" data-animate>
+          <div class="mb-6">
+            <span class="text-blue-600 text-xs font-semibold tracking-[0.15em] uppercase">{{ $t('entrepreneurs.faq.header') }}</span>
+          </div>
+          <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 sm:mb-6">
+            {{ $t('entrepreneurs.faq.title') }}
+          </h2>
+        </div>
+
+        <div class="space-y-4">
+          <div 
+            v-for="(faq, index) in faqs" 
+            :key="index"
+            class="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 fade-in-up stagger-item"
+            :style="{ animationDelay: `${index * 100}ms` }"
+            data-animate
+          >
+            <button
+              @click="toggleFaq(index)"
+              class="w-full px-6 py-5 text-left flex items-center justify-between hover:bg-blue-50 transition-colors duration-300"
+            >
+              <span class="font-semibold text-gray-900 text-sm sm:text-base">{{ faq.question }}</span>
+              <i 
+                class="fas fa-chevron-down text-blue-600 transition-transform duration-300"
+                :class="{ 'rotate-180': openFaqs.includes(index) }"
+              ></i>
+            </button>
+            <div 
+              v-show="openFaqs.includes(index)"
+              class="px-6 pb-5 text-gray-600 text-sm sm:text-base leading-relaxed"
+            >
+              {{ faq.answer }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section Formulaire d'inscription -->
+    <section class="py-16 sm:py-20 lg:py-24 bg-gradient-to-br from-gray-100 via-gray-50 to-gray-200 relative overflow-hidden">
+      <!-- Image d'arrière-plan subtile -->
+      <div class="absolute inset-0">
+        <img 
+          src="../assets/carousel-4.jpg" 
+          alt="Background"
+          class="w-full h-full object-cover opacity-10"
+        />
+        <!-- Overlay pour assombrir légèrement -->
+        <div class="absolute inset-0 bg-gradient-to-br from-gray-900/5 via-transparent to-gray-900/10"></div>
+        <!-- Motif décoratif -->
+        <div class="absolute top-0 left-0 w-full h-full">
+          <div class="absolute top-20 right-20 w-64 h-64 bg-blue-200/15 rounded-full blur-3xl"></div>
+          <div class="absolute bottom-20 left-20 w-80 h-80 bg-blue-100/20 rounded-full blur-3xl"></div>
+        </div>
+      </div>
+      
+      <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <!-- En-tête -->
+        <div class="text-center mb-10 sm:mb-12 fade-in-up" data-animate>
+          <div class="inline-flex items-center gap-2 mb-4">
+            <div class="w-8 h-0.5 bg-blue-600"></div>
+            <span class="text-blue-600 text-xs font-semibold tracking-wider uppercase">INSCRIPTION</span>
+            <div class="w-8 h-0.5 bg-blue-600"></div>
+          </div>
+          <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 sm:mb-5 leading-tight">
+            {{ $t('entrepreneurs.registration.title') }}
+          </h2>
+          <p class="text-gray-600 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
+            {{ $t('entrepreneurs.registration.description') }}
+          </p>
+        </div>
+
+        <!-- Formulaire premium -->
+        <div class="bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden fade-in-up" data-animate>
+          <!-- Barre supérieure décorative -->
+          <div class="h-2 bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700"></div>
+          
+          <div class="p-8 sm:p-10 lg:p-12">
+            <form @submit.prevent="submitRegistration" class="space-y-6">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="group">
+                  <label class="block text-gray-700 text-sm font-semibold mb-2.5">
+                    {{ $t('entrepreneurs.registration.name') }}
+                    <span class="text-red-500 ml-1">*</span>
+                  </label>
+                  <input
+                    v-model="registrationForm.name"
+                    type="text"
+                    required
+                    class="w-full px-4 py-3.5 rounded-xl border-2 border-gray-200 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-300 text-sm bg-gray-50 focus:bg-white group-hover:border-gray-300"
+                    :placeholder="$t('entrepreneurs.registration.namePlaceholder')"
+                  />
+                </div>
+                <div class="group">
+                  <label class="block text-gray-700 text-sm font-semibold mb-2.5">
+                    {{ $t('entrepreneurs.registration.email') }}
+                    <span class="text-red-500 ml-1">*</span>
+                  </label>
+                  <input
+                    v-model="registrationForm.email"
+                    type="email"
+                    required
+                    class="w-full px-4 py-3.5 rounded-xl border-2 border-gray-200 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-300 text-sm bg-gray-50 focus:bg-white group-hover:border-gray-300"
+                    :placeholder="$t('entrepreneurs.registration.emailPlaceholder')"
+                  />
+                </div>
+              </div>
+              
+              <div class="group">
+                <label class="block text-gray-700 text-sm font-semibold mb-2.5">
+                  {{ $t('entrepreneurs.registration.program') }}
+                  <span class="text-red-500 ml-1">*</span>
+                </label>
+                <div class="relative">
+                  <select
+                    v-model="registrationForm.program"
+                    required
+                    class="w-full px-4 py-3.5 rounded-xl border-2 border-gray-200 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-300 text-sm bg-gray-50 focus:bg-white group-hover:border-gray-300 appearance-none cursor-pointer pr-10"
+                  >
+                    <option value="">{{ $t('entrepreneurs.registration.selectProgram') }}</option>
+                    <option value="training1">{{ $t('entrepreneurs.activities.training1.title') }}</option>
+                    <option value="training2">{{ $t('entrepreneurs.activities.training2.title') }}</option>
+                    <option value="training3">{{ $t('entrepreneurs.activities.training3.title') }}</option>
+                    <option value="training4">{{ $t('entrepreneurs.activities.training4.title') }}</option>
+                  </select>
+                  <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                    <i class="fas fa-chevron-down text-gray-400 text-xs"></i>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="group">
+                <label class="block text-gray-700 text-sm font-semibold mb-2.5">
+                  {{ $t('entrepreneurs.registration.message') }}
+                </label>
+                <textarea
+                  v-model="registrationForm.message"
+                  rows="5"
+                  class="w-full px-4 py-3.5 rounded-xl border-2 border-gray-200 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-300 text-sm bg-gray-50 focus:bg-white resize-none group-hover:border-gray-300"
+                  :placeholder="$t('entrepreneurs.registration.messagePlaceholder')"
+                ></textarea>
+              </div>
+              
+              <div class="pt-2">
+                <button
+                  type="submit"
+                  class="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold py-4 px-8 rounded-xl transition-all duration-300 transform hover:scale-[1.02] hover:shadow-2xl shadow-lg flex items-center justify-center gap-2 group"
+                >
+                  <span>{{ $t('entrepreneurs.registration.submit') }}</span>
+                  <i class="fas fa-paper-plane text-sm group-hover:translate-x-1 transition-transform duration-300"></i>
+                </button>
+                <p class="text-xs text-gray-500 text-center mt-4">
+                  En soumettant ce formulaire, vous acceptez d'être contacté par notre équipe.
+                </p>
+              </div>
+            </form>
           </div>
         </div>
       </div>
@@ -221,15 +499,117 @@
   </div>
 </template>
 
-<script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+<script setup lang="ts">
+import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
+import type { TrainingRegistration } from '@/models'
 //@ts-ignore
 import NavBarComponent from '../components/navbar/NavBarComponent.vue'
 //@ts-ignore
 import FooterComponent from '../components/footer/FooterComponent.vue'
 
 const { t } = useI18n()
+
+// Témoignages
+const testimonials = ref([
+  {
+    text: t('entrepreneurs.testimonials.testimonial1.text'),
+    name: t('entrepreneurs.testimonials.testimonial1.name'),
+    role: t('entrepreneurs.testimonials.testimonial1.role'),
+    initials: 'MK'
+  },
+  {
+    text: t('entrepreneurs.testimonials.testimonial2.text'),
+    name: t('entrepreneurs.testimonials.testimonial2.name'),
+    role: t('entrepreneurs.testimonials.testimonial2.role'),
+    initials: 'JD'
+  },
+  {
+    text: t('entrepreneurs.testimonials.testimonial3.text'),
+    name: t('entrepreneurs.testimonials.testimonial3.name'),
+    role: t('entrepreneurs.testimonials.testimonial3.role'),
+    initials: 'PL'
+  }
+])
+
+// Programmes à venir
+const upcomingPrograms = ref([
+  {
+    title: t('entrepreneurs.upcoming.program1.title'),
+    description: t('entrepreneurs.upcoming.program1.description'),
+    date: t('entrepreneurs.upcoming.program1.date'),
+    duration: t('entrepreneurs.upcoming.program1.duration'),
+    participants: t('entrepreneurs.upcoming.program1.participants'),
+    icon: 'fas fa-chart-line'
+  },
+  {
+    title: t('entrepreneurs.upcoming.program2.title'),
+    description: t('entrepreneurs.upcoming.program2.description'),
+    date: t('entrepreneurs.upcoming.program2.date'),
+    duration: t('entrepreneurs.upcoming.program2.duration'),
+    participants: t('entrepreneurs.upcoming.program2.participants'),
+    icon: 'fas fa-handshake'
+  }
+])
+
+// FAQ
+const faqs = ref([
+  {
+    question: t('entrepreneurs.faq.faq1.question'),
+    answer: t('entrepreneurs.faq.faq1.answer')
+  },
+  {
+    question: t('entrepreneurs.faq.faq2.question'),
+    answer: t('entrepreneurs.faq.faq2.answer')
+  },
+  {
+    question: t('entrepreneurs.faq.faq3.question'),
+    answer: t('entrepreneurs.faq.faq3.answer')
+  },
+  {
+    question: t('entrepreneurs.faq.faq4.question'),
+    answer: t('entrepreneurs.faq.faq4.answer')
+  }
+])
+
+const openFaqs = ref([])
+
+const toggleFaq = (index: number) => {
+  const idx = openFaqs.value.indexOf(index)
+  if (idx > -1) {
+    openFaqs.value.splice(idx, 1)
+  } else {
+    openFaqs.value.push(index)
+  }
+}
+
+// Formulaire d'inscription
+const registrationForm = ref<Omit<TrainingRegistration, 'id' | 'status' | 'registrationDate' | 'createdAt' | 'updatedAt' | 'confirmedAt' | 'cancelledAt'>>({
+  name: '',
+  email: '',
+  program: '',
+  message: ''
+})
+
+const submitRegistration = () => {
+  // Créer l'objet d'inscription avec le statut par défaut
+  const registration: TrainingRegistration = {
+    ...registrationForm.value,
+    status: 'pending',
+    registrationDate: new Date().toISOString(),
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  }
+  
+  // Ici vous pouvez envoyer les données à votre API
+  console.log('Inscription soumise:', registration)
+  
+  // Afficher le message de succès
+  alert(t('entrepreneurs.registration.success'))
+  
+  // Réinitialiser le formulaire
+  registrationForm.value = { name: '', email: '', program: '', message: '' }
+}
 
 let observer = null
 
