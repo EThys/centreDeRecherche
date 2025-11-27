@@ -375,5 +375,45 @@
       "submit": "Envoyer ma demande d'inscription",
       "success": "Votre demande d'inscription a été envoyée avec succès ! Nous vous contacterons sous 24h."
     }
+  },
+  "publications": {
+    "request": {
+      "title": "Soumettre un travail de recherche",
+      "subtitle": "Demande de publication",
+      "description": "Vous avez effectué une recherche sur le financement des PME ? Soumettez votre travail pour une éventuelle publication dans notre centre.",
+      "name": "Nom complet",
+      "namePlaceholder": "Votre nom complet",
+      "email": "Adresse email",
+      "emailPlaceholder": "votre@email.com",
+      "phone": "Téléphone (optionnel)",
+      "phonePlaceholder": "+243 XXX XXX XXX",
+      "institution": "Institution (optionnel)",
+      "institutionPlaceholder": "Votre université ou organisation",
+      "position": "Fonction (optionnel)",
+      "positionPlaceholder": "Votre fonction ou titre",
+      "title": "Titre du travail",
+      "titlePlaceholder": "Titre de votre recherche",
+      "abstract": "Résumé",
+      "abstractPlaceholder": "Résumé de votre travail de recherche (minimum 200 caractères)",
+      "type": "Type de publication",
+      "selectType": "Sélectionnez le type",
+      "typeArticle": "Article",
+      "typeResearchPaper": "Document de recherche",
+      "typeBook": "Livre",
+      "typeReport": "Rapport",
+      "typeOther": "Autre",
+      "domains": "Domaines de recherche",
+      "domainsPlaceholder": "Sélectionnez un ou plusieurs domaines",
+      "authors": "Auteurs",
+      "authorsPlaceholder": "Liste des auteurs (séparés par des virgules)",
+      "keywords": "Mots-clés (optionnel)",
+      "keywordsPlaceholder": "Mots-clés séparés par des virgules",
+      "message": "Message complémentaire (optionnel)",
+      "messagePlaceholder": "Informations supplémentaires sur votre travail...",
+      "submit": "Soumettre ma demande",
+      "consent": "En soumettant ce formulaire, vous acceptez que votre travail soit examiné par notre comité scientifique.",
+      "privacyPolicy": "Politique de confidentialité",
+      "success": "Votre demande de publication a été soumise avec succès ! Nous vous contacterons après l'examen de votre travail."
+    }
   }
 }
