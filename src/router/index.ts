@@ -92,6 +92,21 @@ const router = createRouter({
       name: 'entrepreneurs',
       component: () => import('../views/EntrepreneursView.vue'),
     },
+    {
+      path: '/politique-confidentialite',
+      name: 'privacy-policy',
+      component: () => import('../views/PrivacyPolicyView.vue'),
+    },
+    {
+      path: '/mentions-legales',
+      name: 'legal-notice',
+      component: () => import('../views/LegalNoticeView.vue'),
+    },
+    {
+      path: '/conditions-utilisation',
+      name: 'terms-of-service',
+      component: () => import('../views/TermsOfServiceView.vue'),
+    },
   ],
   scrollBehavior(to, from, savedPosition) {
     return { top: 0, behavior: 'smooth' }
