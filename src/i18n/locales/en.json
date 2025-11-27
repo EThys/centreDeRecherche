@@ -230,6 +230,97 @@
         "item2": "Access to a partner network",
         "item3": "Collaboration opportunities"
       }
+    },
+    "stats": {
+      "title": "Our Results in Numbers",
+      "stat1": {
+        "value": "500+",
+        "label": "Trained entrepreneurs"
+      },
+      "stat2": {
+        "value": "50+",
+        "label": "Programs completed"
+      },
+      "stat3": {
+        "value": "95%",
+        "label": "Satisfaction rate"
+      },
+      "stat4": {
+        "value": "30+",
+        "label": "Active partners"
+      }
+    },
+    "testimonials": {
+      "header": "TESTIMONIALS",
+      "title": "What our entrepreneurs say",
+      "testimonial1": {
+        "text": "The business management training helped me structure my business and increase my revenue by 40% in 6 months.",
+        "name": "Marie Kabila",
+        "role": "Founder, TechStart DRC"
+      },
+      "testimonial2": {
+        "text": "Personalized support was crucial in obtaining the funding needed to develop my project.",
+        "name": "Jean Désiré",
+        "role": "Director, AgroBusiness Plus"
+      },
+      "testimonial3": {
+        "text": "The partner network opened doors I never could have crossed alone. A transformative experience!",
+        "name": "Patricia Lumbu",
+        "role": "CEO, Fashion Congo"
+      }
+    },
+    "upcoming": {
+      "header": "PROGRAMS",
+      "title": "Upcoming programs",
+      "register": "Register",
+      "program1": {
+        "title": "SME Financing Training",
+        "description": "Learn how to access different available funding sources",
+        "date": "March 15, 2024",
+        "duration": "3 days",
+        "participants": "25 spots available"
+      },
+      "program2": {
+        "title": "Business Plan Workshop",
+        "description": "Create a professional business plan for your business",
+        "date": "April 5, 2024",
+        "duration": "2 days",
+        "participants": "20 spots available"
+      }
+    },
+    "faq": {
+      "header": "FREQUENTLY ASKED QUESTIONS",
+      "title": "Frequently asked questions",
+      "faq1": {
+        "question": "Are the trainings free?",
+        "answer": "Some trainings are free, others may have modest registration fees. Check the details of each program for more information."
+      },
+      "faq2": {
+        "question": "Who can participate in the trainings?",
+        "answer": "Our trainings are open to all entrepreneurs, project leaders and SME managers in Central Africa, regardless of their level of experience."
+      },
+      "faq3": {
+        "question": "How to register for a program?",
+        "answer": "You can register via the registration form on this page, or contact us directly by email or phone. We will respond within 24 hours."
+      },
+      "faq4": {
+        "question": "Are the trainings certified?",
+        "answer": "Yes, at the end of each training, you will receive a certificate of participation issued by CReFF-PME in partnership with Kongo University and ULB."
+      }
+    },
+    "registration": {
+      "title": "Register for our trainings",
+      "description": "Join our community of entrepreneurs and develop your skills",
+      "name": "Full name",
+      "namePlaceholder": "Your first and last name",
+      "email": "Email address",
+      "emailPlaceholder": "your@email.com",
+      "program": "Desired program",
+      "selectProgram": "Select a program",
+      "message": "Message (optional)",
+      "messagePlaceholder": "Tell us more about your needs...",
+      "submit": "Send my registration request",
+      "success": "Your registration request has been sent successfully! We will contact you within 24 hours."
     }
   }
 }

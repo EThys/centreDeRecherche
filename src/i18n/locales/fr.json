@@ -283,6 +283,97 @@
         "item2": "Accès à un réseau de partenaires",
         "item3": "Opportunités de collaboration"
       }
+    },
+    "stats": {
+      "title": "Nos Résultats en Chiffres",
+      "stat1": {
+        "value": "500+",
+        "label": "Entrepreneurs formés"
+      },
+      "stat2": {
+        "value": "50+",
+        "label": "Programmes réalisés"
+      },
+      "stat3": {
+        "value": "95%",
+        "label": "Taux de satisfaction"
+      },
+      "stat4": {
+        "value": "30+",
+        "label": "Partenaires actifs"
+      }
+    },
+    "testimonials": {
+      "header": "TÉMOIGNAGES",
+      "title": "Ce que disent nos entrepreneurs",
+      "testimonial1": {
+        "text": "La formation en gestion d'entreprise m'a permis de structurer mon entreprise et d'augmenter mon chiffre d'affaires de 40% en 6 mois.",
+        "name": "Marie Kabila",
+        "role": "Fondatrice, TechStart RDC"
+      },
+      "testimonial2": {
+        "text": "L'accompagnement personnalisé a été déterminant pour obtenir le financement nécessaire au développement de mon projet.",
+        "name": "Jean Désiré",
+        "role": "Directeur, AgroBusiness Plus"
+      },
+      "testimonial3": {
+        "text": "Le réseau de partenaires m'a ouvert des portes que je n'aurais jamais pu franchir seule. Une expérience transformatrice !",
+        "name": "Patricia Lumbu",
+        "role": "CEO, Fashion Congo"
+      }
+    },
+    "upcoming": {
+      "header": "PROGRAMMES",
+      "title": "Programmes à venir",
+      "register": "S'inscrire",
+      "program1": {
+        "title": "Formation en Financement des PME",
+        "description": "Apprenez à accéder aux différentes sources de financement disponibles",
+        "date": "15 Mars 2024",
+        "duration": "3 jours",
+        "participants": "25 places disponibles"
+      },
+      "program2": {
+        "title": "Atelier de Business Plan",
+        "description": "Créez un business plan professionnel pour votre entreprise",
+        "date": "5 Avril 2024",
+        "duration": "2 jours",
+        "participants": "20 places disponibles"
+      }
+    },
+    "faq": {
+      "header": "QUESTIONS FRÉQUENTES",
+      "title": "Questions fréquemment posées",
+      "faq1": {
+        "question": "Les formations sont-elles gratuites ?",
+        "answer": "Certaines formations sont gratuites, d'autres peuvent avoir des frais d'inscription modiques. Consultez les détails de chaque programme pour plus d'informations."
+      },
+      "faq2": {
+        "question": "Qui peut participer aux formations ?",
+        "answer": "Nos formations sont ouvertes à tous les entrepreneurs, porteurs de projets et dirigeants de PME en Afrique centrale, quel que soit leur niveau d'expérience."
+      },
+      "faq3": {
+        "question": "Comment s'inscrire à un programme ?",
+        "answer": "Vous pouvez vous inscrire via le formulaire d'inscription sur cette page, ou nous contacter directement par email ou téléphone. Nous vous répondrons dans les 24 heures."
+      },
+      "faq4": {
+        "question": "Les formations sont-elles certifiantes ?",
+        "answer": "Oui, à la fin de chaque formation, vous recevrez un certificat de participation délivré par le CReFF-PME en partenariat avec l'Université Kongo et l'ULB."
+      }
+    },
+    "registration": {
+      "title": "Inscrivez-vous à nos formations",
+      "description": "Rejoignez notre communauté d'entrepreneurs et développez vos compétences",
+      "name": "Nom complet",
+      "namePlaceholder": "Votre nom et prénom",
+      "email": "Adresse email",
+      "emailPlaceholder": "votre@email.com",
+      "program": "Programme souhaité",
+      "selectProgram": "Sélectionnez un programme",
+      "message": "Message (optionnel)",
+      "messagePlaceholder": "Dites-nous en plus sur vos besoins...",
+      "submit": "Envoyer ma demande d'inscription",
+      "success": "Votre demande d'inscription a été envoyée avec succès ! Nous vous contacterons sous 24h."
     }
   }
 }
