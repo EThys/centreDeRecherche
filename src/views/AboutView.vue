@@ -202,11 +202,11 @@
                 <div class="space-y-2 text-sm sm:text-base text-gray-200 border-t border-white/20 pt-4">
                   <p class="leading-relaxed flex items-start">
                     <i class="fas fa-check-circle mr-2 mt-1 text-blue-400 flex-shrink-0"></i>
-                    <span>Professeur d'Entrepreneuriat à Solvay Brussels School</span>
+                    <span>Professeur d'entrepreneuriat à la Solvay Brussels School of Economics and Management (ULB)</span>
                   </p>
                   <p class="leading-relaxed flex items-start">
                     <i class="fas fa-check-circle mr-2 mt-1 text-blue-400 flex-shrink-0"></i>
-                    <span>Vice-Doyen de l'ULB</span>
+                    <span>Vice-Doyen de Solvay Brussels School Economics & Management (ULB)</span>
                   </p>
                   <p class="leading-relaxed flex items-start">
                     <i class="fas fa-check-circle mr-2 mt-1 text-blue-400 flex-shrink-0"></i>
@@ -246,7 +246,7 @@
                 <div class="space-y-2 text-sm sm:text-base text-gray-200 border-t border-white/20 pt-4">
                   <p class="leading-relaxed flex items-start">
                     <i class="fas fa-check-circle mr-2 mt-1 text-blue-400 flex-shrink-0"></i>
-                    <span>Professeur des Universités</span>
+                    <span>Professeur des Universités(RDC)</span>
                   </p>
                   <p class="leading-relaxed flex items-start">
                     <i class="fas fa-check-circle mr-2 mt-1 text-blue-400 flex-shrink-0"></i>
@@ -290,7 +290,7 @@
                 <div class="space-y-2 text-sm sm:text-base text-gray-200 border-t border-white/20 pt-4">
                   <p class="leading-relaxed flex items-start">
                     <i class="fas fa-check-circle mr-2 mt-1 text-blue-400 flex-shrink-0"></i>
-                    <span>Chargé de cours en Sciences de gestion</span>
+                    <span>Professeur à l'Université Kongo</span>
                   </p>
                   <p class="leading-relaxed flex items-start">
                     <i class="fas fa-check-circle mr-2 mt-1 text-blue-400 flex-shrink-0"></i>
@@ -298,7 +298,7 @@
                   </p>
                   <p class="leading-relaxed flex items-start">
                     <i class="fas fa-check-circle mr-2 mt-1 text-blue-400 flex-shrink-0"></i>
-                    <span>Expert en financement des PME</span>
+                    <span>Expert en finance entrepreneuriale</span>
                   </p>
                   <p class="text-xs text-gray-300 mt-4 pt-4 border-t border-white/10">
                     <i class="fas fa-graduation-cap mr-2"></i>
@@ -343,7 +343,7 @@
                 <p class="text-blue-200 text-sm sm:text-base font-medium mb-4">Directeur du Centre de Recherche et de Formation sur le Financement des PME en Afrique centrale</p>
                 
                 <div class="space-y-2 text-sm sm:text-base text-gray-200 border-t border-white/20 pt-4">
-                  <p class="leading-relaxed">Chargé des cours en sciences de gestion</p>
+                  <p class="leading-relaxed">Professeur à l'Université Kongo</p>
                   <p class="text-xs text-gray-300 mt-4 pt-4 border-t border-white/10">
                     <i class="fas fa-graduation-cap mr-2"></i>
                     Doctorat ULB (2024)
@@ -435,47 +435,68 @@
           <div 
             v-for="(partner, index) in partners"
             :key="index"
-            class="group bg-white rounded-2xl sm:rounded-3xl p-8 sm:p-10 shadow-lg hover:shadow-2xl border border-gray-100 hover:border-blue-200 transition-all duration-500 fade-in-up stagger-item"
+            class="group relative bg-white rounded-3xl sm:rounded-[2rem] p-8 sm:p-10 lg:p-12 shadow-xl hover:shadow-2xl border border-gray-100/80 hover:border-blue-300/60 transition-all duration-700 fade-in-up stagger-item overflow-hidden"
             :style="{ animationDelay: `${index * 150}ms` }"
             data-animate
           >
+            <!-- Effet de fond animé au survol -->
+            <div class="absolute inset-0 bg-gradient-to-br from-blue-50/0 via-indigo-50/0 to-cyan-50/0 group-hover:from-blue-50/50 group-hover:via-indigo-50/30 group-hover:to-cyan-50/40 transition-all duration-700 rounded-3xl"></div>
+            
+            <!-- Effet de brillance qui traverse -->
+            <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700">
+              <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out rounded-3xl"></div>
+            </div>
+            
             <!-- Logo du partenaire -->
-            <div class="mb-6 h-32 sm:h-40 flex items-center justify-center relative">
-              <!-- Effet de brillance au survol -->
-              <div class="absolute inset-0 bg-blue-100/30 rounded-2xl blur-2xl scale-150 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            <div class="mb-8 h-36 sm:h-44 lg:h-48 flex items-center justify-center relative z-10">
+              <!-- Effet de halo coloré au survol -->
+              <div class="absolute inset-0 bg-gradient-to-br from-blue-400/20 via-indigo-400/20 to-cyan-400/20 rounded-3xl blur-3xl scale-150 opacity-0 group-hover:opacity-100 transition-all duration-700 transform group-hover:scale-110"></div>
               
-              <!-- Conteneur du logo -->
-              <div class="relative bg-gradient-to-br from-blue-50 to-indigo-50 p-6 sm:p-8 rounded-2xl shadow-md group-hover:shadow-xl transition-all duration-500 group-hover:scale-105 border border-gray-100 group-hover:border-blue-200">
+              <!-- Conteneur du logo premium -->
+              <div class="relative bg-gradient-to-br from-white via-blue-50/30 to-indigo-50/40 p-6 sm:p-8 lg:p-10 rounded-2xl sm:rounded-3xl shadow-lg group-hover:shadow-2xl transition-all duration-700 group-hover:scale-110 group-hover:-translate-y-2 border-2 border-gray-100/60 group-hover:border-blue-300/80 backdrop-blur-sm">
+                <!-- Effet de brillance sur le conteneur -->
+                <div class="absolute inset-0 bg-gradient-to-br from-white/60 via-transparent to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                
                 <img 
                   :src="partner.logo" 
                   :alt="partner.name"
-                  class="max-h-24 sm:max-h-32 max-w-full object-contain filter grayscale group-hover:grayscale-0 transition-all duration-500"
+                  class="relative z-10 max-h-28 sm:max-h-36 lg:max-h-40 max-w-full object-contain transition-all duration-700 group-hover:scale-105 drop-shadow-md group-hover:drop-shadow-xl"
                 />
               </div>
             </div>
             
             <!-- Contenu -->
-            <div class="text-center">
-              <div class="mb-4">
-                <h3 class="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors duration-300">
+            <div class="text-center relative z-10">
+              <div class="mb-5">
+                <h3 class="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-4 group-hover:text-blue-700 transition-all duration-500 transform group-hover:scale-105">
                   {{ partner.name }}
                 </h3>
-                <div class="w-16 h-1 bg-gradient-to-r from-blue-500 to-indigo-500 mx-auto rounded-full group-hover:w-24 transition-all duration-300"></div>
+                <!-- Ligne décorative animée -->
+                <div class="relative w-20 h-1.5 mx-auto rounded-full overflow-hidden">
+                  <div class="absolute inset-0 bg-gradient-to-r from-blue-500 via-indigo-500 to-cyan-500 rounded-full group-hover:w-32 transition-all duration-500"></div>
+                  <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent w-8 group-hover:translate-x-full transition-transform duration-1000 ease-in-out"></div>
+                </div>
               </div>
               
-              <p class="text-gray-600 text-sm sm:text-base leading-relaxed font-light">
+              <p class="text-gray-600 text-sm sm:text-base lg:text-lg leading-relaxed font-medium mb-6 group-hover:text-gray-700 transition-colors duration-300">
                 {{ partner.description }}
               </p>
               
-              <!-- Badge avec icône -->
-              <div class="mt-6 inline-flex items-center gap-2 bg-blue-50 group-hover:bg-blue-100 px-4 py-2 rounded-full transition-colors duration-300">
-                <i :class="partner.icon" class="text-blue-600 text-sm"></i>
-                <span class="text-xs sm:text-sm font-semibold text-blue-700">Partenaire</span>
+              <!-- Badge premium avec icône -->
+              <div class="inline-flex items-center gap-2.5 bg-gradient-to-r from-blue-50 to-indigo-50 group-hover:from-blue-100 group-hover:to-indigo-100 px-5 py-2.5 rounded-full transition-all duration-500 shadow-md group-hover:shadow-lg border border-blue-200/50 group-hover:border-blue-300/80 transform group-hover:scale-105">
+                <i :class="partner.icon" class="text-blue-600 text-base group-hover:text-blue-700 transition-colors duration-300"></i>
+                <span class="text-xs sm:text-sm font-bold text-blue-700 group-hover:text-blue-800 tracking-wide">Partenaire</span>
               </div>
             </div>
             
-            <!-- Effet de bordure animée -->
-            <div class="absolute inset-0 rounded-2xl sm:rounded-3xl border-2 border-transparent group-hover:border-blue-300/50 transition-all duration-500 pointer-events-none"></div>
+            <!-- Bordure animée premium -->
+            <div class="absolute inset-0 rounded-3xl border-2 border-transparent group-hover:border-gradient-to-r group-hover:from-blue-400/60 group-hover:via-indigo-400/60 group-hover:to-cyan-400/60 transition-all duration-700 pointer-events-none">
+              <div class="absolute inset-0 rounded-3xl bg-gradient-to-r from-blue-400/0 via-indigo-400/0 to-cyan-400/0 group-hover:from-blue-400/20 group-hover:via-indigo-400/20 group-hover:to-cyan-400/20 transition-all duration-700"></div>
+            </div>
+            
+            <!-- Points décoratifs -->
+            <div class="absolute top-4 right-4 w-2 h-2 bg-blue-400 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-500 transform scale-0 group-hover:scale-100"></div>
+            <div class="absolute bottom-4 left-4 w-2 h-2 bg-indigo-400 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-700 transform scale-0 group-hover:scale-100" style="transition-delay: 100ms"></div>
           </div>
         </div>
       </div>
@@ -517,7 +538,7 @@ const partners = [
   },
   {
     name: 'Université Kongo',
-    description: 'Partenariat académique',
+    description: 'Mbanza-Ngungu, Kongo-Central, RDC',
     icon: 'fas fa-book',
     logo: kongoLogo
   }
@@ -652,3 +673,4 @@ onUnmounted(() => {
   }
 }
 </style>
+

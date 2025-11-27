@@ -121,8 +121,8 @@ const teamMembers = ref<TeamMember[]>([
     role: "Président",
     photo: researchImage2,
     highlights: [
-      "Professeur d'Entrepreneuriat à Solvay Brussels School",
-      "Vice-Doyen de l'ULB",
+      "Professeur d'entrepreneuriat à la Solvay Brussels School of Economics and Management (ULB)",
+      "Vice-Doyen de Solvay Brussels School Economics & Management (ULB)",
       "Fondateur de StartLAB.Brussels"
     ],
     education: "Doctorat en Entrepreneuriat (2008)",
@@ -135,7 +135,7 @@ const teamMembers = ref<TeamMember[]>([
     role: "Vice-Président",
     photo: researchImage3,
     highlights: [
-      "Professeur des Universités",
+      "Professeur des Universités (RDC)",
       "Expert en sciences de gestion",
       "Spécialiste en entrepreneuriat"
     ],
@@ -149,9 +149,9 @@ const teamMembers = ref<TeamMember[]>([
     role: "Secrétaire",
     photo: researchImage1,
     highlights: [
-      "Chargé de cours en Sciences de gestion",
+      "Professeur à l'Université Kongo",
       "Co-fondateur du Centre CReFF-PME",
-      "Expert en financement des PME"
+      "Expert en finance entrepreneuriale"
     ],
     education: "Doctorat ULB (2024)",
     email: "jean.nsonsumuna@creff-pme.org"
