@@ -58,7 +58,7 @@
           <div class="fade-in-right" data-animate>
             <div class="relative rounded-lg overflow-hidden shadow-xl">
               <img 
-                src="../assets/carousel-3.jpg" 
+                src="../assets/prof.jpeg" 
                 alt="Formation entrepreneurs"
                 class="w-full h-full object-cover aspect-[4/3]"
               />
