@@ -502,7 +502,8 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import type { TrainingRegistration } from '@/models'
+//@ts-ignore
+import type { TrainingRegistration } from '../models/training-registration.model'
 //@ts-ignore
 import NavBarComponent from '../components/navbar/NavBarComponent.vue'
 //@ts-ignore
