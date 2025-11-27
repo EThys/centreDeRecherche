@@ -187,7 +187,7 @@ import NavBarComponent from '../../components/navbar/NavBarComponent.vue'
 import researchImage1 from '../../assets/eunice.jpeg'
 import researchImage2 from '../../assets/prof.jpeg'
 import researchImage3 from '../../assets/nsomuna.jpeg'
-import researchImage4 from '../../assets/carousel-4.jpg'
+import researchImage4 from '../../assets/marcelin.jpeg'
 
 const { t } = useI18n()
 
@@ -202,12 +202,12 @@ const slides = computed(() => [
     image: researchImage1
   },
   {
-    title: t('hero.recruitment.title'),
-    highlight: t('hero.recruitment.highlight'),
-    subtitle: t('hero.recruitment.subtitle'),
-    description: t('hero.recruitment.description'),
-    cta: t('hero.recruitment.cta'),
-    ctaLink: 'Candidature_CReFF_102211.html',
+    title: t('hero.publications.title'),
+    highlight: t('hero.publications.highlight'),
+    subtitle: t('hero.publications.subtitle'),
+    description: t('hero.publications.description'),
+    cta: t('hero.publications.cta'),
+    ctaLink: '/publications',
     image: researchImage2
   },
   {
