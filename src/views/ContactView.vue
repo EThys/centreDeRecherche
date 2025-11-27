@@ -20,7 +20,7 @@ const form = ref({
 const contactInfo = [
   { icon: EnvelopeIcon, title: 'Email', value: 'creff.pme.uk@gmail.com', link: 'mailto:creff.pme.uk@gmail.com' },
   { icon: PhoneIcon, title: 'Téléphone', value: '+243 980 49 52 73 / +243 850 59 32 11', link: 'tel:+243980495273' },
-  { icon: MapPinIcon, title: 'Adresse', value: 'Noki, Avenue Kimungu, Mbanza Kongo', link: '#' },
+  { icon: MapPinIcon, title: 'Adresse', value: 'Université Kongo, Mbanza-Ngungu, Kongo-Central, RDC', link: '#' },
 ];
 
 const submitForm = () => {
@@ -208,7 +208,7 @@ const submitForm = () => {
                 allowfullscreen
                 loading="lazy"
                 referrerpolicy="no-referrer-when-downgrade"
-                title="Localisation CReFF-PME - Noki, Avenue Kimungu, Mbanza Kongo"
+                title="Localisation CReFF-PME - Université Kongo, Mbanza-Ngungu, Kongo-Central, RDC"
               ></iframe>
             </div>
           </div>

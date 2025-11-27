@@ -199,8 +199,8 @@ const contactInfo = [
   { 
     type: 'address', 
     icon: 'fas fa-map-marker-alt', 
-    value: 'Noki, Avenue Kimungu', 
-    label: 'Mbanza Kongo, RDC' 
+    value: 'Université Kongo', 
+    label: 'Mbanza-Ngungu, Kongo-Central, RDC' 
   },
   { 
     type: 'phone', 
