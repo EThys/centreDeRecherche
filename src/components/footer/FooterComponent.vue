@@ -142,15 +142,15 @@
 
         <!-- Liens légaux -->
         <div class="flex flex-wrap justify-center gap-6 slide-in-right" data-delay="2000">
-          <a 
+          <router-link 
             v-for="(link, index) in legalLinks"
             :key="link.name"
-            :href="link.url"
+            :to="link.url"
             class="text-blue-200 hover:text-white text-sm transition-colors duration-300 transform hover:scale-105"
             :style="`transition-delay: ${index * 100}ms`"
           >
             {{ link.name }}
-          </a>
+          </router-link>
         </div>
       </div>
 
@@ -217,9 +217,9 @@ const contactInfo = [
 ]
 
 const legalLinks = [
-  { name: 'Politique de confidentialité', url: '#' },
-  { name: 'Mentions légales', url: '#' },
-  { name: 'Conditions d\'utilisation', url: '#' }
+  { name: 'Politique de confidentialité', url: '/politique-confidentialite' },
+  { name: 'Mentions légales', url: '/mentions-legales' },
+  { name: 'Conditions d\'utilisation', url: '/conditions-utilisation' }
 ]
 
 // Méthodes
