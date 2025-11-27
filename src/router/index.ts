@@ -21,8 +21,6 @@ import ContactView from '@/views/ContactView.vue';
 import AuthView from '@/views/AuthView.vue';
 //@ts-ignore
 import AboutView from '@/views/AboutView.vue';
-//@ts-ignore
-import EntrepreneursView from '../views/EntrepreneursView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -92,7 +90,7 @@ const router = createRouter({
     {
       path: '/entrepreneurs',
       name: 'entrepreneurs',
-      component: EntrepreneursView,
+      component: () => import('../views/EntrepreneursView.vue'),
     },
     {
       path: '/politique-confidentialite',
