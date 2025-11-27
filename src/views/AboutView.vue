@@ -250,7 +250,7 @@
                   </p>
                   <p class="leading-relaxed flex items-start">
                     <i class="fas fa-check-circle mr-2 mt-1 text-blue-400 flex-shrink-0"></i>
-                    <span>Expert en sciences de gestion</span>
+                    <span>Expert en restructuration et croissance des PME en Afrique</span>
                   </p>
                   <p class="leading-relaxed flex items-start">
                     <i class="fas fa-check-circle mr-2 mt-1 text-blue-400 flex-shrink-0"></i>
