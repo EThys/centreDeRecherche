@@ -8,7 +8,8 @@
     "news": "News",
     "gallery": "Gallery",
     "contact": "Contact",
-    "forum": "Forum"
+    "forum": "Forum",
+    "entrepreneurs": "Entrepreneurs"
   },
   "hero": {
     "welcome": "Welcome to",
@@ -182,5 +183,53 @@
     "register": "Register",
     "details": "Details",
     "min": "min"
+  },
+  "entrepreneurs": {
+    "hero": {
+      "title": "CReFF-Entrepreneurs",
+      "subtitle": "Training and Support",
+      "description": "Discover our training and support programs dedicated to entrepreneurs to strengthen their skills and develop their businesses."
+    },
+    "mission": {
+      "header": "OUR MISSION",
+      "title": "Train and support",
+      "titleHighlight": "entrepreneurs",
+      "paragraph1": "CReFF-Entrepreneurs is dedicated to training and supporting entrepreneurs in Central Africa. We offer training programs tailored to the specific needs of SMEs and local entrepreneurs.",
+      "paragraph2": "Our mission is to strengthen entrepreneurial capacities, facilitate access to financing and contribute to the sustainable economic development of the region."
+    },
+    "activities": {
+      "header": "OUR ACTIVITIES",
+      "title": "Training",
+      "titleHighlight": "Programs",
+      "description": "Discover our various training programs designed to meet the needs of entrepreneurs at all stages of their business development.",
+      "training1": {
+        "title": "Business Management Training",
+        "subtitle": "Acquire essential skills",
+        "item1": "Financial management and basic accounting",
+        "item2": "Strategic planning and business plan",
+        "item3": "Human resources management"
+      },
+      "training2": {
+        "title": "Personalized Support",
+        "subtitle": "Follow-up tailored to your needs",
+        "item1": "Individual mentoring with experts",
+        "item2": "Support in fundraising",
+        "item3": "Business development consulting"
+      },
+      "training3": {
+        "title": "Entrepreneurship Training",
+        "subtitle": "Develop your entrepreneurial spirit",
+        "item1": "Business creation and development",
+        "item2": "Innovation and creativity",
+        "item3": "Growth management"
+      },
+      "training4": {
+        "title": "Networking and Partnerships",
+        "subtitle": "Expand your professional network",
+        "item1": "Meetings with other entrepreneurs",
+        "item2": "Access to a partner network",
+        "item3": "Collaboration opportunities"
+      }
+    }
   }
 }

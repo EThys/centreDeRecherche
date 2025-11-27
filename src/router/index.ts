@@ -87,6 +87,11 @@ const router = createRouter({
       name: 'activites-recherche',
       component: ActivityRecherche,
     },
+    {
+      path: '/entrepreneurs',
+      name: 'entrepreneurs',
+      component: () => import('../views/EntrepreneursView.vue'),
+    },
   ],
   scrollBehavior(to, from, savedPosition) {
     return { top: 0, behavior: 'smooth' }

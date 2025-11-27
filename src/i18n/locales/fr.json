@@ -11,7 +11,8 @@
     "forum": "Forum",
     "researchDomains": "Domaines de Recherche",
     "researchActivities": "Activités de Recherche",
-    "memberSpace": "Espace Membre"
+    "memberSpace": "Espace Membre",
+    "entrepreneurs": "Entrepreneurs"
   },
   "hero": {
     "welcome": "Bienvenue au",
@@ -235,5 +236,53 @@
     "register": "S'inscrire",
     "details": "Détails",
     "min": "min"
+  },
+  "entrepreneurs": {
+    "hero": {
+      "title": "CReFF-Entrepreneurs",
+      "subtitle": "Formation et Accompagnement",
+      "description": "Découvrez nos programmes de formation et d'accompagnement dédiés aux entrepreneurs pour renforcer leurs compétences et développer leurs entreprises."
+    },
+    "mission": {
+      "header": "NOTRE MISSION",
+      "title": "Former et accompagner les",
+      "titleHighlight": "entrepreneurs",
+      "paragraph1": "Le CReFF-Entrepreneurs est dédié à la formation et à l'accompagnement des entrepreneurs en Afrique centrale. Nous offrons des programmes de formation adaptés aux besoins spécifiques des PME et des entrepreneurs locaux.",
+      "paragraph2": "Notre mission est de renforcer les capacités entrepreneuriales, de faciliter l'accès au financement et de contribuer au développement économique durable de la région."
+    },
+    "activities": {
+      "header": "NOS ACTIVITÉS",
+      "title": "Programmes de",
+      "titleHighlight": "Formation",
+      "description": "Découvrez nos différents programmes de formation conçus pour répondre aux besoins des entrepreneurs à tous les stades de développement de leur entreprise.",
+      "training1": {
+        "title": "Formation en Gestion d'Entreprise",
+        "subtitle": "Acquérir les compétences essentielles",
+        "item1": "Gestion financière et comptabilité de base",
+        "item2": "Planification stratégique et business plan",
+        "item3": "Gestion des ressources humaines"
+      },
+      "training2": {
+        "title": "Accompagnement Personnalisé",
+        "subtitle": "Un suivi adapté à vos besoins",
+        "item1": "Mentorat individuel avec des experts",
+        "item2": "Accompagnement dans la recherche de financement",
+        "item3": "Conseil en développement d'entreprise"
+      },
+      "training3": {
+        "title": "Formation en Entrepreneuriat",
+        "subtitle": "Développer votre esprit entrepreneurial",
+        "item1": "Création et développement d'entreprise",
+        "item2": "Innovation et créativité",
+        "item3": "Gestion de la croissance"
+      },
+      "training4": {
+        "title": "Réseautage et Partenariats",
+        "subtitle": "Élargir votre réseau professionnel",
+        "item1": "Rencontres avec d'autres entrepreneurs",
+        "item2": "Accès à un réseau de partenaires",
+        "item3": "Opportunités de collaboration"
+      }
+    }
   }
 }
