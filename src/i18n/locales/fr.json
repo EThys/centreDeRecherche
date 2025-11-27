@@ -20,12 +20,12 @@
     "subtitle": "Centre de Recherche et de Formation sur le Financement des PME en Afrique centrale",
     "description": "Une initiative de l'Université Kongo en partenariat avec l'Université libre de Bruxelles pour renforcer la recherche sur l'accès au financement des PME.",
     "cta": "Découvrir notre mission",
-    "recruitment": {
-      "title": "Recrutement",
-      "highlight": "Assistant(e)s Chercheurs",
-      "subtitle": "Rejoignez notre équipe de recherche",
-      "description": "Participez à nos projets de recherche, bénéficiez d'un encadrement académique et d'opportunités de collaboration internationale.",
-      "cta": "Postuler maintenant"
+    "publications": {
+      "title": "Publications et",
+      "highlight": "Recherche",
+      "subtitle": "Découvrez nos travaux de recherche",
+      "description": "Explorez nos publications scientifiques, nos études sur le financement des PME et nos contributions à la recherche académique en Afrique centrale.",
+      "cta": "Voir nos publications"
     },
     "training": {
       "title": "Formation et",
