@@ -52,7 +52,7 @@
               :class="{ 'animate-enter': isVisible }"
             >
               <img
-                src="../assets/carousel-2.jpg"
+                src="../assets/eunice.jpeg"
                 alt="Équipe du CReFF-PME en réunion de recherche"
                 class="w-full h-56 sm:h-72 lg:h-80 object-cover transform transition-transform duration-700 image-main"
               />
