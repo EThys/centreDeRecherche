@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
-import type { Publication } from '@/models'
+import { useI18n } from 'vue-i18n'
+import type { Publication, PublicationRequest } from '@/models'
+
+const { t } = useI18n()
 
 // Données réactives
 const searchQuery = ref('')
@@ -295,6 +298,73 @@ onUnmounted(() => {
     scrollObserver.value.disconnect()
   }
 })
+
+// Formulaire de demande de publication
+const publicationRequestForm = ref<Omit<PublicationRequest, 'id' | 'status' | 'submissionDate' | 'createdAt' | 'updatedAt' | 'reviewedAt' | 'publishedAt'>>({
+  name: '',
+  email: '',
+  phone: '',
+  institution: '',
+  position: '',
+  title: '',
+  abstract: '',
+  type: '',
+  domains: [],
+  authors: '',
+  keywords: '',
+  message: ''
+})
+
+const researchDomainsForForm = [
+  "Finance Bancaire",
+  "Microfinance", 
+  "Capital-Risque",
+  "Finance Digitale",
+  "PME & Entrepreneuriat",
+  "Politique Publique",
+  "Innovation Financière",
+  "Développement Durable"
+]
+
+const toggleDomainForForm = (domain: string) => {
+  const index = publicationRequestForm.value.domains.indexOf(domain)
+  if (index > -1) {
+    publicationRequestForm.value.domains.splice(index, 1)
+  } else {
+    publicationRequestForm.value.domains.push(domain)
+  }
+}
+
+const submitPublicationRequest = () => {
+  // Créer l'objet de demande avec le statut par défaut
+  const request: PublicationRequest = {
+    ...publicationRequestForm.value,
+    status: 'pending',
+    submissionDate: new Date().toISOString(),
+  }
+  
+  // Ici, vous pouvez envoyer la demande à votre API
+  console.log('Publication request submitted:', request)
+  
+  // Afficher un message de succès (vous pouvez utiliser une notification toast)
+  alert(t('publications.request.success'))
+  
+  // Réinitialiser le formulaire
+  publicationRequestForm.value = {
+    name: '',
+    email: '',
+    phone: '',
+    institution: '',
+    position: '',
+    title: '',
+    abstract: '',
+    type: '',
+    domains: [],
+    authors: '',
+    keywords: '',
+    message: ''
+  }
+}
 </script>
 
 <template>
@@ -801,6 +871,259 @@ onUnmounted(() => {
         </button>
       </div>
 
+      <!-- Section Formulaire de demande de publication -->
+      <section class="py-16 sm:py-20 lg:py-24 bg-gradient-to-br from-gray-100 via-gray-50 to-gray-200 relative overflow-hidden mt-12">
+        <!-- Image d'arrière-plan subtile -->
+        <div class="absolute inset-0">
+          <img 
+            src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" 
+            alt="Background"
+            class="w-full h-full object-cover opacity-10"
+          />
+          <!-- Overlay sombre pour plus de profondeur -->
+          <div class="absolute inset-0 bg-gray-900/5"></div>
+          <!-- Motif décoratif -->
+          <div class="absolute top-0 left-0 w-full h-full">
+            <div class="absolute top-20 right-20 w-64 h-64 bg-blue-100/20 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-20 left-20 w-80 h-80 bg-blue-50/30 rounded-full blur-3xl"></div>
+          </div>
+        </div>
+        
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <!-- En-tête -->
+          <div class="text-center mb-10 sm:mb-12 fade-in-up" data-animate>
+            <div class="inline-flex items-center gap-2 mb-4">
+              <div class="w-8 h-0.5 bg-blue-600"></div>
+              <span class="text-blue-600 text-xs font-semibold tracking-wider uppercase">{{ $t('publications.request.subtitle') }}</span>
+              <div class="w-8 h-0.5 bg-blue-600"></div>
+            </div>
+            <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 sm:mb-5 leading-tight">
+              {{ $t('publications.request.title') }}
+            </h2>
+            <p class="text-gray-600 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
+              {{ $t('publications.request.description') }}
+            </p>
+          </div>
+      
+          <!-- Formulaire premium -->
+          <div class="bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden fade-in-up" data-animate>
+            <!-- Barre supérieure décorative -->
+            <div class="h-2 bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700"></div>
+            
+            <div class="p-8 sm:p-10 lg:p-12">
+              <form @submit.prevent="submitPublicationRequest" class="space-y-6">
+                <!-- Informations personnelles -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div class="group">
+                    <label class="block text-gray-700 text-sm font-semibold mb-2.5">
+                      {{ $t('publications.request.name') }}
+                      <span class="text-red-500 ml-1">*</span>
+                    </label>
+                    <input
+                      v-model="publicationRequestForm.name"
+                      type="text"
+                      required
+                      class="w-full px-4 py-3.5 rounded-xl border-2 border-gray-200 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-300 text-sm bg-gray-50 focus:bg-white group-hover:border-gray-300"
+                      :placeholder="$t('publications.request.namePlaceholder')"
+                    />
+                  </div>
+                  <div class="group">
+                    <label class="block text-gray-700 text-sm font-semibold mb-2.5">
+                      {{ $t('publications.request.email') }}
+                      <span class="text-red-500 ml-1">*</span>
+                    </label>
+                    <input
+                      v-model="publicationRequestForm.email"
+                      type="email"
+                      required
+                      class="w-full px-4 py-3.5 rounded-xl border-2 border-gray-200 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-300 text-sm bg-gray-50 focus:bg-white group-hover:border-gray-300"
+                      :placeholder="$t('publications.request.emailPlaceholder')"
+                    />
+                  </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div class="group">
+                    <label class="block text-gray-700 text-sm font-semibold mb-2.5">
+                      {{ $t('publications.request.phone') }}
+                    </label>
+                    <input
+                      v-model="publicationRequestForm.phone"
+                      type="tel"
+                      class="w-full px-4 py-3.5 rounded-xl border-2 border-gray-200 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-300 text-sm bg-gray-50 focus:bg-white group-hover:border-gray-300"
+                      :placeholder="$t('publications.request.phonePlaceholder')"
+                    />
+                  </div>
+                  <div class="group">
+                    <label class="block text-gray-700 text-sm font-semibold mb-2.5">
+                      {{ $t('publications.request.institution') }}
+                    </label>
+                    <input
+                      v-model="publicationRequestForm.institution"
+                      type="text"
+                      class="w-full px-4 py-3.5 rounded-xl border-2 border-gray-200 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-300 text-sm bg-gray-50 focus:bg-white group-hover:border-gray-300"
+                      :placeholder="$t('publications.request.institutionPlaceholder')"
+                    />
+                  </div>
+                </div>
+                
+                <div class="group">
+                  <label class="block text-gray-700 text-sm font-semibold mb-2.5">
+                    {{ $t('publications.request.position') }}
+                  </label>
+                  <input
+                    v-model="publicationRequestForm.position"
+                    type="text"
+                    class="w-full px-4 py-3.5 rounded-xl border-2 border-gray-200 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-300 text-sm bg-gray-50 focus:bg-white group-hover:border-gray-300"
+                    :placeholder="$t('publications.request.positionPlaceholder')"
+                  />
+                </div>
+                
+                <!-- Informations sur le travail -->
+                <div class="border-t border-gray-200 pt-6 mt-6">
+                  <h3 class="text-lg font-bold text-gray-900 mb-4">Informations sur le travail de recherche</h3>
+                  
+                  <div class="group mb-6">
+                    <label class="block text-gray-700 text-sm font-semibold mb-2.5">
+                      {{ $t('publications.request.title') }}
+                      <span class="text-red-500 ml-1">*</span>
+                    </label>
+                    <input
+                      v-model="publicationRequestForm.title"
+                      type="text"
+                      required
+                      class="w-full px-4 py-3.5 rounded-xl border-2 border-gray-200 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-300 text-sm bg-gray-50 focus:bg-white group-hover:border-gray-300"
+                      :placeholder="$t('publications.request.titlePlaceholder')"
+                    />
+                  </div>
+                  
+                  <div class="group mb-6">
+                    <label class="block text-gray-700 text-sm font-semibold mb-2.5">
+                      {{ $t('publications.request.abstract') }}
+                      <span class="text-red-500 ml-1">*</span>
+                    </label>
+                    <textarea
+                      v-model="publicationRequestForm.abstract"
+                      rows="6"
+                      required
+                      minlength="200"
+                      class="w-full px-4 py-3.5 rounded-xl border-2 border-gray-200 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-300 text-sm bg-gray-50 focus:bg-white resize-none group-hover:border-gray-300"
+                      :placeholder="$t('publications.request.abstractPlaceholder')"
+                    ></textarea>
+                    <p class="text-xs text-gray-500 mt-1">{{ publicationRequestForm.abstract.length }} / 200 caractères minimum</p>
+                  </div>
+                  
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div class="group">
+                      <label class="block text-gray-700 text-sm font-semibold mb-2.5">
+                        {{ $t('publications.request.type') }}
+                        <span class="text-red-500 ml-1">*</span>
+                      </label>
+                      <div class="relative">
+                        <select
+                          v-model="publicationRequestForm.type"
+                          required
+                          class="w-full px-4 py-3.5 rounded-xl border-2 border-gray-200 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-300 text-sm bg-gray-50 focus:bg-white group-hover:border-gray-300 appearance-none cursor-pointer pr-10"
+                        >
+                          <option value="">{{ $t('publications.request.selectType') }}</option>
+                          <option value="article">{{ $t('publications.request.typeArticle') }}</option>
+                          <option value="research-paper">{{ $t('publications.request.typeResearchPaper') }}</option>
+                          <option value="book">{{ $t('publications.request.typeBook') }}</option>
+                          <option value="report">{{ $t('publications.request.typeReport') }}</option>
+                          <option value="other">{{ $t('publications.request.typeOther') }}</option>
+                        </select>
+                        <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                          <i class="fas fa-chevron-down text-gray-400 text-xs"></i>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div class="group">
+                      <label class="block text-gray-700 text-sm font-semibold mb-2.5">
+                        {{ $t('publications.request.authors') }}
+                        <span class="text-red-500 ml-1">*</span>
+                      </label>
+                      <input
+                        v-model="publicationRequestForm.authors"
+                        type="text"
+                        required
+                        class="w-full px-4 py-3.5 rounded-xl border-2 border-gray-200 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-300 text-sm bg-gray-50 focus:bg-white group-hover:border-gray-300"
+                        :placeholder="$t('publications.request.authorsPlaceholder')"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div class="group mb-6">
+                    <label class="block text-gray-700 text-sm font-semibold mb-2.5">
+                      {{ $t('publications.request.domains') }}
+                      <span class="text-red-500 ml-1">*</span>
+                    </label>
+                    <div class="flex flex-wrap gap-2">
+                      <button
+                        v-for="domain in researchDomainsForForm"
+                        :key="domain"
+                        type="button"
+                        @click="toggleDomainForForm(domain)"
+                        :class="[
+                          'px-3 py-2 rounded-lg text-xs font-medium transition-all duration-300 border-2',
+                          publicationRequestForm.domains.includes(domain)
+                            ? 'bg-blue-500 text-white border-blue-500 shadow-md'
+                            : 'bg-white text-gray-700 border-gray-200 hover:border-blue-300 hover:text-blue-700'
+                        ]"
+                      >
+                        {{ domain }}
+                        <i 
+                          v-if="publicationRequestForm.domains.includes(domain)"
+                          class="fas fa-check ml-1.5 text-xs"
+                        ></i>
+                      </button>
+                    </div>
+                    <p v-if="publicationRequestForm.domains.length === 0" class="text-xs text-red-500 mt-1">Sélectionnez au moins un domaine</p>
+                  </div>
+                  
+                  <div class="group mb-6">
+                    <label class="block text-gray-700 text-sm font-semibold mb-2.5">
+                      {{ $t('publications.request.keywords') }}
+                    </label>
+                    <input
+                      v-model="publicationRequestForm.keywords"
+                      type="text"
+                      class="w-full px-4 py-3.5 rounded-xl border-2 border-gray-200 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-300 text-sm bg-gray-50 focus:bg-white group-hover:border-gray-300"
+                      :placeholder="$t('publications.request.keywordsPlaceholder')"
+                    />
+                  </div>
+                  
+                  <div class="group">
+                    <label class="block text-gray-700 text-sm font-semibold mb-2.5">
+                      {{ $t('publications.request.message') }}
+                    </label>
+                    <textarea
+                      v-model="publicationRequestForm.message"
+                      rows="4"
+                      class="w-full px-4 py-3.5 rounded-xl border-2 border-gray-200 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-300 text-sm bg-gray-50 focus:bg-white resize-none group-hover:border-gray-300"
+                      :placeholder="$t('publications.request.messagePlaceholder')"
+                    ></textarea>
+                  </div>
+                </div>
+                
+                <div class="pt-2">
+                  <button
+                    type="submit"
+                    class="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold py-4 px-8 rounded-xl transition-all duration-300 transform hover:scale-[1.02] hover:shadow-2xl shadow-lg flex items-center justify-center gap-2 group"
+                  >
+                    <span>{{ $t('publications.request.submit') }}</span>
+                    <i class="fas fa-paper-plane text-sm group-hover:translate-x-1 transition-transform duration-300"></i>
+                  </button>
+                  <p class="text-xs text-gray-500 text-center mt-4">
+                    {{ $t('publications.request.consent') }}
+                    <router-link to="/politique-confidentialite" class="text-blue-600 hover:underline">{{ $t('publications.request.privacyPolicy') }}</router-link>.
+                  </p>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </section>
 
     </div>
   </div>
