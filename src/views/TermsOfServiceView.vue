@@ -192,7 +192,7 @@ import NavBarComponent from '../components/navbar/NavBarComponent.vue'
 //@ts-ignore
 import FooterComponent from '../components/footer/FooterComponent.vue'
 
-const lastUpdateDate = ref('1er janvier 2024')
+const lastUpdateDate = ref('27 Novembre 2025')
 
 let observer: IntersectionObserver | null = null
 
