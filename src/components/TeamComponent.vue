@@ -136,7 +136,7 @@ const teamMembers = ref<TeamMember[]>([
     photo: researchImage3,
     highlights: [
       "Professeur des Universités (RDC)",
-      "Expert en sciences de gestion",
+      "Expert en restructuration et croissance des PME en Afrique",
       "Spécialiste en entrepreneuriat"
     ],
     education: "Doctorat en sciences de gestion (2009)",
