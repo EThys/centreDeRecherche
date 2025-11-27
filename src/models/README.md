@@ -47,3 +47,4 @@ Tous les modèles partagent certaines propriétés communes :
 
 Les réponses API suivent le format `ApiResponse<T>` défini dans `api.client.ts`.
 
+
