@@ -58,7 +58,7 @@
           <div class="fade-in-right" data-animate>
             <div class="relative rounded-lg overflow-hidden shadow-xl">
               <img 
-                src="../assets/carousel-3.jpg" 
+                src="../assets/nsomuna.jpeg" 
                 alt="Recherche et formation"
                 class="w-full h-full object-cover aspect-[4/3]"
               />
@@ -311,7 +311,7 @@
         </div>
 
         <!-- Comité de gestion -->
-        <div class="fade-in-up" data-animate>
+        <div class="fade-in-up " data-animate>
           <div class="text-center mb-12 sm:mb-16">
             <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 sm:mb-6 leading-tight">
               Comité de gestion du <span class="text-blue-600">CReFF-PME</span>
@@ -357,7 +357,11 @@
               <!-- Image en plein (placeholder si pas d'image) -->
               <div class="absolute inset-0 bg-gradient-to-br from-indigo-600 to-indigo-800">
                 <div class="absolute inset-0 flex items-center justify-center">
-                  <i class="fas fa-user text-white/20 text-9xl"></i>
+                  <img 
+                  :src="researchImage4" 
+                  alt="Jean Nsonsumuna" 
+                  class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                />
                 </div>
               </div>
               <!-- Overlay gradient -->
@@ -386,7 +390,11 @@
               <!-- Image en plein (placeholder si pas d'image) -->
               <div class="absolute inset-0 bg-gradient-to-br from-cyan-600 to-cyan-800">
                 <div class="absolute inset-0 flex items-center justify-center">
-                  <i class="fas fa-user text-white/20 text-9xl"></i>
+                  <img 
+                  :src="researchImage5" 
+                  alt="Jean Nsonsumuna" 
+                  class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                />
                 </div>
               </div>
               <!-- Overlay gradient -->
@@ -516,9 +524,11 @@ const { t } = useI18n()
 //@ts-ignore
 import FooterComponent from '../components/footer/FooterComponent.vue'
 
-import researchImage1 from '../assets/jean.jpeg'
+import researchImage1 from '../assets/nsomuna.jpeg'
 import researchImage2 from '../assets/president.jpeg'
-import researchImage3 from '../assets/vp.jpeg'
+import researchImage3 from '../assets/prof.jpeg'
+import researchImage4 from '../assets/eunice.jpeg'
+import researchImage5 from '../assets/marcel.jpeg'
 import solvayLogo from '../assets/solvay.jpeg'
 import aresLogo from '../assets/ares.jpeg'
 import kongoLogo from '../assets/kongo.jpeg'
@@ -673,4 +683,5 @@ onUnmounted(() => {
   }
 }
 </style>
+
 
