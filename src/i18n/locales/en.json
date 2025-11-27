@@ -322,5 +322,45 @@
       "submit": "Send my registration request",
       "success": "Your registration request has been sent successfully! We will contact you within 24 hours."
     }
+  },
+  "publications": {
+    "request": {
+      "title": "Submit a research work",
+      "subtitle": "Publication request",
+      "description": "Have you conducted research on SME financing? Submit your work for possible publication in our center.",
+      "name": "Full name",
+      "namePlaceholder": "Your full name",
+      "email": "Email address",
+      "emailPlaceholder": "your@email.com",
+      "phone": "Phone (optional)",
+      "phonePlaceholder": "+243 XXX XXX XXX",
+      "institution": "Institution (optional)",
+      "institutionPlaceholder": "Your university or organization",
+      "position": "Position (optional)",
+      "positionPlaceholder": "Your position or title",
+      "title": "Work title",
+      "titlePlaceholder": "Title of your research",
+      "abstract": "Abstract",
+      "abstractPlaceholder": "Abstract of your research work (minimum 200 characters)",
+      "type": "Publication type",
+      "selectType": "Select the type",
+      "typeArticle": "Article",
+      "typeResearchPaper": "Research paper",
+      "typeBook": "Book",
+      "typeReport": "Report",
+      "typeOther": "Other",
+      "domains": "Research domains",
+      "domainsPlaceholder": "Select one or more domains",
+      "authors": "Authors",
+      "authorsPlaceholder": "List of authors (separated by commas)",
+      "keywords": "Keywords (optional)",
+      "keywordsPlaceholder": "Keywords separated by commas",
+      "message": "Additional message (optional)",
+      "messagePlaceholder": "Additional information about your work...",
+      "submit": "Submit my request",
+      "consent": "By submitting this form, you agree that your work will be reviewed by our scientific committee.",
+      "privacyPolicy": "Privacy policy",
+      "success": "Your publication request has been submitted successfully! We will contact you after reviewing your work."
+    }
   }
 }
