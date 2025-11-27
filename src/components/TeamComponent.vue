@@ -107,10 +107,10 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { TeamMember } from '@/models'
-import researchImage1 from '../assets/jean.jpeg'
-import researchImage2 from '../assets/president.jpeg'
-import researchImage3 from '../assets/vp.jpeg'
 
+import researchImage1 from '../assets/nsomuna.jpeg'
+import researchImage2 from '../assets/president.jpeg'
+import researchImage3 from '../assets/prof.jpeg'
 const { t } = useI18n()
 
 const teamMembers = ref<TeamMember[]>([
