@@ -75,3 +75,4 @@ export const partnerService = {
 
 export default partnerService
 
+
