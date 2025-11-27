@@ -31,12 +31,9 @@
             />
           </div>
           <!-- Nom du centre -->
-          <div class="hidden sm:flex flex-col">
-            <span class="font-bold text-base sm:text-lg lg:text-xl text-gray-900 group-hover:text-blue-600 transition-colors leading-tight">
+          <div class="flex items-center">
+            <span class="font-bold text-sm sm:text-base lg:text-lg xl:text-xl text-gray-900 group-hover:text-blue-600 transition-colors leading-tight whitespace-nowrap">
               CReFF-PME
-            </span>
-            <span class="text-xs sm:text-sm text-gray-600 font-medium leading-tight">
-              Centre de Recherche et de Formation<br class="hidden md:block">sur le Financement des PME en Afrique centrale
             </span>
           </div>
         </router-link>
@@ -87,7 +84,7 @@
               @click="toggleDropdown('recherche')"
               class="relative px-4 xl:px-5 py-2.5 flex items-center font-medium text-gray-700 hover:text-blue-600 transition-all duration-300 rounded-lg"
               :class="{ 
-                'text-blue-600': route.path.includes('/recherche') || activeDropdown === 'recherche',
+                'text-blue-600': route.path.includes('/recherche') || route.path.includes('/actualites') || route.path.includes('/evenements') || route.path.includes('/publications') || route.path.includes('/entrepreneurs') || activeDropdown === 'recherche',
               }"
             >
               <span class="relative z-10">Recherche</span>
@@ -107,7 +104,7 @@
                 />
               </svg>
               <span 
-                v-if="route.path.includes('/recherche') || activeDropdown === 'recherche'"
+                v-if="route.path.includes('/recherche') || route.path.includes('/actualites') || route.path.includes('/evenements') || route.path.includes('/publications') || route.path.includes('/entrepreneurs') || activeDropdown === 'recherche'"
                 class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full animate-slide-in"
               ></span>
               <span class="absolute inset-0 bg-blue-50/50 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-0"></span>
@@ -163,6 +160,16 @@
                     <div class="absolute left-0 top-0 bottom-0 w-1 bg-blue-600 rounded-r-full opacity-0 group-hover/item:opacity-100 transition-opacity duration-300"></div>
                     <div class="w-2 h-2 bg-blue-600 rounded-full mr-4 opacity-0 group-hover/item:opacity-100 transition-all duration-300 transform scale-0 group-hover/item:scale-100"></div>
                     <span class="text-sm font-semibold relative z-10">{{ $t('nav.publications') }}</span>
+                  </router-link>
+                  
+                  <router-link
+                    to="/entrepreneurs"
+                    class="flex items-center px-5 py-3 text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-transparent hover:text-blue-600 transition-all duration-300 group/item relative"
+                    @click="closeDropdowns"
+                  >
+                    <div class="absolute left-0 top-0 bottom-0 w-1 bg-blue-600 rounded-r-full opacity-0 group-hover/item:opacity-100 transition-opacity duration-300"></div>
+                    <div class="w-2 h-2 bg-blue-600 rounded-full mr-4 opacity-0 group-hover/item:opacity-100 transition-all duration-300 transform scale-0 group-hover/item:scale-100"></div>
+                    <span class="text-sm font-semibold relative z-10">{{ $t('nav.entrepreneurs') }}</span>
                   </router-link>
                 </div>
               </div>
@@ -356,6 +363,15 @@
               >
                 <div class="absolute left-0 top-0 bottom-0 w-1 bg-blue-600 rounded-r-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 <span class="text-sm font-semibold relative z-10 ml-2">{{ $t('nav.publications') }}</span>
+              </router-link>
+              
+              <router-link
+                to="/entrepreneurs"
+                class="flex items-center px-8 py-3.5 text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-transparent hover:text-blue-600 transition-all duration-300 rounded-xl group relative"
+                @click="closeMobileMenu"
+              >
+                <div class="absolute left-0 top-0 bottom-0 w-1 bg-blue-600 rounded-r-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <span class="text-sm font-semibold relative z-10 ml-2">{{ $t('nav.entrepreneurs') }}</span>
               </router-link>
             </div>
           </div>
