@@ -572,7 +572,7 @@ const faqs = ref([
   }
 ])
 
-const openFaqs = ref([])
+const openFaqs = ref<number[]>([])
 
 const toggleFaq = (index: number) => {
   const idx = openFaqs.value.indexOf(index)
@@ -611,7 +611,7 @@ const submitRegistration = () => {
   registrationForm.value = { name: '', email: '', program: '', message: '' }
 }
 
-let observer = null
+let observer: IntersectionObserver | null = null
 
 const initScrollAnimations = () => {
   const observerOptions = {
@@ -621,7 +621,7 @@ const initScrollAnimations = () => {
 
   observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
-      if (entry.isIntersecting) {
+      if (entry.isIntersecting && observer) {
         entry.target.classList.add('animate-in')
         observer.unobserve(entry.target)
       }
@@ -630,7 +630,9 @@ const initScrollAnimations = () => {
 
   // Observer tous les éléments avec data-animate
   document.querySelectorAll('[data-animate]').forEach(el => {
-    observer.observe(el)
+    if (observer) {
+      observer.observe(el)
+    }
   })
 }
 
