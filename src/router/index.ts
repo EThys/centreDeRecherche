@@ -107,6 +107,11 @@ const router = createRouter({
       name: 'terms-of-service',
       component: () => import('../views/TermsOfServiceView.vue'),
     },
+    {
+      path: '/dashboard',
+      name: 'dashboard',
+      component: () => import('../views/DashboardView.vue'),
+    },
   ],
   scrollBehavior(to, from, savedPosition) {
     return { top: 0, behavior: 'smooth' }

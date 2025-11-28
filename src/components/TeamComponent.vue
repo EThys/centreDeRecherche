@@ -111,6 +111,8 @@ import type { TeamMember } from '@/models'
 import researchImage1 from '../assets/nsomuna.jpeg'
 import researchImage2 from '../assets/president.jpeg'
 import researchImage3 from '../assets/prof.jpeg'
+import researchImage4 from '../assets/eunice.jpeg'
+import researchImage5 from '../assets/marcel.jpeg'
 const { t } = useI18n()
 
 const teamMembers = ref<TeamMember[]>([
@@ -155,6 +157,33 @@ const teamMembers = ref<TeamMember[]>([
     ],
     education: "Doctorat ULB (2024)",
     email: "jean.nsonsumuna@creff-pme.org"
+  },
+  {
+    id: 4,
+    name: "Eunice KIKADILU AWAZI",
+    position: "Secrétaire du Centre de Recherche et de Formation sur le Financement des PME en Afrique centrale",
+    role: "Secrétaire",
+    photo: researchImage4,
+    highlights: [
+      "Titulaire d'un diplôme de licence (Bac+5) en droit (2023)",
+      "Expérience au Tribunal pour Enfants de Mbanza-Ngungu",
+      "Gestion de l'entreprise Kadilo SIK SARL"
+    ],
+    education: "Licence en droit (2023)",
+    email: "eunice.kikadilu@creff-pme.org"
+  },
+  {
+    id: 5,
+    name: "Marcel BODI BODI",
+    position: "Chargé du logistique",
+    role: "Logistique",
+    photo: researchImage5,
+    highlights: [
+      "Titulaire d'un diplôme de licence en Sciences de gestion (2024)",
+      "Assistant à temps partiel à l'Université Kongo"
+    ],
+    education: "Licence en Sciences de gestion (2024)",
+    email: "marcel.bodi@creff-pme.org"
   }
 ])
 
