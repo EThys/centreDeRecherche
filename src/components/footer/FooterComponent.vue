@@ -23,8 +23,8 @@
         
         <!-- Colonne 1: Logo et description -->
         <div class="fade-in-up" data-delay="0">
-          <div class="flex items-center mb-6 slide-in-left" data-delay="100">
-            <div class="bg-white/10 backdrop-blur-sm p-2 sm:p-3 rounded-xl mr-3 shadow-lg border border-white/20">
+          <div class="flex items-center mb-6 slide-in-left pl-2 sm:pl-0" data-delay="100">
+            <div class="bg-white p-2 sm:p-3 rounded-xl mr-3 shadow-lg">
               <img 
                 :src="logoImage" 
                 alt="CReFF-PME Logo"
@@ -134,23 +134,75 @@
       </div>
 
       <!-- Section bas du footer -->
-      <div class="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-white/20 fade-in-up" data-delay="1800">
-        <!-- Copyright -->
-        <div class="text-blue-200 text-sm mb-4 md:mb-0 slide-in-left" data-delay="1900">
-          <p>&copy; {{ currentYear }} CReFF-PME. {{ $t('footer.rights') }}</p>
+      <div class="pt-8 border-t border-white/20 fade-in-up" data-delay="1800">
+        <!-- Mobile: Organisation verticale -->
+        <div class="flex flex-col md:hidden items-center space-y-4">
+          <!-- Copyright -->
+          <p class="text-blue-200 text-sm text-center slide-in-left" data-delay="1900">
+            &copy; {{ currentYear }} CReFF-PME. {{ $t('footer.rights') }}
+          </p>
+          
+          <!-- Crédit développeur -->
+          <p class="text-blue-200/90 text-xs text-center">
+            Développé par 
+            <a 
+              href="https://ethberg-muzola.vercel.app" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              class="text-cyan-300 hover:text-cyan-200 font-medium transition-colors duration-300 hover:underline inline-flex items-center"
+            >
+              Ethberg
+              <i class="fas fa-external-link-alt ml-1 text-xs"></i>
+            </a>
+          </p>
+
+          <!-- Liens légaux -->
+          <div class="flex flex-wrap justify-center gap-4">
+            <router-link 
+              v-for="(link, index) in legalLinks"
+              :key="link.name"
+              :to="link.url"
+              class="text-blue-200 hover:text-white text-xs transition-colors duration-300"
+            >
+              {{ link.name }}
+            </router-link>
+          </div>
         </div>
 
-        <!-- Liens légaux -->
-        <div class="flex flex-wrap justify-center gap-6 slide-in-right" data-delay="2000">
-          <router-link 
-            v-for="(link, index) in legalLinks"
-            :key="link.name"
-            :to="link.url"
-            class="text-blue-200 hover:text-white text-sm transition-colors duration-300 transform hover:scale-105"
-            :style="`transition-delay: ${index * 100}ms`"
-          >
-            {{ link.name }}
-          </router-link>
+        <!-- Desktop: Organisation horizontale -->
+        <div class="hidden md:flex md:flex-row md:justify-between md:items-center">
+          <!-- Copyright avec crédit développeur -->
+          <div class="text-blue-200 text-sm slide-in-left" data-delay="1900">
+            <p>
+              &copy; {{ currentYear }} CReFF-PME. {{ $t('footer.rights') }}
+              <span class="mx-2 text-blue-300/60">•</span>
+              <span class="text-blue-200/90">
+                Développé par 
+                <a 
+                  href="https://ethberg-muzola.vercel.app" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  class="text-cyan-300 hover:text-cyan-200 font-medium transition-colors duration-300 hover:underline inline-flex items-center"
+                >
+                  Ethberg
+                  <i class="fas fa-external-link-alt ml-1 text-xs"></i>
+                </a>
+              </span>
+            </p>
+          </div>
+
+          <!-- Liens légaux -->
+          <div class="flex flex-wrap justify-center gap-6 slide-in-right" data-delay="2000">
+            <router-link 
+              v-for="(link, index) in legalLinks"
+              :key="link.name"
+              :to="link.url"
+              class="text-blue-200 hover:text-white text-sm transition-colors duration-300 transform hover:scale-105"
+              :style="`transition-delay: ${index * 100}ms`"
+            >
+              {{ link.name }}
+            </router-link>
+          </div>
         </div>
       </div>
 
