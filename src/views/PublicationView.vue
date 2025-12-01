@@ -1,9 +1,15 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useRouter } from 'vue-router'
 import type { Publication, PublicationRequest } from '@/models'
+//@ts-ignore
+import NavBarComponent from '../components/navbar/NavBarComponent.vue'
+//@ts-ignore
+import FooterComponent from '../components/footer/FooterComponent.vue'
 
 const { t } = useI18n()
+const router = useRouter()
 
 // Données réactives
 const searchQuery = ref('')
@@ -14,15 +20,6 @@ const sortBy = ref('newest')
 const currentPage = ref(1)
 const itemsPerPage = ref(5)
 const scrollObserver = ref<IntersectionObserver | null>(null)
-
-//@ts-ignore
-import NavBarComponent from '../components/navbar/NavBarComponent.vue'
-//@ts-ignore
-import FooterComponent from '../components/footer/FooterComponent.vue'
-
-import { useRouter } from 'vue-router'
-
-const router = useRouter()
 
 const openPublication = (publicationId: number | string | undefined) => {
   if (!publicationId) return
