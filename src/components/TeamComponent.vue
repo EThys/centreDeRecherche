@@ -147,7 +147,7 @@ const teamMembers = ref<TeamMember[]>([
   {
     id: 3,
     name: "Jean Nsonsumuna",
-    position: "Secrétaire du Conseil de Direction",
+    position: "Secrétaire du Conseil de Direction, Directeur du Creff-PME",
     role: "Secrétaire",
     photo: researchImage1,
     highlights: [
@@ -155,17 +155,17 @@ const teamMembers = ref<TeamMember[]>([
       "Co-fondateur du Centre CReFF-PME",
       "Expert en finance entrepreneuriale"
     ],
-    education: "Doctorat ULB (2024)",
+    education: "Doctorat en sciences économiques et de gestion (ULB)",
     email: "jean.nsonsumuna@creff-pme.org"
   },
   {
     id: 4,
     name: "Eunice KIKADILU AWAZI",
-    position: "Secrétaire du Centre de Recherche et de Formation sur le Financement des PME en Afrique centrale",
+    position: "Secrétaire du Creff-PME",
     role: "Secrétaire",
     photo: researchImage4,
     highlights: [
-      "Titulaire d'un diplôme de licence (Bac+5) en droit (2023)",
+      "Licencié (Bac+5) en droit (2023)",
       "Expérience au Tribunal pour Enfants de Mbanza-Ngungu",
       "Gestion de l'entreprise Kadilo SIK SARL"
     ],
@@ -179,7 +179,7 @@ const teamMembers = ref<TeamMember[]>([
     role: "Logistique",
     photo: researchImage5,
     highlights: [
-      "Titulaire d'un diplôme de licence en Sciences de gestion (2024)",
+      "Licencié (Bac+5) en Sciences de gestion (2024)",
       "Assistant à temps partiel à l'Université Kongo"
     ],
     education: "Licence en Sciences de gestion (2024)",
