@@ -8,7 +8,7 @@
       <!-- Image de fond -->
       <div class="absolute inset-0 z-0">
         <img 
-          src="../assets/carousel-1.jpg" 
+          :src="carousel1" 
           alt="CReFF-Entrepreneurs Background"
           class="w-full h-full object-cover"
         />
@@ -58,7 +58,7 @@
           <div class="fade-in-right" data-animate>
             <div class="relative rounded-lg overflow-hidden shadow-xl">
               <img 
-                src="../assets/prof.jpeg" 
+                :src="profImage" 
                 alt="Formation entrepreneurs"
                 class="w-full h-full object-cover aspect-[4/3]"
               />
@@ -185,7 +185,7 @@
     <section class="py-10 sm:py-14 lg:py-20 bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 relative overflow-hidden">
       <div class="absolute inset-0">
         <img 
-          src="../assets/carousel-2.jpg" 
+          :src="carousel2" 
           alt="Background"
           class="w-full h-full object-cover opacity-20"
         />
@@ -377,7 +377,7 @@
       <!-- Image d'arrière-plan subtile -->
       <div class="absolute inset-0">
         <img 
-          src="../assets/carousel-4.jpg" 
+          :src="carousel4" 
           alt="Background"
           class="w-full h-full object-cover opacity-10"
         />
@@ -507,6 +507,12 @@ import type { TrainingRegistration } from '@/models'
 import NavBarComponent from '../components/navbar/NavBarComponent.vue'
 //@ts-ignore
 import FooterComponent from '../components/footer/FooterComponent.vue'
+
+// Import des images
+import carousel1 from '../assets/carousel-1.jpg'
+import carousel2 from '../assets/carousel-2.jpg'
+import carousel4 from '../assets/carousel-4.jpg'
+import profImage from '../assets/prof.jpeg'
 
 const { t } = useI18n()
 
