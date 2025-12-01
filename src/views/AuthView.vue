@@ -3,6 +3,8 @@
 import { ref, computed } from 'vue'
 //@ts-ignore
 import authBg from '../assets/carousel-1.jpg'
+//@ts-ignore
+import logoImage from '../assets/logoCreff-PME.png'
 
 const isLogin = ref(true)
 const isLoading = ref(false)
@@ -77,12 +79,11 @@ const getPasswordStrengthColor = computed(() => {
         <!-- Logo -->
         <div class="flex items-center mb-8">
           <div class="flex-shrink-0">
-            <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
-              <span class="text-white font-bold text-lg">C</span>
-            </div>
-          </div>
-          <div class="ml-3">
-            <h1 class="text-2xl font-bold text-gray-900">CFFR PME</h1>
+            <img 
+              :src="logoImage" 
+              alt="CReFF-PME Logo" 
+              class="h-12 w-auto"
+            />
           </div>
         </div>
 
@@ -326,15 +327,15 @@ const getPasswordStrengthColor = computed(() => {
                 </button>
                 <button
                   type="button"
-                  @click="registerForm.userType = 'investisseur'"
+                  @click="registerForm.userType = 'chercheur'"
                   :class="[
                     'py-3 px-4 border rounded-lg text-sm font-medium transition-all duration-200',
-                    registerForm.userType === 'investisseur'
+                    registerForm.userType === 'chercheur'
                       ? 'border-blue-600 bg-blue-50 text-gray-900 shadow-sm transform scale-105'
                       : 'border-gray-300 text-gray-700 hover:border-gray-400'
                   ]"
                 >
-                  Investisseur
+                  Chercheur
                 </button>
               </div>
             </div>
