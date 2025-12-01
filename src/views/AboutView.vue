@@ -21,7 +21,7 @@
       <!-- Contenu -->
       <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
         <div class="text-center fade-in-up" data-animate>
-          <h1 class="text-lg sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-white mb-3 sm:mb-4 lg:mb-6 leading-tight">
+          <h1 class="text-lg sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-white mb-3 sm:mb-4 lg:mb-6 leading-tight">
             {{ $t('about.aboutView.heroTitle') }}<br class="hidden sm:block" />
             <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 via-blue-200 to-blue-400">{{ $t('about.aboutView.heroSubtitle') }}</span>
         </h1>
@@ -285,7 +285,7 @@
                 <h3 class="text-2xl sm:text-3xl font-bold mb-2 group-hover:text-blue-300 transition-colors duration-300">
                   Jean Nsonsumuna
                 </h3>
-                <p class="text-blue-200 text-sm sm:text-base font-medium mb-4">Secrétaire du Conseil de Direction</p>
+                <p class="text-blue-200 text-sm sm:text-base font-medium mb-4">Secrétaire du Conseil de Direction, Directeur du Creff-PME</p>
                 
                 <div class="space-y-2 text-sm sm:text-base text-gray-200 border-t border-white/20 pt-4">
                   <p class="leading-relaxed flex items-start">
@@ -302,7 +302,7 @@
                   </p>
                   <p class="text-xs text-gray-300 mt-4 pt-4 border-t border-white/10">
                     <i class="fas fa-graduation-cap mr-2"></i>
-                    Doctorat ULB (2024)
+                    Doctorat en sciences économiques et de gestion (ULB)
                   </p>
                 </div>
               </div>
@@ -340,13 +340,13 @@
                 <h3 class="text-2xl sm:text-3xl font-bold mb-2 group-hover:text-blue-300 transition-colors duration-300">
                   Jean Nsonsumuna
                 </h3>
-                <p class="text-blue-200 text-sm sm:text-base font-medium mb-4">Directeur du Centre de Recherche et de Formation sur le Financement des PME en Afrique centrale</p>
+                <p class="text-blue-200 text-sm sm:text-base font-medium mb-4">Directeur du Creff-PME</p>
                 
                 <div class="space-y-2 text-sm sm:text-base text-gray-200 border-t border-white/20 pt-4">
                   <p class="leading-relaxed">Professeur à l'Université Kongo</p>
                   <p class="text-xs text-gray-300 mt-4 pt-4 border-t border-white/10">
                     <i class="fas fa-graduation-cap mr-2"></i>
-                    Doctorat ULB (2024)
+                    Doctorat en sciences économiques et de gestion (ULB)
                   </p>
                 </div>
               </div>
@@ -372,13 +372,13 @@
                 <div class="inline-block bg-indigo-600/90 backdrop-blur-sm text-white px-4 py-1.5 rounded-full text-xs font-semibold mb-3 self-start">
                   Secrétaire
                 </div>
-                <h3 class="text-2xl sm:text-3xl font-bold mb-2 group-hover:text-indigo-300 transition-colors duration-300">
+                <h3 class="text-2xl sm:text-3xl font-bold mb-2 group-hover:text-blue-300 transition-colors duration-300">
                   Eunice KIKADILU AWAZI
                 </h3>
-                <p class="text-indigo-200 text-sm sm:text-base font-medium mb-4">Secrétaire du Centre de Recherche et de Formation sur le Financement des PME en Afrique centrale</p>
+                <p class="text-indigo-200 text-sm sm:text-base font-medium mb-4">Secrétaire du Creff-PME</p>
                 
                 <div class="space-y-2 text-sm sm:text-base text-gray-200 border-t border-white/20 pt-4">
-                  <p class="leading-relaxed">Titulaire d'un diplôme de licence (Bac+5) en droit (2023)</p>
+                  <p class="leading-relaxed">Licencié (Bac+5) en droit (2023)</p>
                   <p class="leading-relaxed">Expérience au Tribunal pour Enfants de Mbanza-Ngungu</p>
                   <p class="leading-relaxed">Gestion de l'entreprise Kadilo SIK SARL</p>
                 </div>
@@ -405,13 +405,13 @@
                 <div class="inline-block bg-cyan-600/90 backdrop-blur-sm text-white px-4 py-1.5 rounded-full text-xs font-semibold mb-3 self-start">
                   Logistique
                 </div>
-                <h3 class="text-2xl sm:text-3xl font-bold mb-2 group-hover:text-cyan-300 transition-colors duration-300">
+                <h3 class="text-2xl sm:text-3xl font-bold mb-2 group-hover:text-blue-300 transition-colors duration-300">
                   Marcel BODI BODI
                 </h3>
                 <p class="text-cyan-200 text-sm sm:text-base font-medium mb-4">Chargé du logistique</p>
                 
                 <div class="space-y-2 text-sm sm:text-base text-gray-200 border-t border-white/20 pt-4">
-                  <p class="leading-relaxed">Titulaire d'un diplôme de licence en Sciences de gestion (2024)</p>
+                  <p class="leading-relaxed">Licencié (Bac+5) en Sciences de gestion (2024)</p>
                   <p class="leading-relaxed">Assistant à temps partiel à l'Université Kongo</p>
                 </div>
               </div>
