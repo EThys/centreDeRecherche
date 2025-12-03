@@ -212,7 +212,7 @@
                 <!-- Points clés à retenir -->
                 <div v-if="article.keyPoints && article.keyPoints.length > 0" class="mt-6 fade-in-up" data-animate>
                   <h3 class="text-xl font-semibold mb-3 text-gray-900">Points clés à retenir :</h3>
-                  <ul class="list-disc list-inside space-y-2 mb-6">
+                <ul class="list-disc list-inside space-y-2 mb-6">
                     <li 
                       v-for="(point, index) in article.keyPoints" 
                       :key="index"
@@ -222,7 +222,7 @@
                     >
                       {{ point }}
                     </li>
-                  </ul>
+                </ul>
                 </div>
 
                 <div class="bg-blue-50 rounded-xl p-6 mt-6 border-l-4 border-blue-500 fade-in-up" data-animate>
@@ -297,7 +297,7 @@
             :style="{ animationDelay: `${index * 100}ms` }"
             data-animate
           >
-              <div class="h-40 relative overflow-hidden">
+            <div class="h-40 relative overflow-hidden">
               <img
                 :src="getArticleImage(related.image)"
                 :alt="related.title"
@@ -436,18 +436,18 @@ const getAuthorAvatar = (authorPhoto?: string | null): string => {
     return 'https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80'
   }
   return actualityService.getImageUrl(authorPhoto) || 'https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80'
-}
+    }
 
 const formatDate = (dateString: string | undefined) => {
   if (!dateString) return ''
   try {
-    const date = new Date(dateString)
+  const date = new Date(dateString)
     if (isNaN(date.getTime())) return dateString
-    return date.toLocaleDateString('fr-FR', {
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric'
-    })
+  return date.toLocaleDateString('fr-FR', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric'
+  })
   } catch {
     return dateString
   }
@@ -524,7 +524,7 @@ const initScrollAnimations = () => {
       if (entry.isIntersecting) {
         entry.target.classList.add('animate-in')
         if (observer) {
-          observer.unobserve(entry.target)
+        observer.unobserve(entry.target)
         }
       }
     })
@@ -533,7 +533,7 @@ const initScrollAnimations = () => {
   // Observer tous les éléments avec data-animate
   document.querySelectorAll('[data-animate]').forEach(el => {
     if (observer) {
-      observer.observe(el)
+    observer.observe(el)
     }
   })
 }

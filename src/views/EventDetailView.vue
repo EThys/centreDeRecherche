@@ -156,7 +156,7 @@
                       <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white font-bold">
                         {{ savedRegistrationData.firstName?.charAt(0) || '' }}{{ savedRegistrationData.lastName?.charAt(0) || '' }}
                       </div>
-                      <div>
+                <div>
                         <p class="font-bold text-gray-900">{{ savedRegistrationData.firstName }} {{ savedRegistrationData.lastName }}</p>
                         <p class="text-xs text-gray-600">{{ savedRegistrationData.email }}</p>
                       </div>
@@ -607,14 +607,14 @@ const getSpeakerPhoto = (photo?: string | null): string => {
 const formatEventDate = (dateString: string | undefined) => {
   if (!dateString) return ''
   try {
-    const date = new Date(dateString)
+  const date = new Date(dateString)
     if (isNaN(date.getTime())) return dateString
-    return date.toLocaleDateString('fr-FR', {
-      weekday: 'long',
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric'
-    })
+  return date.toLocaleDateString('fr-FR', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric'
+  })
   } catch {
     return dateString
   }
@@ -623,13 +623,13 @@ const formatEventDate = (dateString: string | undefined) => {
 const formatFullDate = (dateString: string | undefined) => {
   if (!dateString) return ''
   try {
-    const date = new Date(dateString)
+  const date = new Date(dateString)
     if (isNaN(date.getTime())) return dateString
-    return date.toLocaleDateString('fr-FR', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric'
-    })
+  return date.toLocaleDateString('fr-FR', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric'
+  })
   } catch {
     return dateString
   }
@@ -1149,7 +1149,7 @@ const initScrollAnimations = () => {
       if (entry.isIntersecting) {
         entry.target.classList.add('animate-in')
         if (observer) {
-          observer.unobserve(entry.target)
+        observer.unobserve(entry.target)
         }
       }
     })
@@ -1158,7 +1158,7 @@ const initScrollAnimations = () => {
   // Observer tous les éléments avec data-animate
   document.querySelectorAll('[data-animate]').forEach(el => {
     if (observer) {
-      observer.observe(el)
+    observer.observe(el)
     }
   })
 }

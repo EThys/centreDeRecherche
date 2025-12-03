@@ -49,7 +49,7 @@
             <label class="block text-sm font-medium text-gray-700 mb-2">Catégorie *</label>
             <div class="relative">
               <input
-                v-model="photoForm.category"
+              v-model="photoForm.category"
                 type="text"
                 list="category-list"
                 class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
@@ -240,7 +240,7 @@ const loadPhotos = async () => {
   } catch (err: any) {
     console.error('Erreur lors du chargement des photos:', err)
     error.value = err.message || 'Erreur lors du chargement de la galerie'
-    photos.value = []
+  photos.value = []
   } finally {
     loading.value = false
   }
@@ -326,9 +326,9 @@ const savePhoto = async () => {
   
   try {
     const newPhoto = await galleryService.uploadPhoto(imageFile.value, {
-      title: photoForm.value.title,
+    title: photoForm.value.title,
       description: photoForm.value.description || '',
-      category: photoForm.value.category,
+    category: photoForm.value.category,
       date: photoForm.value.date,
       author: photoForm.value.author
     })
