@@ -1,0 +1,169 @@
+/* Styles personnalisés pour les toasts */
+.v-toast {
+  z-index: 9999;
+}
+
+.v-toast__item {
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 16px 20px;
+  min-width: 320px;
+  max-width: 420px;
+  animation: slideInRight 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.3s ease;
+}
+
+.v-toast__item:hover {
+  transform: translateX(-4px);
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.2);
+}
+
+/* Toast Success */
+.v-toast__item--success {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+}
+
+.v-toast__item--success .v-toast__text {
+  color: white;
+  font-weight: 500;
+}
+
+/* Toast Error */
+.v-toast__item--error {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+}
+
+.v-toast__item--error .v-toast__text {
+  color: white;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.v-toast__item--error .v-toast__text::before {
+  content: '\f00d';
+  font-family: 'Font Awesome 6 Free';
+  font-weight: 900;
+  font-size: 20px;
+  background: rgba(255, 255, 255, 0.2);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Toast Warning */
+.v-toast__item--warning {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  color: white;
+}
+
+.v-toast__item--warning .v-toast__text {
+  color: white;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.v-toast__item--warning .v-toast__text::before {
+  content: '\f071';
+  font-family: 'Font Awesome 6 Free';
+  font-weight: 900;
+  font-size: 20px;
+  background: rgba(255, 255, 255, 0.2);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Toast Info */
+.v-toast__item--info {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: white;
+}
+
+.v-toast__item--info .v-toast__text {
+  color: white;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.v-toast__item--info .v-toast__text::before {
+  content: '\f05a';
+  font-family: 'Font Awesome 6 Free';
+  font-weight: 900;
+  font-size: 20px;
+  background: rgba(255, 255, 255, 0.2);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Bouton de fermeture */
+.v-toast__close {
+  color: rgba(255, 255, 255, 0.9);
+  opacity: 0.8;
+  transition: all 0.2s ease;
+}
+
+.v-toast__close:hover {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+/* Animation d'entrée */
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Animation de sortie */
+.v-toast__item--leave-active {
+  animation: slideOutRight 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideOutRight {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .v-toast__item {
+    min-width: calc(100vw - 32px);
+    max-width: calc(100vw - 32px);
+    margin: 0 16px;
+  }
+}
+
