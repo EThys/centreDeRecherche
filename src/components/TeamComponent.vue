@@ -169,7 +169,7 @@ const teamMembers = ref<TeamMember[]>([
       "Expérience au Tribunal pour Enfants de Mbanza-Ngungu",
       "Gestion de l'entreprise Kadilo SIK SARL"
     ],
-    education: "Licence en droit (2023)",
+    education: "Licence (Bac+5) en droit (2023)",
     email: "eunice.kikadilu@creff-pme.org"
   },
   {
@@ -179,10 +179,10 @@ const teamMembers = ref<TeamMember[]>([
     role: "Logistique",
     photo: researchImage5,
     highlights: [
-      "Licencié (Bac+5) en Sciences de gestion (2024)",
+      "Licencié (Bac+5) en Sciences de gestion  (2024)",
       "Assistant à temps partiel à l'Université Kongo"
     ],
-    education: "Licence en Sciences de gestion (2024)",
+    education: "Licence (Bac+5) en Sciences de gestion (2024)",
     email: "marcel.bodi@creff-pme.org"
   }
 ])

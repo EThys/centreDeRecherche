@@ -107,22 +107,25 @@
           <p class="text-blue-100 text-sm mb-4 fade-in-up" data-delay="1400">
             Restez informé de nos dernières recherches et événements.
           </p>
-          <div class="space-y-3 fade-in-up" data-delay="1500">
+          <form @submit.prevent="subscribeNewsletter" class="space-y-3 fade-in-up" data-delay="1500">
             <input 
               type="email" 
               :placeholder="$t('footer.emailPlaceholder')"
               v-model="email"
+              required
               class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-blue-200 focus:outline-none focus:border-cyan-400 transition-all duration-300 backdrop-blur-sm"
             >
             <button 
-              @click="subscribeNewsletter"
-              :disabled="!email"
+              type="submit"
+              :disabled="!email || isSubmitting"
               class="w-full bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-medium py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center"
             >
-              <span class="mr-2">{{ $t('footer.subscribe') }}</span>
-              <i class="fas fa-paper-plane text-sm"></i>
+              <span v-if="!isSubmitting" class="mr-2">{{ $t('footer.subscribe') }}</span>
+              <span v-else class="mr-2">Inscription en cours...</span>
+              <i v-if="!isSubmitting" class="fas fa-paper-plane text-sm"></i>
+              <i v-else class="fas fa-spinner fa-spin text-sm"></i>
             </button>
-          </div>
+          </form>
         </div>
       </div>
 
@@ -219,17 +222,21 @@
   </footer>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useToast } from 'vue-toast-notification'
+import newsletterService from '@/services/newsletter.service'
 import logoImage from '../../assets/logoCreff-PME.png'
 
 const { t } = useI18n()
+const toast = useToast()
 
 // Données réactives
 const email = ref('')
 const showBackToTop = ref(false)
 const currentYear = ref(new Date().getFullYear())
+const isSubmitting = ref(false)
 
 // Données du footer
 const socialLinks = [
@@ -257,6 +264,12 @@ const contactInfo = [
   { 
     type: 'phone', 
     icon: 'fas fa-phone', 
+    value: '+243 85 059 32 11',  
+    label: 'Lun - Ven, 8h-17h' 
+  },
+  { 
+    type: 'phone2', 
+    icon: 'fas fa-phone', 
     value: '+243 980 49 52 73',  
     label: 'Lun - Ven, 8h-17h' 
   },
@@ -275,12 +288,70 @@ const legalLinks = [
 ]
 
 // Méthodes
-const subscribeNewsletter = () => {
-  if (email.value) {
-    console.log('Inscription newsletter:', email.value)
-    // Simulation d'envoi
-    alert('Merci pour votre inscription à notre newsletter !')
+const subscribeNewsletter = async () => {
+  if (!email.value || isSubmitting.value) return
+  
+  // Validation basique de l'email
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  if (!emailRegex.test(email.value)) {
+    toast.open({
+      message: '⚠️ Veuillez entrer une adresse email valide',
+      type: 'warning',
+      position: 'top-right',
+      duration: 4000,
+    })
+    return
+  }
+  
+  isSubmitting.value = true
+  
+  try {
+    await newsletterService.subscribe({
+      email: email.value,
+      preferences: {
+        events: true,
+        publications: true,
+        actualities: true,
+        general: true,
+      },
+    })
+    
+    toast.open({
+      message: '✅ Merci pour votre inscription à notre newsletter ! Vous recevrez bientôt nos dernières actualités.',
+      type: 'success',
+      position: 'top-right',
+      duration: 6000,
+    })
+    
     email.value = ''
+    
+    // Émettre un événement pour mettre à jour les stats
+    window.dispatchEvent(new CustomEvent('dashboard:update-stats'))
+  } catch (error: any) {
+    console.error('Erreur lors de l\'inscription à la newsletter:', error)
+    
+    // Gérer les erreurs spécifiques
+    let errorMessage = 'Une erreur est survenue lors de votre inscription. Veuillez réessayer.'
+    
+    if (error.status === 422) {
+      const emailError = error.errors?.email?.[0];
+      if (emailError && emailError.includes('already been taken') || emailError.includes('déjà')) {
+        errorMessage = 'Cette adresse email est déjà inscrite à notre newsletter.'
+      } else {
+        errorMessage = emailError || 'Cette adresse email est invalide.'
+      }
+    } else if (error.message) {
+      errorMessage = error.message
+    }
+    
+    toast.open({
+      message: `❌ ${errorMessage}`,
+      type: 'error',
+      position: 'top-right',
+      duration: 6000,
+    })
+  } finally {
+    isSubmitting.value = false
   }
 }
 

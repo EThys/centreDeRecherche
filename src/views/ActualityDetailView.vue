@@ -6,9 +6,10 @@
     <!-- Image de fond -->
     <div class="absolute inset-0">
       <img
-        :src="article.image"
+        :src="getArticleImage(article.image)"
         :alt="article.title"
         class="w-full h-full object-cover"
+        @error="(e) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80' }"
       />
       <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-black/40"></div>
     </div>
@@ -19,14 +20,14 @@
         <!-- Badges et métadonnées -->
         <div class="flex flex-wrap items-center gap-3 mb-4 sm:mb-6">
           <span class="bg-blue-500/90 backdrop-blur-sm text-white text-xs sm:text-sm font-semibold px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl shadow-lg">
-            {{ article.date }}
+            {{ formatDate(article.publishDate) }}
           </span>
           <span class="bg-white/20 backdrop-blur-sm text-white text-xs sm:text-sm font-medium px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl border border-white/30">
             {{ article.category }}
           </span>
           <span class="bg-white/20 backdrop-blur-sm text-white text-xs sm:text-sm font-medium px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl border border-white/30 flex items-center">
             <i class="far fa-clock mr-2"></i>
-            {{ article.readTime }} de lecture
+            {{ article.readTime || 5 }} min de lecture
           </span>
           <span v-if="article.views" class="bg-white/20 backdrop-blur-sm text-white text-xs sm:text-sm font-medium px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl border border-white/30 flex items-center">
             <i class="far fa-eye mr-2"></i>
@@ -35,7 +36,7 @@
         </div>
 
         <!-- Titre -->
-        <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-4 sm:mb-6 leading-tight drop-shadow-2xl">
+        <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-4 sm:mb-6 leading-tight drop-shadow-2xl line-clamp-3">
           {{ article.title }}
         </h1>
 
@@ -148,15 +149,16 @@
                 >
                   <div class="flex items-start space-x-3">
                     <img
-                      :src="related.image"
+                      :src="getArticleImage(related.image)"
                       :alt="related.title"
                       class="w-16 h-16 rounded-lg object-cover flex-shrink-0 group-hover:scale-105 transition-transform duration-300"
+                      @error="(e) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80' }"
                     />
                     <div class="flex-1 min-w-0">
                       <h4 class="text-xs font-semibold text-gray-900 line-clamp-2 group-hover:text-blue-600 transition-colors leading-tight">
                         {{ related.title }}
                       </h4>
-                      <p class="text-xs text-gray-500 mt-1">{{ related.date }}</p>
+                      <p class="text-xs text-gray-500 mt-1">{{ formatDate(related.publishDate) }}</p>
                     </div>
                   </div>
                 </article>
@@ -175,7 +177,7 @@
                 Résumé
               </h2>
               <p class="text-gray-700 leading-relaxed text-base sm:text-lg">
-                {{ article.excerpt }}
+                {{ article.summary }}
               </p>
             </section>
 
@@ -186,17 +188,42 @@
                 Contenu détaillé
               </h2>
               <div class="text-gray-700 leading-relaxed text-base">
-                <p class="mb-4">
-                  {{ article.fullContent || getDefaultContent(article) }}
-                </p>
+                <div class="mb-4 prose max-w-none" v-html="formatContent(article.content)"></div>
 
-                <h3 class="text-xl font-semibold mt-6 mb-3 text-gray-900">Points clés à retenir :</h3>
-                <ul class="list-disc list-inside space-y-2 mb-6">
-                  <li class="fade-in-up stagger-item" :style="{ animationDelay: '100ms' }" data-animate>Comprendre les mécanismes de financement adaptés aux PME</li>
-                  <li class="fade-in-up stagger-item" :style="{ animationDelay: '200ms' }" data-animate>Identifier les opportunités de croissance et de développement</li>
-                  <li class="fade-in-up stagger-item" :style="{ animationDelay: '300ms' }" data-animate>Optimiser la gestion financière de votre entreprise</li>
-                  <li class="fade-in-up stagger-item" :style="{ animationDelay: '400ms' }" data-animate>Accéder aux ressources et programmes disponibles</li>
-                </ul>
+                <!-- Ce que vous apprendrez -->
+                <div v-if="article.learningPoints && article.learningPoints.length > 0" class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 mt-6 border-l-4 border-blue-500 fade-in-up" data-animate>
+                  <h3 class="text-xl font-semibold mb-4 text-gray-900 flex items-center">
+                    <i class="fas fa-graduation-cap mr-2 text-blue-600"></i>
+                    Ce que vous apprendrez :
+                  </h3>
+                  <ul class="list-disc list-inside space-y-2">
+                    <li 
+                      v-for="(point, index) in article.learningPoints" 
+                      :key="index"
+                      class="fade-in-up stagger-item text-gray-700" 
+                      :style="{ animationDelay: `${(index + 1) * 100}ms` }" 
+                      data-animate
+                    >
+                      {{ point }}
+                    </li>
+                  </ul>
+                </div>
+
+                <!-- Points clés à retenir -->
+                <div v-if="article.keyPoints && article.keyPoints.length > 0" class="mt-6 fade-in-up" data-animate>
+                  <h3 class="text-xl font-semibold mb-3 text-gray-900">Points clés à retenir :</h3>
+                  <ul class="list-disc list-inside space-y-2 mb-6">
+                    <li 
+                      v-for="(point, index) in article.keyPoints" 
+                      :key="index"
+                      class="fade-in-up stagger-item text-gray-700" 
+                      :style="{ animationDelay: `${(index + 1) * 100}ms` }" 
+                      data-animate
+                    >
+                      {{ point }}
+                    </li>
+                  </ul>
+                </div>
 
                 <div class="bg-blue-50 rounded-xl p-6 mt-6 border-l-4 border-blue-500 fade-in-up" data-animate>
                   <h4 class="font-semibold text-blue-900 mb-2 flex items-center">
@@ -212,6 +239,26 @@
               </div>
             </section>
 
+            <!-- Auteur -->
+            <section v-if="article.author" class="mb-10 pb-10 border-b border-gray-200 fade-in-up" data-animate>
+              <h2 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 flex items-center">
+                <i class="fas fa-user mr-3 text-blue-500"></i>
+                Auteur
+              </h2>
+              <div class="flex items-center space-x-4">
+                <img
+                  :src="getAuthorAvatar(article.authorPhoto)"
+                  :alt="article.author"
+                  class="w-16 h-16 rounded-full object-cover border-2 border-blue-200"
+                  @error="(e) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80' }"
+                />
+                <div>
+                  <p class="text-lg font-semibold text-gray-900">{{ article.author }}</p>
+                  <p class="text-sm text-gray-600">Auteur de l'article</p>
+                </div>
+              </div>
+            </section>
+
             <!-- Tags -->
             <section class="fade-in-up" data-animate>
               <h2 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 flex items-center">
@@ -220,11 +267,14 @@
               </h2>
               <div class="flex flex-wrap gap-2">
                 <span
-                  v-for="tag in article.tags || [article.category, 'PME', 'Financement', 'RDC']"
+                  v-for="tag in (article.tags && article.tags.length > 0 ? article.tags : [])"
                   :key="tag"
                   class="bg-gray-100 text-gray-700 px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-blue-100 hover:text-blue-700 transition-colors cursor-pointer"
                 >
                   #{{ tag }}
+                </span>
+                <span v-if="!article.tags || article.tags.length === 0" class="text-gray-500 text-sm italic">
+                  Aucun mot-clé défini
                 </span>
               </div>
             </section>
@@ -247,14 +297,15 @@
             :style="{ animationDelay: `${index * 100}ms` }"
             data-animate
           >
-            <div class="h-40 relative overflow-hidden">
+              <div class="h-40 relative overflow-hidden">
               <img
-                :src="related.image"
+                :src="getArticleImage(related.image)"
                 :alt="related.title"
                 class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                @error="(e) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80' }"
               />
               <div class="absolute top-3 left-3 bg-blue-500 text-white text-xs font-semibold px-2 py-1 rounded-lg">
-                {{ related.date }}
+                {{ formatDate(related.publishDate) }}
               </div>
             </div>
             <div class="p-4">
@@ -263,10 +314,10 @@
                 {{ related.title }}
               </h3>
               <p class="text-gray-600 text-sm mb-3 line-clamp-2">
-                {{ related.excerpt }}
+                {{ related.summary }}
               </p>
               <div class="flex items-center justify-between text-xs text-gray-500">
-                <span>{{ related.readTime }}</span>
+                <span>{{ related.readTime || 5 }} min</span>
                 <span class="text-blue-600 font-medium group-hover:translate-x-1 transition-transform inline-flex items-center">
                   Lire la suite
                   <i class="fas fa-arrow-right ml-1"></i>
@@ -279,166 +330,141 @@
     </div>
 
     <!-- Loading State -->
-    <div v-else class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div v-else-if="loading" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 text-center">
         <i class="fas fa-spinner fa-spin text-4xl text-blue-600 mb-4"></i>
         <p class="text-gray-600">Chargement de l'article...</p>
       </div>
     </div>
+
+    <!-- Error State -->
+    <div v-else-if="error" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div class="bg-white rounded-2xl shadow-lg border border-red-200 p-8 text-center">
+        <i class="fas fa-exclamation-triangle text-4xl text-red-600 mb-4"></i>
+        <h3 class="text-xl font-bold text-gray-900 mb-2">Erreur</h3>
+        <p class="text-gray-600 mb-6">{{ error }}</p>
+        <button
+          @click="loadArticle"
+          class="bg-blue-500 hover:bg-blue-600 text-white font-medium px-6 py-3 rounded-lg transition-colors"
+        >
+          Réessayer
+        </button>
+        <router-link
+          to="/actualites"
+          class="ml-4 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium px-6 py-3 rounded-lg transition-colors inline-block"
+        >
+          Retour aux actualités
+        </router-link>
+      </div>
+    </div>
   </main>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import type { Actuality } from '@/models'
+import actualityService from '@/services/actuality.service'
 
 //@ts-ignore
 import NavBarComponent from '../components/navbar/NavBarComponent.vue'
 
 const route = useRoute()
 const router = useRouter()
-const articleId = parseInt(route.params.id)
+const articleId = route.params.id as string
 
-const article = ref(null)
+const article = ref<Actuality | null>(null)
+const relatedArticles = ref<Actuality[]>([])
+const loading = ref(true)
+const error = ref<string | null>(null)
 const isBookmarked = ref(false)
-let observer = null
+let observer: IntersectionObserver | null = null
 
-const allArticles = [
-  {
-    id: 1,
-    title: "Étude Exclusive : Le Crowdfunding Émergent en RDC comme Solution de Financement des PME",
-    excerpt: "Une recherche approfondie de l'ULB révèle le potentiel du crowdfunding pour combler le déficit de financement des PME congolaises, malgré les défis infrastructurels.",
-    fullContent: `
-Le Potentiel Inexploité du Crowdfunding en RDC
-
-Une étude menée par la Solvay Brussels School en collaboration avec iCite démontre que les conditions d'offre et de demande de financement sont favorables au développement du crowdfunding en République Démocratique du Congo.
-
-Principales Constatations
-
-• Épargne informelle importante : USD 10 millions échappent au système financier formel
-• Diaspora active : Près de USD 2 milliards de transferts annuels
-• Besoins non satisfaits : Seulement 3 milliards USD de crédits aux PME pour 11 milliards USD de dépôts
-
-L'étude, basée sur 47 entretiens avec les acteurs clés du secteur financier congolais, identifie à la fois les opportunités et les défis à relever.
-    `,
-    image: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80",
-    date: "15 Jan 2024",
-    category: "Recherche",
-    readTime: "8 min",
-    views: "312",
-    tags: ["crowdfunding", "RDC", "PME", "recherche", "financement alternatif"],
-    author: {
-      name: "Jean Nsonsumuna & Olivier Witmeur",
-      role: "Chercheurs ULB",
-      avatar: "https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80"
+// Charger l'actualité depuis le backend
+const loadArticle = async () => {
+  loading.value = true
+  error.value = null
+  try {
+    const loadedArticle = await actualityService.getActualityById(articleId)
+    article.value = loadedArticle
+    
+    // Incrémenter les vues
+    if (loadedArticle.id) {
+      await actualityService.incrementViews(loadedArticle.id)
     }
-  },
-  {
-    id: 2,
-    title: "Infrastructure Financière en RDC : Le Frein Majeur au Développement du Crowdfunding",
-    excerpt: "L'analyse met en lumière les défis réglementaires et infrastructurels qui entravent l'émergence des plateformes de financement participatif.",
-    fullContent: `
-Les Défis Infrastructurels en RDC
-
-L'étude identifie plusieurs obstacles majeurs au développement du crowdfunding :
-
-Défis Réglementaires
-
-• Absence de cadre réglementaire spécifique au crowdfunding
-• Inefficacité du système de réalisation des contrats
-• Longues procédures de réalisation d'hypothèques
-
-Défis Techniques
-
-• Taux de pénétration internet à 17.6% seulement
-• Coût élevé et qualité médiocre de la connexion
-• Faible taux de digitalisation des PME
-
-Malgré ces défis, l'étude note une croissance prometteuse du mobile money avec un taux de pénétration de 10.43%.
-    `,
-    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80",
-    date: "10 Jan 2024",
-    category: "Analyse",
-    readTime: "6 min",
-    views: "234",
-    tags: ["infrastructure", "régulation", "technologie", "mobile money"],
-    author: {
-      name: "Équipe de Recherche iCite",
-      role: "Centre de Recherche",
-      avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80"
-    }
-  },
-  {
-    id: 3,
-    title: "PME Congolaises : Besoins de Financement et Stratégies de Résilience",
-    excerpt: "Comment les petites et moyennes entreprises congolaises surmontent les obstacles d'accès au financement traditionnel.",
-    fullContent: `
-Stratégies de Financement des PME en RDC
-
-L'étude révèle trois stades de développement avec des besoins de financement spécifiques :
-
-Stade d'Amorçage
-
-• Fonds propres et prêts familiaux
-• Main-d'œuvre familiale
-• Activités informelles pour économiser les taxes
-
-Stade de Démarrage
-
-• Autofinancement par les bénéfices
-• Crédit à court terme
-• Subventions et prix
-
-Stade de Croissance
-
-• Diversification financée par les bénéfices
-• Crédits à court terme
-• Partenariats stratégiques
-
-Ces stratégies démontrent la résilience des entrepreneurs congolais face aux contraintes financières.
-    `,
-    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80",
-    date: "05 Jan 2024",
-    category: "PME",
-    readTime: "7 min",
-    views: "189",
-    tags: ["PME", "stratégie", "financement", "croissance", "résilience"],
-    author: {
-      name: "Équipe CReFF-PME",
-      role: "Experts Financement",
-      avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80"
-    }
+    
+    // Charger les articles similaires
+    await loadRelatedArticles(loadedArticle)
+  } catch (err: any) {
+    console.error('Erreur lors du chargement de l\'actualité:', err)
+    error.value = err.message || 'Erreur lors du chargement de l\'article'
+  } finally {
+    loading.value = false
   }
-]
-
-
-
-const relatedArticles = computed(() => {
-  if (!article.value) return []
-  return allArticles
-    .filter(a => a.id !== article.value.id && a.category === article.value.category)
-    .slice(0, 3)
-})
-
-const formatDate = (dateString) => {
-  if (dateString.includes('Nov') || dateString.includes('Déc')) {
-    return dateString
-  }
-  const date = new Date(dateString)
-  return date.toLocaleDateString('fr-FR', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric'
-  })
 }
 
-const getDefaultContent = (article) => {
-  return `${article.excerpt} Le financement des PME représente un enjeu crucial pour le développement économique. 
-  Cet article explore en détail les différentes options disponibles et les meilleures pratiques pour 
-  optimiser l'accès au financement pour votre entreprise.`
+// Charger les articles similaires
+const loadRelatedArticles = async (currentArticle: Actuality) => {
+  try {
+    const result = await actualityService.getActualities({
+      category: currentArticle.category,
+      status: 'published',
+      limit: 4
+    })
+    
+    // Filtrer pour exclure l'article actuel et limiter à 3
+    relatedArticles.value = result.data
+      .filter(a => a.id !== currentArticle.id)
+      .slice(0, 3)
+  } catch (err) {
+    console.error('Erreur lors du chargement des articles similaires:', err)
+    relatedArticles.value = []
+  }
+}
+
+// Obtenir l'URL de l'image de l'article
+const getArticleImage = (image?: string | null): string => {
+  if (!image) {
+    return 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80'
+  }
+  return actualityService.getImageUrl(image) || 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80'
+}
+
+// Obtenir l'avatar de l'auteur
+const getAuthorAvatar = (authorPhoto?: string | null): string => {
+  if (!authorPhoto) {
+    return 'https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80'
+  }
+  return actualityService.getImageUrl(authorPhoto) || 'https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80'
+}
+
+const formatDate = (dateString: string | undefined) => {
+  if (!dateString) return ''
+  try {
+    const date = new Date(dateString)
+    if (isNaN(date.getTime())) return dateString
+    return date.toLocaleDateString('fr-FR', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric'
+    })
+  } catch {
+    return dateString
+  }
+}
+
+const formatContent = (content: string | undefined) => {
+  if (!content) return ''
+  // Convertir les retours à la ligne en paragraphes HTML
+  return content
+    .split('\n')
+    .filter(line => line.trim())
+    .map(line => `<p>${line.trim()}</p>`)
+    .join('')
 }
 
 const toggleBookmark = () => {
+  if (!article.value) return
   isBookmarked.value = !isBookmarked.value
   const bookmarks = JSON.parse(localStorage.getItem('bookmarkedArticles') || '[]')
   if (isBookmarked.value) {
@@ -456,10 +482,11 @@ const toggleBookmark = () => {
 }
 
 const shareArticle = () => {
+  if (!article.value) return
   if (navigator.share) {
     navigator.share({
       title: article.value.title,
-      text: article.value.excerpt,
+      text: article.value.summary,
       url: window.location.href
     })
   } else {
@@ -469,13 +496,15 @@ const shareArticle = () => {
 }
 
 const shareOnFacebook = () => {
+  if (!article.value) return
   const url = encodeURIComponent(window.location.href)
   const text = encodeURIComponent(article.value.title)
   window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}&quote=${text}`, '_blank')
 }
 
 const shareOnTwitter = () => {
-  const text = encodeURIComponent(`"${article.value.title}" - ${article.value.excerpt}`)
+  if (!article.value) return
+  const text = encodeURIComponent(`"${article.value.title}" - ${article.value.summary}`)
   const url = encodeURIComponent(window.location.href)
   window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank')
 }
@@ -506,7 +535,10 @@ const initScrollAnimations = () => {
 }
 
 onMounted(() => {
-  article.value = allArticles.find(a => a.id === articleId)
+  // Charger l'article depuis le backend
+  loadArticle()
+  
+  // Vérifier le statut de bookmark
   const bookmarks = JSON.parse(localStorage.getItem('bookmarkedArticles') || '[]')
   isBookmarked.value = bookmarks.includes(articleId)
   
@@ -599,5 +631,14 @@ onUnmounted(() => {
     transform: none !important;
     opacity: 1 !important;
   }
+}
+
+/* Limiter le nombre de lignes pour le titre */
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 </style>

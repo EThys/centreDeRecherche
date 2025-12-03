@@ -1,8 +1,8 @@
 <template>
-  <div class="min-h-screen bg-white py-12 px-4 sm:px-6 lg:px-8">
+  <div class="min-h-screen bg-white py-8 px-4 sm:px-6 lg:px-8">
     <div class="max-w-7xl mx-auto">
       <!-- En-tête avec animations -->
-      <div class="text-center mb-16">
+      <div class="text-center mb-8">
         <div class="flex items-center justify-center mb-6 fade-in-up" data-delay="0">
           <h1 class="text-4xl md:text-5xl font-bold text-gray-900">{{ $t('gallery.title') }}</h1>
         </div>
@@ -11,7 +11,7 @@
         </p>
         
         <!-- Filtres avec animations -->
-        <div class="flex flex-wrap justify-center gap-3 mb-12">
+        <div class="flex flex-wrap justify-center gap-3 mb-8">
           <button
             v-for="(filter, index) in filters"
             :key="filter.id"
@@ -29,8 +29,28 @@
         </div>
       </div>
 
+
+      <!-- Loading State -->
+      <div v-if="loading && photos.length === 0" class="text-center py-12">
+        <i class="fas fa-spinner fa-spin text-4xl text-blue-600 mb-4"></i>
+        <p class="text-gray-600">Chargement de la galerie...</p>
+      </div>
+
+      <!-- Error State -->
+      <div v-else-if="error && photos.length === 0" class="text-center py-12">
+        <i class="fas fa-exclamation-triangle text-4xl text-red-600 mb-4"></i>
+        <h3 class="text-xl font-bold text-gray-900 mb-2">Erreur</h3>
+        <p class="text-gray-600 mb-6">{{ error }}</p>
+        <button
+          @click="loadPhotos(true)"
+          class="bg-blue-500 hover:bg-blue-600 text-white font-medium px-6 py-3 rounded-lg transition-colors"
+        >
+          Réessayer
+        </button>
+      </div>
+
       <!-- Grille de photos avec animations en cascade -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-12">
+      <div v-else-if="!loading && filteredPhotos.length > 0" class="grid grid-cols-1 lg:px-20 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-8">
         <div
           v-for="(photo, index) in filteredPhotos"
           :key="photo.id"
@@ -40,9 +60,10 @@
         >
           <div class="relative overflow-hidden aspect-square">
             <img
-              :src="photo.image"
+              :src="getImageUrl(photo.image)"
               :alt="photo.title"
               class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+              @error="(e) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80' }"
             />
             
             <!-- Overlay au survol -->
@@ -79,14 +100,27 @@
         </div>
       </div>
 
+      <!-- Empty State -->
+      <div v-else-if="!loading && photos.length === 0 && !error" class="text-center py-12">
+        <i class="fas fa-images text-4xl text-gray-300 mb-4"></i>
+        <h3 class="text-xl font-bold text-gray-900 mb-2">Aucune photo disponible</h3>
+        <p class="text-gray-600 mb-4">La galerie sera bientôt mise à jour avec de nouvelles photos.</p>
+        <button
+          @click="loadPhotos(true)"
+          class="bg-blue-500 hover:bg-blue-600 text-white font-medium px-6 py-3 rounded-lg transition-colors"
+        >
+          Actualiser
+        </button>
+      </div>
+
       <!-- Bouton Load More avec animation -->
-      <div v-if="filteredPhotos.length < totalFilteredPhotos" class="text-center fade-in-up" data-delay="500">
+      <div v-else-if="(filteredPhotos.length < totalFilteredPhotos || hasMore) && !loading" class="text-center fade-in-up" data-delay="500">
         <button
           @click="loadMore"
-          :disabled="loading"
+          :disabled="loadingMore"
           class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-8 py-4 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center mx-auto"
         >
-          <span v-if="loading" class="flex items-center">
+          <span v-if="loadingMore" class="flex items-center">
             <div class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-3"></div>
             Chargement...
           </span>
@@ -122,7 +156,8 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import VueEasyLightbox from 'vue-easy-lightbox'
 import 'vue-easy-lightbox/dist/external-css/vue-easy-lightbox.css'
-import type { GalleryPhoto } from '@/models'
+import type { GalleryPhoto, GalleryCategory } from '@/models'
+import galleryService from '@/services/gallery.service'
 
 const { t } = useI18n()
 
@@ -131,65 +166,254 @@ const activeFilter = ref('all')
 const lightboxOpen = ref(false)
 const currentLightboxIndex = ref(0)
 const loading = ref(false)
+const loadingMore = ref(false)
 const displayedCount = ref(12)
+const error = ref<string | null>(null)
 
-// Filtres
-const filters = computed(() => [
-  { id: 'all', name: t('gallery.allPhotos') },
-  { id: 'evenements', name: t('gallery.events') },
-  { id: 'equipe', name: t('gallery.team') },
-  { id: 'installations', name: t('gallery.installations') },
-  { id: 'collaborations', name: t('gallery.collaborations') }
-])
+// Données des photos depuis le backend
+const photos = ref<GalleryPhoto[]>([])
+const categories = ref<GalleryCategory[]>([])
+const currentPage = ref(1)
+const totalPages = ref(1)
+const hasMore = ref(true)
 
-// Données des photos
-const photos = ref<GalleryPhoto[]>([
-  {
-    id: 1,
-    title: "Conférence Internationale 2024",
-    description: "Moments forts de notre conférence annuelle réunissant experts et partenaires",
-    image: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-    category: "evenements",
-    date: "15 Nov 2024",
-    author: "Photographie CReFF"
-  },
-  {
-    id: 2,
-    title: "Équipe de Recherche",
-    description: "Notre équipe dévouée travaillant sur des projets innovants",
-    image: "https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-    category: "equipe",
-    date: "10 Nov 2024",
-    author: "Studio Pro"
-  },
-  {
-    id: 3,
-    title: "Laboratoires Modernes",
-    description: "Nos installations de recherche dernière génération",
-    image: "https://images.unsplash.com/photo-1553877522-43269d4ea984?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-    category: "installations",
-    date: "08 Nov 2024",
-    author: "Architecture Vision"
-  },
-  {
-    id: 4,
-    title: "Signature de Partenariat",
-    description: "Cérémonie officielle de collaboration stratégique",
-    image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-    category: "collaborations",
-    date: "05 Nov 2024",
-    author: "CReFF Presse"
-  },
+// Filtres dynamiques basés sur les catégories du backend
+const filters = computed(() => {
+  const baseFilters = [
+    { id: 'all', name: t('gallery.allPhotos') }
+  ]
+  
+  // Créer un Set pour éviter les doublons
+  const uniqueCategoryMap = new Map<string, string>()
+  
+  // Ajouter les catégories du backend
+  categories.value.forEach(cat => {
+    const categoryName = cat.name || cat.id
+    if (categoryName && !uniqueCategoryMap.has(categoryName)) {
+      uniqueCategoryMap.set(categoryName, categoryName)
+    }
+  })
+  
+  // Si aucune catégorie du backend, extraire les catégories uniques des photos
+  if (uniqueCategoryMap.size === 0 && photos.value.length > 0) {
+    const uniqueCategories = [...new Set(photos.value.map(p => p.category).filter(Boolean))]
+    uniqueCategories.forEach(cat => {
+      if (cat && !uniqueCategoryMap.has(cat)) {
+        uniqueCategoryMap.set(cat, cat)
+      }
+    })
+  }
+  
+  // Convertir le Map en tableau de filtres
+  const categoryFilters = Array.from(uniqueCategoryMap.entries()).map(([id, name]) => ({
+    id,
+    name
+  }))
+  
+  return [...baseFilters, ...categoryFilters]
+})
 
-])
+// Charger les photos depuis le backend
+const loadPhotos = async (reset: boolean = false) => {
+  console.log('🔄 loadPhotos appelé - reset:', reset, 'activeFilter:', activeFilter.value)
+  
+  if (reset) {
+    currentPage.value = 1
+    displayedCount.value = 12
+    photos.value = []
+    hasMore.value = true
+  }
+  
+  loading.value = true
+  error.value = null
+  
+  try {
+    console.log('🔄 Appel à galleryService.getPhotos avec:', {
+      category: activeFilter.value === 'all' ? undefined : activeFilter.value,
+      page: currentPage.value,
+      limit: 100
+    })
+    
+    const result = await galleryService.getPhotos({
+      category: activeFilter.value === 'all' ? undefined : activeFilter.value,
+      page: currentPage.value,
+      limit: 100, // Charger plus de photos pour le pagination côté client
+      sortBy: 'date',
+      sortOrder: 'desc'
+    })
+    
+    console.log('✅ GalleryComponent - Résultat du service:', result)
+    console.log('✅ GalleryComponent - Photos reçues du service:', result.data?.length || 0)
+    console.log('✅ GalleryComponent - Données brutes:', result.data)
+    
+    if (result && result.data && Array.isArray(result.data)) {
+      if (reset) {
+        photos.value = result.data
+      } else {
+        photos.value = [...photos.value, ...result.data]
+      }
+      
+      console.log('📊 GalleryComponent - Photos assignées:', photos.value.length)
+      console.log('📊 GalleryComponent - Détails des photos:', photos.value.map(p => ({
+        id: p.id,
+        title: p.title,
+        category: p.category,
+        image: p.image
+      })))
+    } else {
+      console.error('❌ GalleryComponent - Format de réponse invalide:', result)
+      photos.value = []
+      error.value = 'Format de réponse invalide du serveur'
+    }
+    
+    totalPages.value = result.pagination?.totalPages || 1
+    hasMore.value = currentPage.value < totalPages.value && result.data?.length > 0
+    
+    // Si aucune photo mais pas d'erreur, c'est peut-être un problème de format
+    if (result.data?.length === 0 && !error.value) {
+      console.warn('⚠️ Aucune photo reçue du service, mais pas d\'erreur')
+    }
+  } catch (err: any) {
+    console.error('❌ Erreur lors du chargement des photos:', err)
+    console.error('❌ Stack trace:', err.stack)
+    error.value = err.message || 'Erreur lors du chargement de la galerie'
+    photos.value = []
+  } finally {
+    loading.value = false
+    console.log('✅ loadPhotos terminé - photos.value.length:', photos.value.length)
+  }
+}
+
+// Charger les catégories depuis le backend
+const loadCategories = async () => {
+  try {
+    const cats = await galleryService.getCategories()
+    console.log('📂 Catégories reçues du backend:', cats)
+    
+    // Catégories par défaut suggérées (plus de types)
+    const defaultCategories = [
+      { id: 'evenements', name: 'Événements' },
+      { id: 'equipe', name: 'Équipe' },
+      { id: 'installations', name: 'Installations' },
+      { id: 'collaborations', name: 'Collaborations' },
+      { id: 'formations', name: 'Formations' },
+      { id: 'conferences', name: 'Conférences' },
+      { id: 'ateliers', name: 'Ateliers' },
+      { id: 'reunions', name: 'Réunions' },
+      { id: 'ceremonies', name: 'Cérémonies' },
+      { id: 'activites', name: 'Activités' },
+      { id: 'projets', name: 'Projets' },
+      { id: 'partenariats', name: 'Partenariats' }
+    ]
+    
+    // Combiner les catégories du backend avec les catégories par défaut
+    const categoryMap = new Map<string, GalleryCategory>()
+    
+    // Ajouter les catégories par défaut
+    defaultCategories.forEach(cat => {
+      categoryMap.set(cat.name.toLowerCase(), cat)
+    })
+    
+    // Ajouter les catégories du backend (elles écraseront les catégories par défaut si même nom)
+    cats.forEach(cat => {
+      const catName = cat.name || cat.id
+      categoryMap.set(catName.toLowerCase(), { id: cat.id, name: catName })
+    })
+    
+    // Extraire les catégories uniques des photos si nécessaire
+    if (photos.value.length > 0) {
+      const uniqueCategories = [...new Set(photos.value.map(p => p.category).filter(Boolean))]
+      uniqueCategories.forEach(cat => {
+        if (cat && !categoryMap.has(cat.toLowerCase())) {
+          categoryMap.set(cat.toLowerCase(), { id: cat, name: cat })
+        }
+      })
+    }
+    
+    categories.value = Array.from(categoryMap.values())
+    console.log('📂 Catégories finales:', categories.value)
+  } catch (err) {
+    console.error('Erreur lors du chargement des catégories:', err)
+    // Si aucune catégorie du backend et qu'on a des photos, extraire des photos
+    if (photos.value.length > 0) {
+      const uniqueCategories = [...new Set(photos.value.map(p => p.category).filter(Boolean))]
+      console.log('📂 Catégories extraites des photos (fallback):', uniqueCategories)
+      categories.value = uniqueCategories.map(cat => ({ id: cat, name: cat }))
+    } else {
+      // Utiliser des catégories par défaut en cas d'erreur
+      categories.value = [
+        { id: 'evenements', name: 'Événements' },
+        { id: 'equipe', name: 'Équipe' },
+        { id: 'installations', name: 'Installations' },
+        { id: 'collaborations', name: 'Collaborations' },
+        { id: 'formations', name: 'Formations' },
+        { id: 'conferences', name: 'Conférences' },
+        { id: 'ateliers', name: 'Ateliers' },
+        { id: 'reunions', name: 'Réunions' },
+        { id: 'ceremonies', name: 'Cérémonies' },
+        { id: 'activites', name: 'Activités' },
+        { id: 'projets', name: 'Projets' },
+        { id: 'partenariats', name: 'Partenariats' }
+      ]
+    }
+  }
+}
+
+// Obtenir l'URL de l'image (utilise le service)
+const getImageUrl = (imagePath: string | null | undefined): string => {
+  if (!imagePath) {
+    return 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80'
+  }
+  return galleryService.getImageUrl(imagePath) || 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80'
+}
 
 // Computed
 const filteredPhotos = computed(() => {
-  const items = activeFilter.value === 'all' 
-    ? photos.value 
-    : photos.value.filter(photo => photo.category === activeFilter.value)
+  // Si pas de photos, retourner un tableau vide
+  if (!photos.value || photos.value.length === 0) {
+    console.log('🔍 filteredPhotos: Aucune photo disponible')
+    return []
+  }
   
-  return items.slice(0, displayedCount.value)
+  let items: GalleryPhoto[] = []
+  
+  if (activeFilter.value === 'all') {
+    // Pour "Tous", retourner toutes les photos
+    items = [...photos.value]
+    console.log('🔍 filteredPhotos: Filtre "all" -', items.length, 'photos')
+  } else {
+    // Pour les autres filtres, filtrer par catégorie
+    // Le filtre peut être soit l'ID de la catégorie, soit le nom
+    items = photos.value.filter(photo => {
+      if (!photo.category) {
+        console.log('🔍 Photo sans catégorie:', photo.id, photo.title)
+        return false
+      }
+      
+      // Comparaison directe
+      if (photo.category === activeFilter.value) {
+        console.log('🔍 Photo correspond (directe):', photo.id, photo.title, photo.category, '===', activeFilter.value)
+        return true
+      }
+      
+      // Comparaison insensible à la casse et aux accents
+      const photoCategory = photo.category.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      const filterCategory = activeFilter.value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      
+      const matches = photoCategory === filterCategory
+      if (matches) {
+        console.log('🔍 Photo correspond (normalisée):', photo.id, photo.title, photoCategory, '===', filterCategory)
+      }
+      
+      return matches
+    })
+    console.log('🔍 filteredPhotos: Filtre "' + activeFilter.value + '" -', items.length, 'photos sur', photos.value.length)
+  }
+  
+  // Limiter le nombre de photos affichées
+  const result = items.slice(0, displayedCount.value)
+  console.log('🔍 filteredPhotos: Résultat final (limité à', displayedCount.value, '):', result.length)
+  return result
 })
 
 const totalFilteredPhotos = computed(() => {
@@ -203,7 +427,7 @@ const currentLightboxImage = computed(() => {
 })
 
 const lightboxImages = computed(() => {
-  return filteredPhotos.value.map(photo => photo.image)
+  return filteredPhotos.value.map(photo => getImageUrl(photo.image))
 })
 
 const handleLightboxSwitch = (index: number) => {
@@ -212,9 +436,17 @@ const handleLightboxSwitch = (index: number) => {
 
 // Méthodes
 const setActiveFilter = (filterId: string) => {
+  console.log('🔍 setActiveFilter appelé avec:', filterId)
+  console.log('🔍 Photos actuelles:', photos.value.length)
   activeFilter.value = filterId
   displayedCount.value = 12
-  // Réinitialiser les animations pour les nouveaux éléments
+  
+  // Pour tous les filtres, utiliser le computed filteredPhotos qui filtre côté client
+  // On a déjà toutes les photos chargées au début, donc pas besoin de recharger
+  console.log('🔍 Filtre changé - filteredPhotos devrait se mettre à jour automatiquement')
+  console.log('🔍 filteredPhotos après changement:', filteredPhotos.value.length)
+  
+  // Réinitialiser les animations
   setTimeout(() => {
     initScrollAnimations()
   }, 100)
@@ -230,10 +462,21 @@ const closeLightbox = () => {
 }
 
 const loadMore = async () => {
-  loading.value = true
-  await new Promise(resolve => setTimeout(resolve, 1000))
+  if (loadingMore.value || !hasMore.value) return
+  
+  loadingMore.value = true
+  
+  // Si on a chargé toutes les photos disponibles, charger la page suivante
+  if (displayedCount.value >= photos.value.length && hasMore.value) {
+    currentPage.value++
+    await loadPhotos(false)
+  }
+  
+  // Afficher plus de photos
   displayedCount.value += 8
-  loading.value = false
+  
+  loadingMore.value = false
+  
   // Réinitialiser les animations pour les nouveaux éléments
   setTimeout(() => {
     initScrollAnimations()
@@ -288,8 +531,45 @@ const handleKeydown = (event: KeyboardEvent) => {
 }
 
 // Lifecycle
-onMounted(() => {
+onMounted(async () => {
   window.addEventListener('keydown', handleKeydown)
+  
+  // Charger toutes les photos au début (sans filtre) pour avoir toutes les données
+  // Ensuite, le computed filteredPhotos filtrera côté client
+  console.log('🔄 onMounted - Début du chargement')
+  activeFilter.value = 'all' // S'assurer que le filtre est "all" au début
+  
+  try {
+    await loadPhotos(true) // Charger toutes les photos sans filtre
+    console.log('✅ onMounted - Photos chargées:', photos.value.length)
+    console.log('✅ onMounted - Détails photos:', photos.value.map(p => ({
+      id: p.id,
+      title: p.title,
+      category: p.category,
+      image: p.image
+    })))
+    
+    // Charger les catégories après avoir chargé les photos
+    await loadCategories()
+    console.log('✅ onMounted - Catégories chargées:', categories.value.length)
+    console.log('✅ onMounted - Catégories détails:', categories.value)
+    
+    // Si le filtre actif n'est pas "all" et qu'il n'existe pas dans les catégories, le réinitialiser
+    if (activeFilter.value !== 'all' && !filters.value.find(f => f.id === activeFilter.value)) {
+      console.warn('⚠️ Filtre actif non trouvé dans les catégories, réinitialisation à "all"')
+      activeFilter.value = 'all'
+    }
+    
+    console.log('✅ onMounted - filteredPhotos:', filteredPhotos.value.length)
+    console.log('✅ onMounted - filteredPhotos détails:', filteredPhotos.value.map(p => ({
+      id: p.id,
+      title: p.title,
+      category: p.category
+    })))
+  } catch (err) {
+    console.error('❌ onMounted - Erreur:', err)
+  }
+  
   setTimeout(() => {
     initScrollAnimations()
   }, 100)

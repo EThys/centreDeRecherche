@@ -57,7 +57,6 @@
     <!-- Header Section -->
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
 
-
       <!-- Filters and Search -->
       <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 sm:p-6 mb-8 fade-in-up delay-600">
         <div class="flex flex-col lg:flex-row gap-4 items-center justify-between">
@@ -114,18 +113,18 @@
           class="group bg-white rounded-2xl border border-gray-200 hover:border-blue-200 shadow-sm hover:shadow-2xl transition-all duration-500 overflow-hidden cursor-pointer fade-in-up"
           :style="`animation-delay: ${index * 100}ms;`"
           @click="openArticle(article.id)"
-        >
+        >.
           <!-- Article Image -->
           <div class="relative h-48 sm:h-56 overflow-hidden">
             <img
-              :src="article.image"
+              :src="getImageUrl(article.image)"
               :alt="article.title"
               class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
             />
             <div class="absolute top-3 sm:top-4 left-3 sm:left-4 bg-blue-500 text-white text-xs font-semibold px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg shadow-lg">
-              {{ formatDate(article.date) }}
+              {{ formatDate(article.publishDate) }}
             </div>
-            <div class="absolute top-3 sm:top-4 right-3 sm:right-4 bg-white/90 backdrop-blur-sm text-gray-700 text-xs font-medium px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg">
+            <div v-if="article.category" class="absolute top-3 sm:top-4 right-3 sm:right-4 bg-white/90 backdrop-blur-sm text-gray-700 text-xs font-medium px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg">
               {{ article.category }}
             </div>
             <div class="absolute bottom-3 sm:bottom-4 left-3 sm:left-4 bg-black/50 text-white text-xs px-2 py-1 rounded">
@@ -138,9 +137,9 @@
             <div class="flex items-center justify-between mb-3">
               <span class="text-blue-500 text-xs sm:text-sm font-medium flex items-center">
                 <i class="far fa-calendar-alt mr-2"></i>
-                {{ formatDate(article.date) }}
+                {{ formatDate(article.publishDate) }}
               </span>
-              <span class="text-gray-400 text-xs sm:text-sm flex items-center">
+              <span v-if="article.views" class="text-gray-400 text-xs sm:text-sm flex items-center">
                 <i class="far fa-eye mr-1"></i>
                 {{ article.views }}
               </span>
@@ -151,20 +150,20 @@
             </h3>
             
             <p class="text-gray-600 text-sm sm:text-base mb-4 line-clamp-3 leading-relaxed">
-              {{ article.excerpt }}
+              {{ article.summary }}
             </p>
             
             <!-- Author Info -->
             <div class="flex items-center justify-between pt-4 border-t border-gray-100">
               <div class="flex items-center space-x-2 sm:space-x-3">
                 <img
-                  :src="article.author.avatar"
-                  :alt="article.author.name"
+                  :src="getAuthorAvatar(article.authorPhoto)"
+                  :alt="article.author"
                   class="w-7 h-7 sm:w-8 sm:h-8 rounded-full object-cover"
                 />
                 <div>
-                  <p class="text-xs sm:text-sm font-medium text-gray-900">{{ article.author.name }}</p>
-                  <p class="text-xs text-gray-500">{{ article.author.role }}</p>
+                  <p class="text-xs sm:text-sm font-medium text-gray-900">{{ article.author || 'Admin' }}</p>
+                  <p class="text-xs text-gray-500">Auteur</p>
                 </div>
               </div>
               <div class="text-blue-600 font-semibold text-xs sm:text-sm group-hover:translate-x-2 transition-transform flex items-center">
@@ -186,19 +185,44 @@
         </button>
       </div>
 
+      <!-- Loading State -->
+      <div
+        v-if="loading"
+        class="text-center py-12 sm:py-16 bg-white rounded-2xl shadow-sm border border-gray-200 fade-in-up"
+      >
+        <i class="fas fa-spinner fa-spin text-4xl sm:text-6xl text-blue-500 mb-4"></i>
+        <h3 class="text-xl sm:text-2xl font-bold text-gray-900 mb-2">Chargement des actualités...</h3>
+      </div>
+
+      <!-- Error State -->
+      <div
+        v-else-if="error"
+        class="text-center py-12 sm:py-16 bg-white rounded-2xl shadow-sm border border-gray-200 fade-in-up"
+      >
+        <i class="fas fa-exclamation-triangle text-4xl sm:text-6xl text-red-500 mb-4"></i>
+        <h3 class="text-xl sm:text-2xl font-bold text-gray-900 mb-2">Erreur</h3>
+        <p class="text-gray-600 mb-6 text-sm sm:text-base">{{ error }}</p>
+        <button
+          @click="loadArticles"
+          class="bg-blue-500 hover:bg-blue-600 text-white font-medium px-5 sm:px-6 py-2 sm:py-3 rounded-lg transition-colors text-sm sm:text-base"
+        >
+          Réessayer
+        </button>
+      </div>
+
       <!-- No Results -->
       <div
-        v-if="filteredArticles.length === 0"
+        v-else-if="filteredArticles.length === 0"
         class="text-center py-12 sm:py-16 bg-white rounded-2xl shadow-sm border border-gray-200 fade-in-up"
       >
         <i class="fas fa-search text-4xl sm:text-6xl text-gray-300 mb-4"></i>
-        <h3 class="text-xl sm:text-2xl font-bold text-gray-900 mb-2">No articles found</h3>
-        <p class="text-gray-600 mb-6 text-sm sm:text-base">Try adjusting your search or filter criteria</p>
+        <h3 class="text-xl sm:text-2xl font-bold text-gray-900 mb-2">Aucun article trouvé</h3>
+        <p class="text-gray-600 mb-6 text-sm sm:text-base">Essayez d'ajuster vos critères de recherche ou de filtrage</p>
         <button
           @click="clearFilters"
           class="bg-blue-500 hover:bg-blue-600 text-white font-medium px-5 sm:px-6 py-2 sm:py-3 rounded-lg transition-colors text-sm sm:text-base"
         >
-          Clear All Filters
+          Effacer tous les filtres
         </button>
       </div>
 
@@ -207,9 +231,16 @@
   <FooterComponent/>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
+import actualityService from '@/services/actuality.service'
+import type { Actuality } from '@/models'
+//@ts-ignore
+import NavBarComponent from '../components/navbar/NavBarComponent.vue'
+//@ts-ignore
+import FooterComponent from '../components/footer/FooterComponent.vue'
+import researchImage1 from '../assets/jean.jpeg'
 
 const router = useRouter()
 
@@ -220,65 +251,34 @@ const sortBy = ref('newest')
 const currentPage = ref(1)
 const articlesPerPage = 9
 const scrollObserver = ref(null)
-//@ts-ignore
-import NavBarComponent from '../components/navbar/NavBarComponent.vue'
-//@ts-ignore
-import FooterComponent from '../components/footer/FooterComponent.vue'
-import researchImage1 from '../assets/jean.jpeg'
+const loading = ref(false)
+const error = ref<string | null>(null)
+
+const allArticles = ref<Actuality[]>([])
 
 
-const allArticles = ref([
-  {
-    id: 1,
-    title: "Étude Exclusive : Le Crowdfunding Émergent en RDC comme Solution de Financement des PME",
-    excerpt: "Une recherche approfondie de l'ULB révèle le potentiel du crowdfunding pour combler le déficit de financement des PME congolaises, malgré les défis infrastructurels.",
-    image: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-    date: "2025-05-15",
-    category: "Recherche",
-    readTime: "8 min",
-    views: "312",
-    author: {
-      name: "Jean Nsonsumuna",
-      role: "Chercheurs ULB",
-      avatar: researchImage1
-    }
-  },
-  {
-    id: 2,
-    title: "Infrastructure Financière en RDC : Le Frein Majeur au Développement du Crowdfunding",
-    excerpt: "L'analyse met en lumière les défis réglementaires et infrastructurels qui entravent l'émergence des plateformes de financement participatif.",
-    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-    date: "2025-05-10",
-    category: "Analyse",
-    readTime: "6 min",
-    views: "234",
-    author: {
-      name: "Jean Nsonsumuna",
-      role: "Chercheurs ULB",
-      avatar: researchImage1
-    }
-  },
-  {
-    id: 3,
-    title: "PME Congolaises : Besoins de Financement et Stratégies de Résilience",
-    excerpt: "Comment les petites et moyennes entreprises congolaises surmontent les obstacles d'accès au financement traditionnel.",
-    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-    date: "2025-05-05",
-    category: "PME",
-    readTime: "7 min",
-    views: "189",
-    author: {
-      name: "Jean Nsonsumuna",
-      role: "Chercheurs ULB",
-      avatar: researchImage1
-    }
+// Charger les actualités depuis le backend
+const loadArticles = async () => {
+  loading.value = true
+  error.value = null
+  try {
+    const result = await actualityService.getActualities({
+      status: 'published',
+      limit: 100
+    })
+    allArticles.value = result.data
+  } catch (err: any) {
+    console.error('Erreur lors du chargement des actualités:', err)
+    error.value = err.message || 'Erreur lors du chargement des actualités'
+    allArticles.value = []
+  } finally {
+    loading.value = false
   }
-])
-
+}
 
 // Computed properties
 const categories = computed(() => {
-  return [...new Set(allArticles.value.map(article => article.category))]
+  return [...new Set(allArticles.value.map(article => article.category).filter(Boolean))]
 })
 
 const totalArticles = computed(() => allArticles.value.length)
@@ -292,29 +292,37 @@ const filteredArticles = computed(() => {
   if (searchQuery.value) {
     const query = searchQuery.value.toLowerCase()
     filtered = filtered.filter(article => 
-      article.title.toLowerCase().includes(query) ||
-      article.excerpt.toLowerCase().includes(query) ||
-      article.author.name.toLowerCase().includes(query)
+      article.title?.toLowerCase().includes(query) ||
+      article.summary?.toLowerCase().includes(query) ||
+      article.author?.toLowerCase().includes(query)
     )
   }
 
   // Filter by categories
   if (selectedCategories.value.length > 0) {
     filtered = filtered.filter(article => 
-      selectedCategories.value.includes(article.category)
+      article.category && selectedCategories.value.includes(article.category)
     )
   }
 
   // Sort articles
   switch (sortBy.value) {
     case 'newest':
-      filtered.sort((a, b) => new Date(b.date) - new Date(a.date))
+      filtered.sort((a, b) => {
+        const dateA = new Date(a.publishDate || '').getTime()
+        const dateB = new Date(b.publishDate || '').getTime()
+        return dateB - dateA
+      })
       break
     case 'oldest':
-      filtered.sort((a, b) => new Date(a.date) - new Date(b.date))
+      filtered.sort((a, b) => {
+        const dateA = new Date(a.publishDate || '').getTime()
+        const dateB = new Date(b.publishDate || '').getTime()
+        return dateA - dateB
+      })
       break
     case 'title':
-      filtered.sort((a, b) => a.title.localeCompare(b.title))
+      filtered.sort((a, b) => (a.title || '').localeCompare(b.title || ''))
       break
   }
 
@@ -360,13 +368,31 @@ const clearFilters = () => {
   currentPage.value = 1
 }
 
-const formatDate = (dateString) => {
-  const date = new Date(dateString)
-  return date.toLocaleDateString('en-US', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric'
-  })
+const formatDate = (dateString?: string) => {
+  if (!dateString) return 'N/A'
+  try {
+    const date = new Date(dateString)
+    if (isNaN(date.getTime())) return 'N/A'
+    return date.toLocaleDateString('en-US', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric'
+    })
+  } catch {
+    return 'N/A'
+  }
+}
+
+const getImageUrl = (image?: string) => {
+  if (!image) return 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'
+  return actualityService.getImageUrl(image) || 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'
+}
+
+const getAuthorAvatar = (authorPhoto?: string) => {
+  if (authorPhoto) {
+    return actualityService.getImageUrl(authorPhoto)
+  }
+  return researchImage1
 }
 
 const openArticle = (articleId) => {
@@ -397,6 +423,8 @@ const initScrollAnimations = () => {
 
 // Lifecycle
 onMounted(() => {
+  // Charger les actualités
+  loadArticles()
   // Initialize scroll animations
   setTimeout(() => {
     initScrollAnimations()

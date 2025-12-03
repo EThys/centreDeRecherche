@@ -47,6 +47,10 @@
           <div class="text-3xl font-bold text-white">{{ speakers.length }}</div>
           <div class="text-blue-200 text-sm">Experts Invités</div>
         </div>
+        <div class="text-center">
+          <div class="text-3xl font-bold text-white">{{ allEvents.length }}</div>
+          <div class="text-blue-200 text-sm">Total Événements</div>
+        </div>
       </div>
     </div>
 
@@ -101,8 +105,22 @@
         </div>
       </div>
 
+      <!-- Loading State -->
+      <div v-if="loading" class="text-center py-16">
+        <i class="fas fa-spinner fa-spin text-4xl text-blue-600 mb-4"></i>
+        <p class="text-gray-600">Chargement des événements...</p>
+      </div>
+
+      <!-- Error State -->
+      <div v-else-if="error" class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl mb-8">
+        <div class="flex items-center gap-2">
+          <i class="fas fa-exclamation-circle"></i>
+          <span>{{ error }}</span>
+        </div>
+      </div>
+
       <!-- Events Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+      <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
         <article
           v-for="event in filteredEvents"
           :key="event.id"
@@ -112,9 +130,10 @@
           <!-- Event Image -->
           <div class="relative h-56 overflow-hidden">
             <img
-              :src="event.image"
+              :src="getEventImage(event.image)"
               :alt="event.title"
               class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+              @error="(e) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80' }"
             />
             <!-- Event Status Badge -->
             <div 
@@ -171,14 +190,21 @@
                 <span class="text-sm font-medium text-gray-700">Intervenants:</span>
               </div>
               <div class="flex -space-x-2">
-                <img
+                <div
                   v-for="speaker in event.speakers.slice(0, 3)"
-                  :key="speaker.id"
-                  :src="speaker.photo"
-                  :alt="speaker.name"
-                  class="w-8 h-8 rounded-full border-2 border-white object-cover"
+                  :key="speaker.id || speaker.name"
+                  class="w-8 h-8 rounded-full border-2 border-white flex items-center justify-center text-xs font-medium text-blue-600 bg-blue-100"
                   :title="speaker.name"
-                />
+                >
+                  <img
+                    v-if="speaker.photo"
+                    :src="getSpeakerPhoto(speaker.photo)"
+                    :alt="speaker.name"
+                    class="w-full h-full rounded-full object-cover"
+                    @error="(e) => { (e.target as HTMLImageElement).style.display = 'none' }"
+                  />
+                  <span v-else class="text-xs">{{ speaker.name?.charAt(0) || '?' }}</span>
+                </div>
                 <div 
                   v-if="event.speakers.length > 3"
                   class="w-8 h-8 rounded-full bg-blue-100 border-2 border-white flex items-center justify-center text-xs font-medium text-blue-600"
@@ -238,6 +264,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import type { Event } from '@/models'
+import eventService from '@/services/event.service'
 
 const router = useRouter()
 
@@ -247,132 +274,16 @@ const selectedEventTypes = ref<string[]>([])
 const statusFilter = ref('all')
 const currentPage = ref(1)
 const eventsPerPage = 9
+const loading = ref(false)
+const error = ref<string | null>(null)
 
 //@ts-ignore
 import NavBarComponent from '../components/navbar/NavBarComponent.vue'
 //@ts-ignore
 import FooterComponent from '../components/footer/FooterComponent.vue'
 
-// Sample events data
-const allEvents = ref<Event[]>([
-  // {
-  //   id: 1,
-  //   title: "Conférence Nationale sur le Financement des PME",
-  //   description: "Une conférence majeure réunissant les acteurs clés du financement des PME en RDC pour discuter des défis et opportunités.",
-  //   content: "Une conférence majeure réunissant les acteurs clés du financement des PME en RDC pour discuter des défis et opportunités. Cette conférence abordera les enjeux actuels du financement des PME.",
-  //   image: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-  //   startDate: "2025-12-15",
-  //   startTime: "09:00",
-  //   endTime: "17:00",
-  //   location: "Kinshasa, Hôtel du Gouvernement",
-  //   address: "Hôtel du Gouvernement, Kinshasa",
-  //   type: "conference",
-  //   status: "upcoming",
-  //   price: 150,
-  //   currency: "USD",
-  //   maxAttendees: 300,
-  //   currentAttendees: 245,
-  //   registrationRequired: true,
-  //   speakers: [
-  //     { id: 1, name: "Dr. Jean Kabila", position: "Ministre des PME", photo: "https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" },
-  //     { id: 2, name: "Marie Lumbu", position: "Directrice Banque Centrale", photo: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" }
-  //   ]
-  // },
-  // {
-  //   id: 2,
-  //   title: "Atelier Pratique: Préparer son Business Plan",
-  //   description: "Session interactive pour apprendre à créer un business plan convaincant pour les investisseurs.",
-  //   image: "https://images.unsplash.com/photo-1515187029135-18ee286d815b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-  //   startDate: "2025-11-25",
-  //   startTime: "14:00",
-  //   endTime: "18:00",
-  //   location: "Lubumbashi, Centre des Affaires",
-  //   type: "workshop",
-  //   status: "upcoming",
-  //   price: 50,
-  //   maxAttendees: 50,
-  //   currentAttendees: 32,
-  //   speakers: [
-  //     { id: 3, name: "Pierre Mbayo", position: "Consultant en Finance", photo: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" }
-  //   ]
-  // },
-  // {
-  //   id: 3,
-  //   title: "Table Ronde: Innovation Financière pour PME",
-  //   description: "Discussion sur les nouvelles solutions de financement digital et les fintech en RDC.",
-  //   image: "https://images.unsplash.com/photo-1559136555-9303baea8ebd?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-  //   startDate: "2025-11-20",
-  //   startTime: "10:00",
-  //   endTime: "12:30",
-  //   location: "En Ligne",
-  //   type: "webinar",
-  //   status: "upcoming",
-  //   price: 0,
-  //   maxAttendees: 500,
-  //   currentAttendees: 387,
-  //   speakers: [
-  //     { id: 4, name: "Sarah Ntumba", position: "CEO FinTech RDC", photo: "https://images.unsplash.com/photo-1494790108755-2616b612b786?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" },
-  //     { id: 5, name: "David Mukendi", position: "Expert Digital", photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" }
-  //   ]
-  // },
-  // {
-  //   id: 4,
-  //   title: "Forum des Investisseurs PME 2025",
-  //   description: "Rencontre entre entrepreneurs et investisseurs potentiels pour des opportunités de financement.",
-  //   image: "https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-  //   startDate: "2025-10-30",
-  //   startTime: "08:30",
-  //   endTime: "16:00",
-  //   location: "Goma, Centre de Conférences",
-  //   type: "other",
-  //   status: "completed",
-  //   price: 100,
-  //   maxAttendees: 200,
-  //   currentAttendees: 180,
-  //   registrationRequired: true,
-  //   speakers: [
-  //     { id: 6, name: "Luc Tshibanda", position: "Investisseur Privé", photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" }
-  //   ]
-  // },
-  // {
-  //   id: 5,
-  //   title: "Formation: Gestion de Trésorerie PME",
-  //   description: "Formation intensive sur les techniques de gestion de trésorerie pour les dirigeants de PME.",
-  //   image: "https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-  //   startDate: "2025-10-20",
-  //   startTime: "09:00",
-  //   endTime: "16:00",
-  //   location: "Kinshasa, Centre de Formation",
-  //   type: "workshop",
-  //   status: "completed",
-  //   price: 75,
-  //   maxAttendees: 40,
-  //   currentAttendees: 35,
-  //   registrationRequired: true,
-  //   speakers: [
-  //     { id: 7, name: "Dr. Amina Koffi", position: "Expert Comptable", photo: "https://images.unsplash.com/photo-1544725176-7c40e5a71c5e?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" }
-  //   ]
-  // },
-  // {
-  //   id: 6,
-  //   title: "Séminaire International Financement Agricole",
-  //   description: "Focus sur les solutions de financement pour les PME du secteur agricole en RDC.",
-  //   image: "https://images.unsplash.com/photo-1465495976277-4387d4b0e4a6?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-  //   startDate: "2025-12-05",
-  //   startTime: "08:00",
-  //   endTime: "13:00",
-  //   location: "Kisangani, Hôtel des Chutes",
-  //   type: "seminar",
-  //   status: "upcoming",
-  //   price: 0,
-  //   maxAttendees: 150,
-  //   currentAttendees: 89,
-  //   registrationRequired: false,
-  //   speakers: [
-  //     { id: 8, name: "Prof. Joseph Lelo", position: "Expert Agricole", photo: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" }
-  //   ]
-  // }
-])
+// Events data from backend
+const allEvents = ref<Event[]>([])
 
 // Computed properties
 const eventTypes = computed(() => {
@@ -389,7 +300,15 @@ const pastEvents = computed(() => {
 
 const speakers = computed(() => {
   const allSpeakers = allEvents.value.flatMap(event => event.speakers || [])
-  return [...new Map(allSpeakers.map(speaker => [speaker.id, speaker])).values()]
+  // Utiliser un identifiant unique basé sur l'ID ou le nom
+  const uniqueSpeakers = new Map()
+  allSpeakers.forEach(speaker => {
+    const key = speaker.id || speaker.name || `${speaker.position}-${speaker.organization}`
+    if (!uniqueSpeakers.has(key)) {
+      uniqueSpeakers.set(key, speaker)
+    }
+  })
+  return Array.from(uniqueSpeakers.values())
 })
 
 const filteredEvents = computed(() => {
@@ -415,7 +334,11 @@ const filteredEvents = computed(() => {
 
   // Filter by status
   if (statusFilter.value !== 'all') {
-    filtered = filtered.filter(event => event.status === statusFilter.value)
+    if (statusFilter.value === 'past') {
+      filtered = filtered.filter(event => event.status === 'completed')
+    } else {
+      filtered = filtered.filter(event => event.status === statusFilter.value)
+    }
   }
 
   // Sort events by date (upcoming first)
@@ -468,16 +391,41 @@ const clearFilters = () => {
 
 const formatEventDate = (dateString: string | undefined) => {
   if (!dateString) return ''
-  const date = new Date(dateString)
-  return date.toLocaleDateString('fr-FR', {
-    day: 'numeric',
-    month: 'short'
-  })
+  try {
+    const date = new Date(dateString)
+    if (isNaN(date.getTime())) return dateString
+    return date.toLocaleDateString('fr-FR', {
+      day: 'numeric',
+      month: 'short'
+    })
+  } catch {
+    return dateString
+  }
 }
 
 const formatEventTime = (startTime: string | undefined, endTime: string | undefined) => {
-  if (!startTime || !endTime) return ''
-  return `${startTime} - ${endTime}`
+  if (!startTime) return ''
+  if (endTime) {
+    return `${startTime} - ${endTime}`
+  }
+  return startTime
+}
+
+const getEventImage = (image?: string | null): string => {
+  if (!image) {
+    return 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'
+  }
+  return eventService.getImageUrl(image) || 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'
+}
+
+const getSpeakerPhoto = (photo?: string | null): string => {
+  if (!photo) return ''
+  // Si c'est déjà une URL complète, la retourner telle quelle
+  if (photo.startsWith('http://') || photo.startsWith('https://')) {
+    return photo
+  }
+  // Sinon, utiliser le service pour construire l'URL
+  return eventService.getImageUrl(photo)
 }
 
 const openEvent = (eventId: string | number | undefined) => {
@@ -485,9 +433,55 @@ const openEvent = (eventId: string | number | undefined) => {
   router.push(`/events/${eventId}`)
 }
 
+// Load events from backend
+const loadEvents = async () => {
+  loading.value = true
+  error.value = null
+  try {
+    const result = await eventService.getEvents({
+      limit: 100, // Charger un grand nombre pour avoir tous les événements
+    })
+    
+    // Déterminer le statut des événements basé sur la date
+    const now = new Date()
+    allEvents.value = result.data.map(event => {
+      // Si le statut n'est pas défini ou est 'upcoming', déterminer le statut basé sur la date
+      if (!event.status || event.status === 'upcoming') {
+        try {
+          const eventDate = new Date(event.startDate)
+          if (isNaN(eventDate.getTime())) {
+            return { ...event, status: 'upcoming' as const }
+          }
+          
+          // Comparer la date (sans l'heure)
+          const eventDateOnly = new Date(eventDate.getFullYear(), eventDate.getMonth(), eventDate.getDate())
+          const nowDateOnly = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+          
+          if (eventDateOnly < nowDateOnly) {
+            return { ...event, status: 'completed' as const }
+          } else if (eventDateOnly.getTime() === nowDateOnly.getTime()) {
+            return { ...event, status: 'ongoing' as const }
+          } else {
+            return { ...event, status: 'upcoming' as const }
+          }
+        } catch {
+          return { ...event, status: 'upcoming' as const }
+        }
+      }
+      return event
+    })
+  } catch (err: any) {
+    error.value = err.message || 'Erreur lors du chargement des événements'
+    console.error('Erreur:', err)
+    allEvents.value = []
+  } finally {
+    loading.value = false
+  }
+}
+
 // Lifecycle
 onMounted(() => {
-  // Initialization if needed
+  loadEvents()
 })
 </script>
 

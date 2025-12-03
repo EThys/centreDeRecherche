@@ -44,7 +44,7 @@
         >
           <div class="relative h-40 sm:h-48 lg:h-52 overflow-hidden">
             <img
-              :src="article.image"
+              :src="getArticleImage(article.image)"
               :alt="article.title"
               class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
             />
@@ -83,6 +83,18 @@
             </div>
           </div>
         </article>
+      </div>
+
+      <!-- État de chargement pour les actualités -->
+      <div v-else-if="loadingNews" class="bg-white/80 backdrop-blur-sm rounded-xl sm:rounded-2xl border border-gray-200/80 shadow-md sm:shadow-lg p-8 sm:p-12 mb-6 sm:mb-8 text-center fade-in-up">
+        <div class="max-w-md mx-auto">
+          <div class="w-20 h-20 sm:w-24 sm:h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6">
+            <i class="fas fa-spinner fa-spin text-3xl sm:text-4xl text-blue-500"></i>
+          </div>
+          <h3 class="text-xl sm:text-2xl font-bold text-gray-900 mb-2 sm:mb-3">
+            Chargement des actualités...
+          </h3>
+        </div>
       </div>
 
       <!-- État vide pour les actualités -->
@@ -140,8 +152,14 @@
         </div>
       </div>
 
+      <!-- État de chargement -->
+      <div v-if="loadingEvents" class="text-center py-12">
+        <i class="fas fa-spinner fa-spin text-3xl text-blue-600 mb-4"></i>
+        <p class="text-gray-600 text-sm">Chargement des événements...</p>
+      </div>
+
       <!-- Grille des événements -->
-      <div v-if="events && events.length > 0" class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 mb-6 sm:mb-8">
+      <div v-else-if="events && events.length > 0" class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 mb-6 sm:mb-8">
         <!-- Événement Card -->
         <div 
           v-for="(event, index) in events"
@@ -243,6 +261,8 @@ import { ref, reactive, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import type { Actuality, Event } from '@/models'
+import eventService from '@/services/event.service'
+import actualityService from '@/services/actuality.service'
 
 const { t } = useI18n()
 
@@ -251,169 +271,68 @@ const router = useRouter()
 // État réactif
 const isLoading = ref(false)
 const isVisible = ref(false)
+const loadingEvents = ref(false)
+const loadingNews = ref(false)
 
 // Observer pour les animations au défilement
 let observer: IntersectionObserver | null = null
 
-// Données des actualités adaptées au financement PME
-// Remplacer le tableau 'news' existant par :
-const news = reactive<Actuality[]>([
-  {
-    id: 1,
-    title: "Étude Exclusive : Le Crowdfunding Émergent en RDC comme Solution de Financement des PME",
-    summary: "Une recherche approfondie de l'ULB révèle le potentiel du crowdfunding pour combler le déficit de financement des PME congolaises, malgré les défis infrastructurels.",
-    content: `
-Le Potentiel Inexploité du Crowdfunding en RDC
-
-Une étude menée par la Solvay Brussels School en collaboration avec iCite démontre que les conditions d'offre et de demande de financement sont favorables au développement du crowdfunding en République Démocratique du Congo.
-
-Principales Constatations
-
-• Épargne informelle importante : USD 10 millions échappent au système financier formel
-• Diaspora active : Près de USD 2 milliards de transferts annuels
-• Besoins non satisfaits : Seulement 3 milliards USD de crédits aux PME pour 11 milliards USD de dépôts
-
-L'étude, basée sur 47 entretiens avec les acteurs clés du secteur financier congolais, identifie à la fois les opportunités et les défis à relever.
-    `,
-    image: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    publishDate: "2025-05-15",
-    category: "Recherche",
-    author: "Jean Nsonsumuna & Olivier Witmeur",
-    readTime: 8,
-    views: 312,
-    tags: ["crowdfunding", "RDC", "PME", "recherche", "financement alternatif"]
-  },
-  {
-    id: 2,
-    title: "Infrastructure Financière en RDC : Le Frein Majeur au Développement du Crowdfunding",
-    summary: "L'analyse met en lumière les défis réglementaires et infrastructurels qui entravent l'émergence des plateformes de financement participatif.",
-    content: `
-Les Défis Infrastructurels en RDC
-
-L'étude identifie plusieurs obstacles majeurs au développement du crowdfunding :
-
-Défis Réglementaires
-
-• Absence de cadre réglementaire spécifique au crowdfunding
-• Inefficacité du système de réalisation des contrats
-• Longues procédures de réalisation d'hypothèques
-
-Défis Techniques
-
-• Taux de pénétration internet à 17.6% seulement
-• Coût élevé et qualité médiocre de la connexion
-• Faible taux de digitalisation des PME
-
-Malgré ces défis, l'étude note une croissance prometteuse du mobile money avec un taux de pénétration de 10.43%.
-    `,
-    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    publishDate: "2025-05-10",
-    category: "Analyse",
-    author: "Équipe de Recherche iCite",
-    readTime: 6,
-    views: 234,
-    tags: ["infrastructure", "régulation", "technologie", "mobile money"]
-  },
-  {
-    id: 3,
-    title: "PME Congolaises : Besoins de Financement et Stratégies de Résilience",
-    summary: "Comment les petites et moyennes entreprises congolaises surmontent les obstacles d'accès au financement traditionnel.",
-    content: `
-Stratégies de Financement des PME en RDC
-
-L'étude révèle trois stades de développement avec des besoins de financement spécifiques :
-
-Stade d'Amorçage
-
-• Fonds propres et prêts familiaux
-• Main-d'œuvre familiale
-• Activités informelles pour économiser les taxes
-
-Stade de Démarrage
-
-• Autofinancement par les bénéfices
-• Crédit à court terme
-• Subventions et prix
-
-Stade de Croissance
-
-• Diversification financée par les bénéfices
-• Crédits à court terme
-• Partenariats stratégiques
-
-Ces stratégies démontrent la résilience des entrepreneurs congolais face aux contraintes financières.
-    `,
-    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    publishDate: "2025-05-05",
-    category: "PME",
-    author: "Équipe CReFF-PME",
-    readTime: 7,
-    views: 189,
-    tags: ["PME", "stratégie", "financement", "croissance", "résilience"]
-  }
-])
+// Données des actualités depuis le backend
+const news = reactive<Actuality[]>([])
 
 
-// Données des événements adaptés au financement PME
-const events = reactive<Event[]>([
-  // {
-  //   id: 1,
-  //   title: "Webinaire : Financement Participatif pour PME Innovantes",
-  //   description: "Apprenez les meilleures pratiques pour réussir votre campagne de crowdfunding avec des experts du secteur.",
-  //   content: "Apprenez les meilleures pratiques pour réussir votre campagne de crowdfunding avec des experts du secteur. Ce webinaire couvrira les stratégies de financement participatif, les plateformes disponibles et les cas de succès.",
-  //   image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-  //   type: "webinar",
-  //   status: "upcoming",
-  //   startDate: "2025-11-25",
-  //   startTime: "14:00",
-  //   endTime: "16:00",
-  //   location: "En ligne",
-  //   registrationRequired: true,
-  //   maxAttendees: 100,
-  //   currentAttendees: 45
-  // },
-  // {
-  //   id: 2,
-  //   title: "Salon du Financement des Entreprises 2025",
-  //   description: "Rencontrez les principaux acteurs du financement et découvrez les solutions adaptées à votre croissance.",
-  //   content: "Rencontrez les principaux acteurs du financement et découvrez les solutions adaptées à votre croissance. Stands, conférences et networking au programme.",
-  //   image: "https://images.unsplash.com/photo-1515168833906-d2d02d9820b2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-  //   type: "conference",
-  //   status: "upcoming",
-  //   startDate: "2025-12-05",
-  //   endDate: "2025-12-06",
-  //   startTime: "09:00",
-  //   endTime: "18:00",
-  //   location: "Paris, France",
-  //   address: "Palais des Congrès, Paris",
-  //   registrationRequired: true,
-  //   price: 150,
-  //   currency: "EUR",
-  //   maxAttendees: 500,
-  //   currentAttendees: 234
-  // }
-])
+// Données des événements depuis le backend
+const events = ref<Event[]>([])
 
 // Méthodes
-const formatDate = (dateString: string): string => {
-  const date = new Date(dateString)
-  return date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' })
+const formatDate = (dateString?: string): string => {
+  if (!dateString) return ''
+  try {
+    const date = new Date(dateString)
+    if (isNaN(date.getTime())) return ''
+    return date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' })
+  } catch {
+    return ''
+  }
 }
 
-const getEventDay = (dateString: string): string => {
-  const date = new Date(dateString)
-  return date.getDate().toString().padStart(2, '0')
+const getArticleImage = (image?: string): string => {
+  if (!image) return 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
+  return actualityService.getImageUrl(image) || 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
 }
 
-const getEventMonth = (dateString: string): string => {
-  const date = new Date(dateString)
-  const months = ['JAN', 'FÉV', 'MAR', 'AVR', 'MAI', 'JUN', 'JUL', 'AOÛ', 'SEP', 'OCT', 'NOV', 'DÉC']
-  return months[date.getMonth()]
+const getEventDay = (dateString: string | undefined): string => {
+  if (!dateString) return ''
+  try {
+    const date = new Date(dateString)
+    if (isNaN(date.getTime())) return ''
+    return date.getDate().toString().padStart(2, '0')
+  } catch {
+    return ''
+  }
 }
 
-const getEventYear = (dateString: string): string => {
-  const date = new Date(dateString)
-  return date.getFullYear().toString()
+const getEventMonth = (dateString: string | undefined): string => {
+  if (!dateString) return ''
+  try {
+    const date = new Date(dateString)
+    if (isNaN(date.getTime())) return ''
+    const months = ['JAN', 'FÉV', 'MAR', 'AVR', 'MAI', 'JUN', 'JUL', 'AOÛ', 'SEP', 'OCT', 'NOV', 'DÉC']
+    return months[date.getMonth()]
+  } catch {
+    return ''
+  }
+}
+
+const getEventYear = (dateString: string | undefined): string => {
+  if (!dateString) return ''
+  try {
+    const date = new Date(dateString)
+    if (isNaN(date.getTime())) return ''
+    return date.getFullYear().toString()
+  } catch {
+    return ''
+  }
 }
 
 const openArticle = (articleId: number | string | undefined) => {
@@ -466,7 +385,74 @@ const initScrollAnimations = () => {
   })
 }
 
+// Charger les actualités depuis le backend
+const loadNews = async () => {
+  loadingNews.value = true
+  try {
+    // Charger les 3 dernières actualités publiées
+    const result = await actualityService.getActualities({
+      status: 'published',
+      limit: 3,
+      sortBy: 'date',
+      sortOrder: 'desc'
+    })
+    
+    // Mettre à jour le tableau réactif
+    news.splice(0, news.length, ...result.data)
+  } catch (err: any) {
+    console.error('Erreur lors du chargement des actualités:', err)
+    news.splice(0, news.length) // Vider le tableau en cas d'erreur
+  } finally {
+    loadingNews.value = false
+  }
+}
+
+// Charger les événements depuis le backend
+const loadEvents = async () => {
+  loadingEvents.value = true
+  try {
+    // Charger tous les événements et filtrer côté client
+    const result = await eventService.getEvents({
+      limit: 50, // Charger suffisamment d'événements
+    })
+    
+    // Filtrer pour ne garder que les événements à venir (basé sur la date)
+    const now = new Date()
+    const nowDateOnly = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+    
+    events.value = result.data
+      .filter(event => {
+        if (!event.startDate) return false
+        try {
+          const eventDate = new Date(event.startDate)
+          if (isNaN(eventDate.getTime())) return false
+          const eventDateOnly = new Date(eventDate.getFullYear(), eventDate.getMonth(), eventDate.getDate())
+          return eventDateOnly >= nowDateOnly
+        } catch {
+          return false
+        }
+      })
+      .sort((a, b) => {
+        // Trier par date croissante (les plus proches en premier)
+        const dateA = new Date(a.startDate || '').getTime()
+        const dateB = new Date(b.startDate || '').getTime()
+        return dateA - dateB
+      })
+      .slice(0, 3) // Limiter à 3 événements
+  } catch (err: any) {
+    console.error('Erreur lors du chargement des événements:', err)
+    events.value = []
+  } finally {
+    loadingEvents.value = false
+  }
+}
+
 onMounted(() => {
+  // Charger les actualités
+  loadNews()
+  // Charger les événements
+  loadEvents()
+  
   // Initialiser les animations au scroll
   setTimeout(() => {
     initScrollAnimations()

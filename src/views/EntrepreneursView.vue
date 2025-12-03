@@ -286,47 +286,96 @@
           </h2>
         </div>
 
-        <div class="space-y-6">
+        <!-- Loading State -->
+        <div v-if="loadingEvents" class="text-center py-12">
+          <i class="fas fa-spinner fa-spin text-3xl text-blue-600 mb-4"></i>
+          <p class="text-gray-600 text-sm">Chargement des programmes...</p>
+        </div>
+
+        <!-- Events Grid -->
+        <div v-else-if="upcomingEvents.length > 0" class="space-y-6">
           <div 
-            v-for="(program, index) in upcomingPrograms" 
-            :key="index"
-            class="bg-white rounded-xl p-6 sm:p-8 shadow-md hover:shadow-xl border border-gray-100 transition-all duration-300 fade-in-up stagger-item"
+            v-for="(event, index) in upcomingEvents" 
+            :key="event.id"
+            class="group bg-white rounded-xl p-6 sm:p-8 shadow-md hover:shadow-xl border border-gray-100 transition-all duration-300 fade-in-up stagger-item overflow-hidden cursor-pointer"
             :style="{ animationDelay: `${index * 150}ms` }"
             data-animate
+            @click="openEvent(event.id)"
           >
-            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-              <div class="flex-1">
-                <div class="flex items-center gap-3 mb-3">
-                  <div class="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center">
-                    <i :class="program.icon" class="text-white text-xl"></i>
-                  </div>
-                  <div>
-                    <h3 class="text-xl sm:text-2xl font-bold text-gray-900">{{ program.title }}</h3>
-                    <p class="text-gray-600 text-sm sm:text-base">{{ program.description }}</p>
-                  </div>
-                </div>
-                <div class="flex flex-wrap gap-4 text-sm text-gray-600">
-                  <div class="flex items-center">
-                    <i class="fas fa-calendar-alt mr-2 text-blue-600"></i>
-                    {{ program.date }}
-                  </div>
-                  <div class="flex items-center">
-                    <i class="fas fa-clock mr-2 text-blue-600"></i>
-                    {{ program.duration }}
-                  </div>
-                  <div class="flex items-center">
-                    <i class="fas fa-users mr-2 text-blue-600"></i>
-                    {{ program.participants }}
+            <div class="flex flex-col md:flex-row gap-6">
+              <!-- Event Image -->
+              <div class="md:w-48 lg:w-56 flex-shrink-0">
+                <div class="relative h-40 md:h-full rounded-lg overflow-hidden">
+                  <img
+                    :src="getEventImage(event.image)"
+                    :alt="event.title"
+                    class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                    @error="(e) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80' }"
+                  />
+                  <div class="absolute top-3 left-3 bg-blue-600 text-white text-xs font-semibold px-3 py-1 rounded-lg">
+                    {{ event.type }}
                   </div>
                 </div>
               </div>
-              <div class="flex-shrink-0">
-                <button class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-all duration-300 transform hover:scale-105">
-                  {{ $t('entrepreneurs.upcoming.register') }}
-                </button>
+
+              <!-- Event Content -->
+              <div class="flex-1 flex flex-col justify-between">
+                <div>
+                  <h3 class="text-xl sm:text-2xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
+                    {{ event.title }}
+                  </h3>
+                  <p class="text-gray-600 text-sm sm:text-base mb-4 line-clamp-2">
+                    {{ event.description }}
+                  </p>
+                  <div class="flex flex-wrap gap-4 text-sm text-gray-600 mb-4">
+                    <div class="flex items-center">
+                      <i class="fas fa-calendar-alt mr-2 text-blue-600"></i>
+                      {{ formatEventDate(event.startDate) }}
+                    </div>
+                    <div class="flex items-center">
+                      <i class="fas fa-clock mr-2 text-blue-600"></i>
+                      {{ formatEventTime(event.startTime, event.endTime) }}
+                    </div>
+                    <div class="flex items-center">
+                      <i class="fas fa-map-marker-alt mr-2 text-blue-600"></i>
+                      {{ event.location }}
+                    </div>
+                    <div v-if="event.maxAttendees" class="flex items-center">
+                      <i class="fas fa-users mr-2 text-blue-600"></i>
+                      {{ event.currentAttendees || 0 }}/{{ event.maxAttendees }} places
+                    </div>
+                  </div>
+                  <div v-if="event.price !== undefined && event.price !== null" class="mb-4">
+                    <span class="text-blue-600 font-semibold text-lg">
+                      {{ event.price === 0 ? 'Gratuit' : `${event.price} ${event.currency || 'USD'}` }}
+                    </span>
+                  </div>
+                </div>
+                <div class="flex items-center justify-between pt-4 border-t border-gray-100">
+                  <button 
+                    @click.stop="registerEvent(event.id)"
+                    class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-all duration-300 transform hover:scale-105"
+                  >
+                    {{ $t('entrepreneurs.upcoming.register') }}
+                  </button>
+                  <button 
+                    @click.stop="openEvent(event.id)"
+                    class="text-blue-600 hover:text-blue-700 font-medium text-sm flex items-center gap-2 transition-colors"
+                  >
+                    Voir détails
+                    <i class="fas fa-arrow-right"></i>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
+        </div>
+
+        <!-- Empty State -->
+        <div v-else class="text-center py-12 bg-white rounded-xl shadow-sm border border-gray-200">
+          <i class="fas fa-calendar-times text-4xl text-gray-300 mb-4"></i>
+          <h3 class="text-xl font-bold text-gray-900 mb-2">Aucun programme à venir</h3>
+          <p class="text-gray-600 text-sm">De nouveaux programmes seront bientôt disponibles.</p>
         </div>
       </div>
     </section>
@@ -477,13 +526,23 @@
                 ></textarea>
               </div>
               
+              <!-- Message d'erreur -->
+              <div v-if="registrationError" class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+                <div class="flex items-center gap-2">
+                  <i class="fas fa-exclamation-circle"></i>
+                  <span>{{ registrationError }}</span>
+                </div>
+              </div>
+              
               <div class="pt-2">
                 <button
                   type="submit"
-                  class="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold py-4 px-8 rounded-xl transition-all duration-300 transform hover:scale-[1.02] hover:shadow-2xl shadow-lg flex items-center justify-center gap-2 group"
+                  :disabled="isSubmitting"
+                  class="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold py-4 px-8 rounded-xl transition-all duration-300 transform hover:scale-[1.02] hover:shadow-2xl shadow-lg flex items-center justify-center gap-2 group disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <span>{{ $t('entrepreneurs.registration.submit') }}</span>
-                  <i class="fas fa-paper-plane text-sm group-hover:translate-x-1 transition-transform duration-300"></i>
+                  <i v-if="isSubmitting" class="fas fa-spinner fa-spin text-sm"></i>
+                  <span v-else>{{ $t('entrepreneurs.registration.submit') }}</span>
+                  <i v-if="!isSubmitting" class="fas fa-paper-plane text-sm group-hover:translate-x-1 transition-transform duration-300"></i>
                 </button>
                 <p class="text-xs text-gray-500 text-center mt-4">
                   En soumettant ce formulaire, vous acceptez d'être contacté par notre équipe.
@@ -502,7 +561,13 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import type { TrainingRegistration } from '@/models'
+import { useRouter } from 'vue-router'
+import { useToast } from 'vue-toast-notification'
+import type { TrainingRegistration, Event } from '@/models'
+import eventService from '@/services/event.service'
+import trainingRegistrationService from '@/services/training-registration.service'
+
+const toast = useToast()
 //@ts-ignore
 import NavBarComponent from '../components/navbar/NavBarComponent.vue'
 //@ts-ignore
@@ -515,6 +580,7 @@ import carousel4 from '../assets/carousel-4.jpg'
 import profImage from '../assets/prof.jpeg'
 
 const { t } = useI18n()
+const router = useRouter()
 
 // Témoignages
 const testimonials = ref([
@@ -538,25 +604,94 @@ const testimonials = ref([
   }
 ])
 
-// Programmes à venir
-const upcomingPrograms = ref([
-  {
-    title: t('entrepreneurs.upcoming.program1.title'),
-    description: t('entrepreneurs.upcoming.program1.description'),
-    date: t('entrepreneurs.upcoming.program1.date'),
-    duration: t('entrepreneurs.upcoming.program1.duration'),
-    participants: t('entrepreneurs.upcoming.program1.participants'),
-    icon: 'fas fa-chart-line'
-  },
-  {
-    title: t('entrepreneurs.upcoming.program2.title'),
-    description: t('entrepreneurs.upcoming.program2.description'),
-    date: t('entrepreneurs.upcoming.program2.date'),
-    duration: t('entrepreneurs.upcoming.program2.duration'),
-    participants: t('entrepreneurs.upcoming.program2.participants'),
-    icon: 'fas fa-handshake'
+// Événements à venir (dynamiques depuis le backend)
+const upcomingEvents = ref<Event[]>([])
+const loadingEvents = ref(false)
+
+// Charger les événements depuis le backend
+const loadUpcomingEvents = async () => {
+  loadingEvents.value = true
+  try {
+    const result = await eventService.getEvents({
+      limit: 10, // Limiter à 10 événements
+    })
+    
+    // Filtrer pour ne garder que les événements à venir (basé sur la date)
+    const now = new Date()
+    const nowDateOnly = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+    
+    upcomingEvents.value = result.data
+      .filter(event => {
+        if (!event.startDate) return false
+        try {
+          const eventDate = new Date(event.startDate)
+          if (isNaN(eventDate.getTime())) return false
+          const eventDateOnly = new Date(eventDate.getFullYear(), eventDate.getMonth(), eventDate.getDate())
+          return eventDateOnly >= nowDateOnly
+        } catch {
+          return false
+        }
+      })
+      .sort((a, b) => {
+        // Trier par date croissante (les plus proches en premier)
+        const dateA = new Date(a.startDate || '').getTime()
+        const dateB = new Date(b.startDate || '').getTime()
+        return dateA - dateB
+      })
+      .slice(0, 6) // Limiter à 6 événements pour l'affichage
+  } catch (err: any) {
+    console.error('Erreur lors du chargement des événements:', err)
+    upcomingEvents.value = []
+  } finally {
+    loadingEvents.value = false
   }
-])
+}
+
+// Formater la date de l'événement
+const formatEventDate = (dateString: string | undefined) => {
+  if (!dateString) return ''
+  try {
+    const date = new Date(dateString)
+    if (isNaN(date.getTime())) return dateString
+    return date.toLocaleDateString('fr-FR', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    })
+  } catch {
+    return dateString
+  }
+}
+
+// Formater l'heure de l'événement
+const formatEventTime = (startTime: string | undefined, endTime: string | undefined) => {
+  if (!startTime) return ''
+  if (endTime) {
+    return `${startTime} - ${endTime}`
+  }
+  return startTime
+}
+
+// Obtenir l'URL de l'image de l'événement
+const getEventImage = (image?: string | null): string => {
+  if (!image) {
+    return 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'
+  }
+  return eventService.getImageUrl(image) || 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'
+}
+
+// Ouvrir la page de détail de l'événement
+const openEvent = (eventId: string | number | undefined) => {
+  if (!eventId) return
+  router.push(`/events/${eventId}`)
+}
+
+// S'inscrire à un événement
+const registerEvent = (eventId: string | number | undefined) => {
+  if (!eventId) return
+  // Navigation vers la page de détail pour l'inscription
+  router.push(`/events/${eventId}`)
+}
 
 // FAQ
 const faqs = ref([
@@ -597,24 +732,72 @@ const registrationForm = ref<Omit<TrainingRegistration, 'id' | 'status' | 'regis
   message: ''
 })
 
-const submitRegistration = () => {
-  // Créer l'objet d'inscription avec le statut par défaut
-  const registration: TrainingRegistration = {
-    ...registrationForm.value,
-    status: 'pending',
-    registrationDate: new Date().toISOString(),
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
+const isSubmitting = ref(false)
+const registrationError = ref<string | null>(null)
+
+const submitRegistration = async () => {
+  if (!registrationForm.value.name || !registrationForm.value.email || !registrationForm.value.program) {
+    registrationError.value = 'Veuillez remplir tous les champs obligatoires'
+    toast.open({
+      message: '⚠️ Veuillez remplir tous les champs obligatoires',
+      type: 'warning',
+      position: 'top-right',
+      duration: 4000,
+    })
+    return
   }
   
-  // Ici vous pouvez envoyer les données à votre API
-  console.log('Inscription soumise:', registration)
+  isSubmitting.value = true
+  registrationError.value = null
   
-  // Afficher le message de succès
-  alert(t('entrepreneurs.registration.success'))
-  
-  // Réinitialiser le formulaire
-  registrationForm.value = { name: '', email: '', program: '', message: '' }
+  try {
+    // Mapper le nom du programme depuis la valeur du select
+    const programNames: Record<string, string> = {
+      'training1': t('entrepreneurs.activities.training1.title'),
+      'training2': t('entrepreneurs.activities.training2.title'),
+      'training3': t('entrepreneurs.activities.training3.title'),
+      'training4': t('entrepreneurs.activities.training4.title'),
+    }
+    
+    const registrationData = {
+      ...registrationForm.value,
+      programName: programNames[registrationForm.value.program] || registrationForm.value.program
+    }
+    
+    await trainingRegistrationService.submitRegistration(registrationData)
+    
+    // Afficher le message de succès
+    toast.open({
+      message: `✅ ${t('entrepreneurs.registration.success') || 'Votre inscription a été enregistrée avec succès ! Nous vous contacterons bientôt.'}`,
+      type: 'success',
+      position: 'top-right',
+      duration: 6000,
+    })
+    
+    // Réinitialiser le formulaire
+    registrationForm.value = { name: '', email: '', program: '', message: '' }
+  } catch (err: any) {
+    console.error('Erreur lors de l\'inscription:', err)
+    let errorMessage = 'Une erreur est survenue lors de l\'envoi de votre inscription. Veuillez réessayer.'
+    
+    if (err.status === 422) {
+      const errors = err.errors || {};
+      const firstError = Object.values(errors)[0] as string[];
+      errorMessage = firstError?.[0] || 'Veuillez vérifier les informations saisies.';
+    } else if (err.message) {
+      errorMessage = err.message;
+    }
+    
+    registrationError.value = errorMessage
+    toast.open({
+      message: `❌ ${errorMessage}`,
+      type: 'error',
+      position: 'top-right',
+      duration: 6000,
+    })
+  } finally {
+    isSubmitting.value = false
+  }
 }
 
 let observer: IntersectionObserver | null = null
@@ -643,6 +826,9 @@ const initScrollAnimations = () => {
 }
 
 onMounted(() => {
+  // Charger les événements à venir
+  loadUpcomingEvents()
+  
   setTimeout(() => {
     initScrollAnimations()
   }, 100)
@@ -716,6 +902,14 @@ onUnmounted(() => {
     transform: translateY(20px);
     transition-duration: 0.6s;
   }
+}
+
+/* Line clamp utility */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 </style>
 

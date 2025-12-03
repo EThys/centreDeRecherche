@@ -2,7 +2,10 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
+import { useToast } from 'vue-toast-notification'
 import type { Publication, PublicationRequest } from '@/models'
+import publicationRequestService from '@/services/publication-request.service'
+import publicationService from '@/services/publication.service'
 //@ts-ignore
 import NavBarComponent from '../components/navbar/NavBarComponent.vue'
 //@ts-ignore
@@ -10,6 +13,8 @@ import FooterComponent from '../components/footer/FooterComponent.vue'
 
 const { t } = useI18n()
 const router = useRouter()
+const toast = useToast()
+const isSubmitting = ref(false)
 
 // Données réactives
 const searchQuery = ref('')
@@ -20,34 +25,46 @@ const sortBy = ref('newest')
 const currentPage = ref(1)
 const itemsPerPage = ref(5)
 const scrollObserver = ref<IntersectionObserver | null>(null)
+const loading = ref(false)
+const error = ref<string | null>(null)
 
 const openPublication = (publicationId: number | string | undefined) => {
   if (!publicationId) return
   router.push(`/publications/${publicationId}`)
 }
 
-// Données des publications de recherche
-const allPublications = ref<Publication[]>([
-  {
-    id: 1,
-    title: "Tester les conditions de lancement d'une plateforme de crowdfunding en République Démocratique du Congo (RDC)",
-    abstract: "La recherche disponible sur le crowdfunding s'intéresse essentiellement aux sociétés qui font appel à ce mode de financement et suppose l'existence préalable de plateformes pour l'organiser. Malheureusement, elle ne s'intéresse que rarement aux conditions d'exploitation des plateformes et accorde peu de place au contexte local notamment dans les pays dont le système financier et légal est moins développé.L'ambition de cet article est double. En adoptant une approche de recherche qualitative à travers 47 entretiens semi-structurés, nous souhaitons analyser l'opportunité de lancement d'une plateforme de crowdfunding en République Démocratique du Congo (RDC) en utilisant le modèle de la Banque Mondiale (2013). Ce modèle distingue deux familles de conditions de succès :d'un côté, l'offre et la demande de financement et, de l'autre côté, l'état de l'infrastructure. Parallèlement, nous profitons de l'exercice pour tester l'exhaustivité du modèle. Les résultats de l'étude sur le terrain montrent que, sur le plan de la faisabilité d'une plateforme de crowdfunding en RDC, les conditions d'offre et de demande de financement sont plus satisfaisantes et montrent l'intérêt d'une telle initiative. Par contre, les conditions d'infrastructure sont moins satisfaisantes pour assurer le développement d'une plateforme notamment au niveau de cadre réglementaire, du fonctionnement des services financiers et du climat des affaires. Au niveau du modèle, il semble souhaitable de le compléter avec des conditions tant sur le plan de l'analyse de 'infrastructure que sur le plan de l'offre et de demande de financement. Il semble également souhaitable d'accorder une attention plus particulière aux conditions de mise en œuvre. Ces résultats ouvrent des pistes de recherche futures tant sur le terrain afin de faire émerger une première plateforme en RDC que sur le plan académique au niveau de l'analyse des conditions d'exploitation des plateformes.",
-    content: "La recherche disponible sur le crowdfunding s'intéresse essentiellement aux sociétés qui font appel à ce mode de financement et suppose l'existence préalable de plateformes pour l'organiser. Malheureusement, elle ne s'intéresse que rarement aux conditions d'exploitation des plateformes et accorde peu de place au contexte local notamment dans les pays dont le système financier et légal est moins développé.L'ambition de cet article est double. En adoptant une approche de recherche qualitative à travers 47 entretiens semi-structurés, nous souhaitons analyser l'opportunité de lancement d'une plateforme de crowdfunding en République Démocratique du Congo (RDC) en utilisant le modèle de la Banque Mondiale (2013). Ce modèle distingue deux familles de conditions de succès :d'un côté, l'offre et la demande de financement et, de l'autre côté, l'état de l'infrastructure. Parallèlement, nous profitons de l'exercice pour tester l'exhaustivité du modèle. Les résultats de l'étude sur le terrain montrent que, sur le plan de la faisabilité d'une plateforme de crowdfunding en RDC, les conditions d'offre et de demande de financement sont plus satisfaisantes et montrent l'intérêt d'une telle initiative. Par contre, les conditions d'infrastructure sont moins satisfaisantes pour assurer le développement d'une plateforme notamment au niveau de cadre réglementaire, du fonctionnement des services financiers et du climat des affaires. Au niveau du modèle, il semble souhaitable de le compléter avec des conditions tant sur le plan de l'analyse de 'infrastructure que sur le plan de l'offre et de demande de financement. Il semble également souhaitable d'accorder une attention plus particulière aux conditions de mise en œuvre. Ces résultats ouvrent des pistes de recherche futures tant sur le terrain afin de faire émerger une première plateforme en RDC que sur le plan académique au niveau de l'analyse des conditions d'exploitation des plateformes.",
-    authors: [
-      { id: 1, name: "Jean Nsonsumuna" },
-      { id: 2, name: "Olivier Witmeur" }
-    ],
-    journal: "Research Paper",
-    publicationDate: "2024-01-01",
-    type: "research-paper",
-    domains: ["Crowdfunding", "Financement", "RDC", "PME"],
-    citations: 0,
-    image: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-    doi: "",
-    views: 0,
-    downloads: 0
+// Données des publications de recherche - chargées dynamiquement
+const allPublications = ref<Publication[]>([])
+
+// Charger les publications depuis l'API
+const loadPublications = async () => {
+  loading.value = true
+  error.value = null
+  try {
+    const result = await publicationService.getPublications({
+      type: selectedType.value !== 'all' ? selectedType.value : undefined,
+      limit: 100, // Charger toutes les publications pour le filtrage côté client
+    })
+    
+    // Transformer les données pour correspondre au format attendu
+    allPublications.value = result.data.map((pub: any) => ({
+      ...pub,
+      publicationDate: pub.publication_date || pub.publicationDate || pub.created_at,
+      image: pub.image || 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+      authors: Array.isArray(pub.authors) ? pub.authors : (pub.authors ? [{ id: 1, name: pub.authors }] : []),
+      domains: Array.isArray(pub.domains) ? pub.domains : [],
+      citations: pub.citations || 0,
+      downloads: pub.downloads || 0,
+      views: pub.views || 0,
+    }))
+  } catch (err: any) {
+    console.error('Erreur lors du chargement des publications:', err)
+    error.value = err.message || 'Erreur lors du chargement des publications'
+    allPublications.value = []
+  } finally {
+    loading.value = false
   }
-])
+}
 
 const showAdvancedFilters = ref(false)
 
@@ -284,6 +301,7 @@ const initScrollAnimations = () => {
 
 // Lifecycle
 onMounted(() => {
+  loadPublications()
   // Initialize scroll animations
   setTimeout(() => {
     initScrollAnimations()
@@ -312,6 +330,44 @@ const publicationRequestForm = ref<Omit<PublicationRequest, 'id' | 'status' | 's
   message: ''
 })
 
+// Fichiers
+const documentFile = ref<File | null>(null)
+const documentImage = ref<File | null>(null)
+const documentFilePreview = ref<string | null>(null)
+const documentImagePreview = ref<string | null>(null)
+
+const handleDocumentFileChange = (event: Event) => {
+  const target = event.target as HTMLInputElement
+  if (target.files && target.files[0]) {
+    documentFile.value = target.files[0]
+    // Afficher le nom du fichier
+    documentFilePreview.value = target.files[0].name
+  }
+}
+
+const handleDocumentImageChange = (event: Event) => {
+  const target = event.target as HTMLInputElement
+  if (target.files && target.files[0]) {
+    documentImage.value = target.files[0]
+    // Créer une preview de l'image
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      documentImagePreview.value = e.target?.result as string
+    }
+    reader.readAsDataURL(target.files[0])
+  }
+}
+
+const removeDocumentFile = () => {
+  documentFile.value = null
+  documentFilePreview.value = null
+}
+
+const removeDocumentImage = () => {
+  documentImage.value = null
+  documentImagePreview.value = null
+}
+
 const researchDomainsForForm = [
   "Finance Bancaire",
   "Microfinance", 
@@ -332,34 +388,76 @@ const toggleDomainForForm = (domain: string) => {
   }
 }
 
-const submitPublicationRequest = () => {
-  // Créer l'objet de demande avec le statut par défaut
-  const request: PublicationRequest = {
-    ...publicationRequestForm.value,
-    status: 'pending',
-    submissionDate: new Date().toISOString(),
+const submitPublicationRequest = async () => {
+  if (isSubmitting.value) return
+  
+  // Validation des domaines
+  if (publicationRequestForm.value.domains.length === 0) {
+    toast.open({
+      message: '⚠️ Veuillez sélectionner au moins un domaine de recherche',
+      type: 'warning',
+      position: 'top-right',
+      duration: 5000,
+    })
+    return
   }
   
-  // Ici, vous pouvez envoyer la demande à votre API
-  console.log('Publication request submitted:', request)
+  isSubmitting.value = true
   
-  // Afficher un message de succès (vous pouvez utiliser une notification toast)
-  alert(t('publications.request.success'))
-  
-  // Réinitialiser le formulaire
-  publicationRequestForm.value = {
-    name: '',
-    email: '',
-    phone: '',
-    institution: '',
-    position: '',
-    title: '',
-    abstract: '',
-    type: '',
-    domains: [],
-    authors: '',
-    keywords: '',
-    message: ''
+  try {
+    await publicationRequestService.submitRequest({
+      ...publicationRequestForm.value,
+      documentFile: documentFile.value || undefined,
+      documentImage: documentImage.value || undefined,
+    })
+    
+    toast.open({
+      message: `✅ ${t('publications.request.success') || 'Votre demande de publication a été soumise avec succès ! Nous vous répondrons sous 24h.'}`,
+      type: 'success',
+      position: 'top-right',
+      duration: 6000,
+    })
+    
+    // Réinitialiser le formulaire
+    publicationRequestForm.value = {
+      name: '',
+      email: '',
+      phone: '',
+      institution: '',
+      position: '',
+      title: '',
+      abstract: '',
+      type: '',
+      domains: [],
+      authors: '',
+      keywords: '',
+      message: ''
+    }
+    documentFile.value = null
+    documentImage.value = null
+    documentFilePreview.value = null
+    documentImagePreview.value = null
+  } catch (error: any) {
+    console.error('Erreur lors de l\'envoi de la demande:', error)
+    
+    let errorMessage = 'Une erreur est survenue lors de l\'envoi de votre demande. Veuillez réessayer.';
+    
+    if (error.status === 422) {
+      const errors = error.errors || {};
+      const firstError = Object.values(errors)[0] as string[];
+      errorMessage = firstError?.[0] || 'Veuillez vérifier les informations saisies.';
+    } else if (error.message) {
+      errorMessage = error.message;
+    }
+    
+    toast.open({
+      message: `❌ ${errorMessage}`,
+      type: 'error',
+      position: 'top-right',
+      duration: 6000,
+    })
+  } finally {
+    isSubmitting.value = false
   }
 }
 </script>
@@ -934,7 +1032,7 @@ const submitPublicationRequest = () => {
                       type="email"
                       required
                       class="w-full px-4 py-3.5 rounded-xl border-2 border-gray-200 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-300 text-sm bg-gray-50 focus:bg-white group-hover:border-gray-300"
-                      :placeholder="$t('publications.request.emailPlaceholder')"
+                      placeholder="exemple@email.com"
                     />
                   </div>
                 </div>
@@ -1101,15 +1199,90 @@ const submitPublicationRequest = () => {
                       :placeholder="$t('publications.request.messagePlaceholder')"
                     ></textarea>
                   </div>
+                  
+                  <!-- Fichiers -->
+                  <div class="border-t border-gray-200 pt-6 mt-6">
+                    <h3 class="text-lg font-bold text-gray-900 mb-4">Fichiers du document</h3>
+                    
+                    <!-- Fichier document (PDF/Word) -->
+                    <div class="group mb-6">
+                      <label class="block text-gray-700 text-sm font-semibold mb-2.5">
+                        Document (PDF ou Word)
+                      </label>
+                      <div class="flex items-center gap-4">
+                        <label class="flex-1 cursor-pointer">
+                          <input
+                            type="file"
+                            accept=".pdf,.doc,.docx"
+                            @change="handleDocumentFileChange"
+                            class="hidden"
+                          />
+                          <div class="w-full px-4 py-3.5 rounded-xl border-2 border-dashed border-gray-300 hover:border-blue-500 transition-all duration-300 text-sm bg-gray-50 hover:bg-blue-50 text-center">
+                            <i class="fas fa-file-upload text-blue-500 mr-2"></i>
+                            <span v-if="!documentFilePreview" class="text-gray-600">Cliquez pour télécharger un fichier PDF ou Word</span>
+                            <span v-else class="text-blue-600 font-medium">{{ documentFilePreview }}</span>
+                          </div>
+                        </label>
+                        <button
+                          v-if="documentFilePreview"
+                          @click="removeDocumentFile"
+                          type="button"
+                          class="px-4 py-3.5 bg-red-500 text-white rounded-xl hover:bg-red-600 transition-colors"
+                        >
+                          <i class="fas fa-times"></i>
+                        </button>
+                      </div>
+                      <p class="text-xs text-gray-500 mt-2">Formats acceptés: PDF, DOC, DOCX (max 10MB)</p>
+                    </div>
+                    
+                    <!-- Image du document -->
+                    <div class="group mb-6">
+                      <label class="block text-gray-700 text-sm font-semibold mb-2.5">
+                        Image du document
+                      </label>
+                      <div class="flex items-center gap-4">
+                        <label class="flex-1 cursor-pointer">
+                          <input
+                            type="file"
+                            accept="image/*"
+                            @change="handleDocumentImageChange"
+                            class="hidden"
+                          />
+                          <div class="w-full px-4 py-3.5 rounded-xl border-2 border-dashed border-gray-300 hover:border-blue-500 transition-all duration-300 text-sm bg-gray-50 hover:bg-blue-50 text-center">
+                            <i class="fas fa-image text-blue-500 mr-2"></i>
+                            <span v-if="!documentImagePreview" class="text-gray-600">Cliquez pour télécharger une image</span>
+                            <span v-else class="text-blue-600 font-medium">Image sélectionnée</span>
+                          </div>
+                        </label>
+                        <button
+                          v-if="documentImagePreview"
+                          @click="removeDocumentImage"
+                          type="button"
+                          class="px-4 py-3.5 bg-red-500 text-white rounded-xl hover:bg-red-600 transition-colors"
+                        >
+                          <i class="fas fa-times"></i>
+                        </button>
+                      </div>
+                      <div v-if="documentImagePreview" class="mt-4">
+                        <img :src="documentImagePreview" alt="Preview" class="max-w-xs rounded-lg border border-gray-200" />
+                      </div>
+                      <p class="text-xs text-gray-500 mt-2">Formats acceptés: JPG, PNG, GIF (max 5MB)</p>
+                    </div>
+                  </div>
                 </div>
                 
                 <div class="pt-2">
                   <button
                     type="submit"
-                    class="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold py-4 px-8 rounded-xl transition-all duration-300 transform hover:scale-[1.02] hover:shadow-2xl shadow-lg flex items-center justify-center gap-2 group"
+                    :disabled="isSubmitting"
+                    :class="[
+                      'w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold py-4 px-8 rounded-xl transition-all duration-300 transform hover:scale-[1.02] hover:shadow-2xl shadow-lg flex items-center justify-center gap-2 group',
+                      isSubmitting ? 'opacity-75 cursor-not-allowed' : ''
+                    ]"
                   >
-                    <span>{{ $t('publications.request.submit') }}</span>
-                    <i class="fas fa-paper-plane text-sm group-hover:translate-x-1 transition-transform duration-300"></i>
+                    <span>{{ isSubmitting ? 'Envoi en cours...' : $t('publications.request.submit') }}</span>
+                    <i v-if="!isSubmitting" class="fas fa-paper-plane text-sm group-hover:translate-x-1 transition-transform duration-300"></i>
+                    <i v-else class="fas fa-spinner fa-spin text-sm"></i>
                   </button>
                   <p class="text-xs text-gray-500 text-center mt-4">
                     {{ $t('publications.request.consent') }}

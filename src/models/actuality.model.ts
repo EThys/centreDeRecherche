@@ -3,6 +3,8 @@ export interface Actuality {
   title: string
   summary: string
   content: string
+  learningPoints?: string[]
+  keyPoints?: string[]
   image: string
   category: string
   author: string
