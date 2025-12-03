@@ -395,7 +395,7 @@
                   />
                   <div>
                     <h3 class="font-semibold text-gray-900 mb-1">{{ speaker.name }}</h3>
-                    <p class="text-blue-600 text-sm mb-2">{{ speaker.position || speaker.role || 'Intervenant' }}</p>
+                    <p class="text-blue-600 text-sm mb-2">{{ speaker.position || 'Intervenant' }}</p>
                     <p v-if="speaker.organization" class="text-gray-500 text-xs mb-2">{{ speaker.organization }}</p>
                     <p class="text-gray-600 text-sm">
                       {{ speaker.bio || 'Expert avec plus de 10 ans d\'expérience dans le domaine du financement des PME.' }}
@@ -903,8 +903,10 @@ const downloadBadge = () => {
         doc.text('✓', 78, 49)
         
         // Télécharger le PDF
-        const fileName = `badge-${event.value.title.replace(/\s+/g, '-')}-${savedRegistrationData.value.lastName || 'badge'}.pdf`
-        doc.save(fileName)
+        if (event.value) {
+          const fileName = `badge-${event.value.title.replace(/\s+/g, '-')}-${savedRegistrationData.value.lastName || 'badge'}.pdf`
+          doc.save(fileName)
+        }
       }
       
       reader.onerror = () => {
@@ -928,8 +930,10 @@ const downloadBadge = () => {
       doc.text('✓', 78, 49)
       
       // Télécharger le PDF même sans logo
-      const fileName = `badge-${event.value.title.replace(/\s+/g, '-')}-${savedRegistrationData.value.lastName || 'badge'}.pdf`
-      doc.save(fileName)
+      if (event.value) {
+        const fileName = `badge-${event.value.title.replace(/\s+/g, '-')}-${savedRegistrationData.value.lastName || 'badge'}.pdf`
+        doc.save(fileName)
+      }
     }
   }
   
@@ -1083,7 +1087,9 @@ const printBadge = () => {
           }
         } else {
           // Fallback: télécharger le PDF si les popups sont bloquées
-          doc.save(`badge-${event.value.title.replace(/\s+/g, '-')}-${savedRegistrationData.value.lastName || 'badge'}.pdf`)
+          if (event.value) {
+            doc.save(`badge-${event.value.title.replace(/\s+/g, '-')}-${savedRegistrationData.value.lastName || 'badge'}.pdf`)
+          }
         }
       }
       
@@ -1119,10 +1125,12 @@ const printBadge = () => {
             URL.revokeObjectURL(pdfUrl)
           }, 500)
         }
-      } else {
-        // Fallback: télécharger le PDF si les popups sont bloquées
-        doc.save(`badge-${event.value.title.replace(/\s+/g, '-')}-${savedRegistrationData.value.lastName || 'badge'}.pdf`)
-      }
+        } else {
+          // Fallback: télécharger le PDF si les popups sont bloquées
+          if (event.value) {
+            doc.save(`badge-${event.value.title.replace(/\s+/g, '-')}-${savedRegistrationData.value.lastName || 'badge'}.pdf`)
+          }
+        }
     }
   }
   
@@ -1140,14 +1148,18 @@ const initScrollAnimations = () => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
         entry.target.classList.add('animate-in')
-        observer.unobserve(entry.target)
+        if (observer) {
+          observer.unobserve(entry.target)
+        }
       }
     })
   }, observerOptions)
 
   // Observer tous les éléments avec data-animate
   document.querySelectorAll('[data-animate]').forEach(el => {
-    observer.observe(el)
+    if (observer) {
+      observer.observe(el)
+    }
   })
 }
 

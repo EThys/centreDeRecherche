@@ -74,7 +74,7 @@ const submitForm = async () => {
       currency: form.value.currency || 'USD',
     };
     
-    await financingRequestService.submitRequest(requestData);
+    await financingRequestService.submitRequest(requestData as any);
     
     toast.open({
       message: '✅ Votre demande de financement a été envoyée avec succès ! Nous vous répondrons sous 24h.',
@@ -146,7 +146,7 @@ onMounted(() => {
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '© OpenStreetMap contributors',
       maxZoom: 19,
-    }).addTo(map.value);
+    }).addTo(map.value as any);
 
     // Créer une icône personnalisée pour le marqueur
     const customIcon = L.divIcon({
@@ -177,7 +177,7 @@ onMounted(() => {
     });
 
     // Ajouter le marqueur
-    const marker = L.marker(center, { icon: customIcon }).addTo(map.value);
+    const marker = L.marker(center, { icon: customIcon }).addTo(map.value as any);
     
     // Ajouter un popup avec les informations
     marker.bindPopup(`
@@ -214,32 +214,32 @@ const changeMapView = (view: string) => {
       L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
         attribution: '© Esri',
         maxZoom: 19,
-      }).addTo(map.value);
+      }).addTo(map.value as any);
       break;
     case 'hybrid':
       // Couche satellite
       L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
         attribution: '© Esri',
         maxZoom: 19,
-      }).addTo(map.value);
+      }).addTo(map.value as any);
       // Couche de labels par-dessus
       L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
         attribution: '© Esri',
         maxZoom: 19,
         opacity: 0.7,
-      }).addTo(map.value);
+      }).addTo(map.value as any);
       break;
     case 'terrain':
       L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
         attribution: '© OpenTopoMap',
         maxZoom: 17,
-      }).addTo(map.value);
+      }).addTo(map.value as any);
       break;
     default: // 'osm'
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© OpenStreetMap contributors',
         maxZoom: 19,
-      }).addTo(map.value);
+      }).addTo(map.value as any);
   }
 };
 

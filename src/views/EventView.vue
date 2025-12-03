@@ -132,7 +132,7 @@
             <img
               :src="getEventImage(event.image)"
               :alt="event.title"
-              class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+              class="w-full h-full object-cover group-hover:scale-125 transition-transform duration-700 ease-out"
               @error="(e) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80' }"
             />
             <!-- Event Status Badge -->
