@@ -129,7 +129,7 @@
               <i class="fas fa-times"></i>
             </button>
             <button
-              v-if="request.status === 'accepted' && request.status !== 'published'"
+              v-if="request.status === 'accepted'"
               @click="updateStatus(request, 'published')"
               :disabled="saving"
               class="p-2 text-purple-600 hover:bg-purple-50 rounded-lg transition-colors disabled:opacity-50"
@@ -167,8 +167,8 @@
           <!-- Fichiers -->
           <div class="flex gap-2 mt-3 pt-3 border-t border-gray-200">
             <a
-              v-if="request.documentFileUrl || (request as any).document_file_url"
-              :href="request.documentFileUrl || (request as any).document_file_url"
+              v-if="(request as any).documentFileUrl || (request as any).document_file_url"
+              :href="(request as any).documentFileUrl || (request as any).document_file_url"
               target="_blank"
               class="flex items-center gap-2 px-3 py-1.5 bg-blue-600 text-white rounded-lg text-xs font-medium hover:bg-blue-700 transition-colors"
             >
@@ -253,8 +253,8 @@
               <div>
                 <label class="text-sm font-medium text-gray-600 mb-2 block">Document (PDF/Word)</label>
                 <a
-                  v-if="selectedRequest.documentFileUrl || (selectedRequest as any).document_file_url"
-                  :href="selectedRequest.documentFileUrl || (selectedRequest as any).document_file_url"
+                  v-if="(selectedRequest as any).documentFileUrl || (selectedRequest as any).document_file_url"
+                  :href="(selectedRequest as any).documentFileUrl || (selectedRequest as any).document_file_url"
                   target="_blank"
                   class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
                 >
@@ -268,15 +268,15 @@
               <!-- Image du document -->
               <div>
                 <label class="text-sm font-medium text-gray-600 mb-2 block">Image du document</label>
-                <div v-if="selectedRequest.documentImageUrl || (selectedRequest as any).document_image_url">
+                <div v-if="(selectedRequest as any).documentImageUrl || (selectedRequest as any).document_image_url">
                   <img
-                    :src="selectedRequest.documentImageUrl || (selectedRequest as any).document_image_url"
+                    :src="(selectedRequest as any).documentImageUrl || (selectedRequest as any).document_image_url"
                     :alt="selectedRequest.title"
                     class="max-w-md rounded-lg border border-gray-200 mb-2"
                     @error="(e: any) => e.target.style.display = 'none'"
                   />
                   <a
-                    :href="selectedRequest.documentImageUrl || (selectedRequest as any).document_image_url"
+                    :href="(selectedRequest as any).documentImageUrl || (selectedRequest as any).document_image_url"
                     target="_blank"
                     class="inline-flex items-center gap-2 px-3 py-1.5 bg-gray-600 text-white rounded-lg text-xs font-medium hover:bg-gray-700 transition-colors"
                   >
