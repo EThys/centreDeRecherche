@@ -368,7 +368,7 @@ const handleScroll = () => {
 }
 
 // Système d'animation
-let observer = null
+let observer: IntersectionObserver | null = null
 
 const initScrollAnimations = () => {
   const observerOptions = {
@@ -380,14 +380,18 @@ const initScrollAnimations = () => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
         entry.target.classList.add('animate-in')
-        observer.unobserve(entry.target)
+        if (observer) {
+          observer.unobserve(entry.target)
+        }
       }
     })
   }, observerOptions)
 
   // Observer tous les éléments avec des classes d'animation
   document.querySelectorAll('.fade-in-up, .slide-in-left, .slide-in-right, .slide-in-up, .scale-in, .expand-width').forEach(el => {
-    observer.observe(el)
+    if (observer) {
+      observer.observe(el)
+    }
   })
 }
 

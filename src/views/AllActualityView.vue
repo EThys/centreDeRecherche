@@ -112,14 +112,14 @@
           :key="article.id"
           class="group bg-white rounded-2xl border border-gray-200 hover:border-blue-200 shadow-sm hover:shadow-2xl transition-all duration-500 overflow-hidden cursor-pointer fade-in-up"
           :style="`animation-delay: ${index * 100}ms;`"
-          @click="openArticle(article.id)"
+          @click="article.id && openArticle(article.id)"
         >.
           <!-- Article Image -->
           <div class="relative h-48 sm:h-56 overflow-hidden">
             <img
               :src="getImageUrl(article.image)"
               :alt="article.title"
-              class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+              class="w-full h-full object-cover group-hover:scale-125 transition-transform duration-700 ease-out"
             />
             <div class="absolute top-3 sm:top-4 left-3 sm:left-4 bg-blue-500 text-white text-xs font-semibold px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg shadow-lg">
               {{ formatDate(article.publishDate) }}
@@ -246,11 +246,11 @@ const router = useRouter()
 
 // Reactive data
 const searchQuery = ref('')
-const selectedCategories = ref([])
+const selectedCategories = ref<string[]>([])
 const sortBy = ref('newest')
 const currentPage = ref(1)
 const articlesPerPage = 9
-const scrollObserver = ref(null)
+const scrollObserver = ref<IntersectionObserver | null>(null)
 const loading = ref(false)
 const error = ref<string | null>(null)
 
@@ -335,10 +335,10 @@ const showLoadMore = computed(() => {
   const totalFiltered = allArticles.value.filter(article => {
     const matchesSearch = !searchQuery.value || 
       article.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-      article.excerpt.toLowerCase().includes(searchQuery.value.toLowerCase())
+      article.summary?.toLowerCase().includes(searchQuery.value.toLowerCase())
     
     const matchesCategory = selectedCategories.value.length === 0 || 
-      selectedCategories.value.includes(article.category)
+      (article.category && selectedCategories.value.includes(article.category))
     
     return matchesSearch && matchesCategory
   }).length
@@ -347,7 +347,7 @@ const showLoadMore = computed(() => {
 })
 
 // Methods
-const toggleCategory = (category) => {
+const toggleCategory = (category: string) => {
   const index = selectedCategories.value.indexOf(category)
   if (index > -1) {
     selectedCategories.value.splice(index, 1)
@@ -395,7 +395,7 @@ const getAuthorAvatar = (authorPhoto?: string) => {
   return researchImage1
 }
 
-const openArticle = (articleId) => {
+const openArticle = (articleId: string | number) => {
   // Navigation vers la page de détail de l'actualité
   router.push(`/actualites/${articleId}`)
 }
@@ -417,7 +417,9 @@ const initScrollAnimations = () => {
 
   // Observe all elements with fade-in-up class
   document.querySelectorAll('.fade-in-up').forEach(el => {
-    scrollObserver.value.observe(el)
+    if (scrollObserver.value) {
+      scrollObserver.value.observe(el)
+    }
   })
 }
 
