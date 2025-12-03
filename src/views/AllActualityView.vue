@@ -113,13 +113,14 @@
           class="group bg-white rounded-2xl border border-gray-200 hover:border-blue-200 shadow-sm hover:shadow-2xl transition-all duration-500 overflow-hidden cursor-pointer fade-in-up"
           :style="`animation-delay: ${index * 100}ms;`"
           @click="article.id && openArticle(article.id)"
-        >.
+        >
           <!-- Article Image -->
-          <div class="relative h-48 sm:h-56 overflow-hidden">
+          <div class="relative h-48 sm:h-56 lg:h-64 overflow-hidden bg-gray-100">
             <img
               :src="getImageUrl(article.image)"
               :alt="article.title"
-              class="w-full h-full object-cover group-hover:scale-125 transition-transform duration-700 ease-out"
+              class="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-700 ease-out block"
+              @error="handleImageError"
             />
             <div class="absolute top-3 sm:top-4 left-3 sm:left-4 bg-blue-500 text-white text-xs font-semibold px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg shadow-lg">
               {{ formatDate(article.publishDate) }}
@@ -127,9 +128,7 @@
             <div v-if="article.category" class="absolute top-3 sm:top-4 right-3 sm:right-4 bg-white/90 backdrop-blur-sm text-gray-700 text-xs font-medium px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg">
               {{ article.category }}
             </div>
-            <div class="absolute bottom-3 sm:bottom-4 left-3 sm:left-4 bg-black/50 text-white text-xs px-2 py-1 rounded">
-              {{ article.readTime }}
-            </div>
+            
           </div>
           
           <!-- Article Content -->
@@ -393,6 +392,11 @@ const getAuthorAvatar = (authorPhoto?: string) => {
     return actualityService.getImageUrl(authorPhoto)
   }
   return researchImage1
+}
+
+const handleImageError = (event: Event) => {
+  const target = event.target as HTMLImageElement
+  target.src = 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'
 }
 
 const openArticle = (articleId: string | number) => {

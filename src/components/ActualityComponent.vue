@@ -42,11 +42,11 @@
           :class="['stagger-item', `delay-${index * 150}`]"
           @click="openArticle(article.id)"
         >
-          <div class="relative h-40 sm:h-48 lg:h-52 overflow-hidden">
+          <div class="relative h-48 sm:h-56 lg:h-64 overflow-hidden bg-gray-100">
             <img
               :src="getArticleImage(article.image)"
               :alt="article.title"
-              class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
+              class="w-full h-full object-cover object-center transform group-hover:scale-110 transition-transform duration-700"
             />
             <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
             <div class="absolute top-3 sm:top-4 left-3 sm:left-4 bg-blue-500 text-white text-xs font-semibold px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg sm:rounded-xl shadow-lg transform group-hover:scale-105 transition-transform duration-300 scale-in">
