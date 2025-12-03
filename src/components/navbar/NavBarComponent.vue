@@ -1,10 +1,10 @@
 <template>
   <header
-    class="fixed w-full z-50 transition-all duration-500 ease-out"
+    class="fixed w-full z-50 transition-all duration-500 ease-out bg-white"
     :class="{
-      'bg-white/95 backdrop-blur-xl shadow-lg border-b border-gray-200/60': isScrolled,
-      'bg-white/90 backdrop-blur-lg border-b border-transparent': !isScrolled && !isMobileMenuOpen,
-      'bg-white border-b border-gray-200': isMobileMenuOpen,
+      'shadow-lg border-b border-gray-200/60': isScrolled,
+      'border-b border-transparent': !isScrolled && !isMobileMenuOpen,
+      'border-b border-gray-200': isMobileMenuOpen,
     }"
   >
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -15,24 +15,17 @@
           class="flex items-center gap-3 sm:gap-4 z-60 group relative"
           @click="closeMobileMenu"
         >
-          <!-- Conteneur logo premium avec effets visuels -->
-          <div
-            class="relative w-14 h-14 sm:w-16 sm:h-16 lg:w-18 lg:h-18 bg-white rounded-2xl flex items-center justify-center shadow-xl ring-2 ring-gray-100/80 group-hover:shadow-2xl group-hover:ring-blue-400/60 group-hover:scale-105 transition-all duration-500 ease-out p-2 sm:p-2.5 overflow-hidden flex-shrink-0"
-          >
-            <!-- Effet de brillance animé -->
-            <div class="absolute inset-0 bg-gradient-to-br from-white via-blue-50/30 to-white rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-            <!-- Effet de lumière au survol -->
-            <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out"></div>
-            <!-- Logo PNG avec fond transparent -->
-            <img
-              :src="logoImage"
+          <!-- Logo -->
+          <div class="flex-shrink-0">
+            <img 
+              :src="logoImage" 
               alt="CReFF-PME Logo"
-              class="relative z-10 w-full h-full object-contain drop-shadow-md group-hover:drop-shadow-lg transition-all duration-500"
+              class="h-12 sm:h-14 lg:h-16 w-16 sm:w-20 lg:w-24 object-contain scale-150"
             />
           </div>
           <!-- Nom du centre -->
           <div class="flex items-center">
-            <span class="font-bold text-sm sm:text-base lg:text-lg xl:text-xl text-gray-900 group-hover:text-blue-600 transition-colors leading-tight whitespace-nowrap">
+            <span class="font-bold text-xs sm:text-sm lg:text-base text-gray-900 group-hover:text-blue-600 transition-colors leading-tight whitespace-nowrap">
               CReFF-PME
             </span>
           </div>
