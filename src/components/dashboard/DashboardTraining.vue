@@ -52,12 +52,27 @@
         v-model="searchQuery"
         type="text"
         placeholder="Rechercher..."
+        @input="watchFilters"
         class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
       />
     </div>
 
+    <!-- Loading State -->
+    <div v-if="loading" class="text-center py-12">
+      <i class="fas fa-spinner fa-spin text-3xl text-blue-600 mb-4"></i>
+      <p class="text-gray-600">Chargement des inscriptions...</p>
+    </div>
+
+    <!-- Error State -->
+    <div v-else-if="error" class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+      <div class="flex items-center gap-2">
+        <i class="fas fa-exclamation-circle"></i>
+        <span>{{ error }}</span>
+      </div>
+    </div>
+
     <!-- Liste -->
-    <div class="space-y-4">
+    <div v-else class="space-y-4">
       <div
         v-for="registration in filteredRegistrations"
         :key="registration.id"
@@ -171,14 +186,17 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import type { TrainingRegistration } from '@/models'
+import trainingRegistrationService from '@/services/training-registration.service'
 
 const searchQuery = ref('')
 const statusFilter = ref('')
 const programFilter = ref('')
 const registrations = ref<TrainingRegistration[]>([])
 const selectedRegistration = ref<TrainingRegistration | null>(null)
+const loading = ref(false)
+const error = ref<string | null>(null)
 
 const filteredRegistrations = computed(() => {
   let filtered = registrations.value
@@ -207,26 +225,62 @@ const newCount = computed(() => registrations.value.filter(r => {
   return date >= weekAgo
 }).length)
 
-const loadRegistrations = () => {
-  // TODO: Charger depuis l'API
-  registrations.value = []
+const loadRegistrations = async () => {
+  loading.value = true
+  error.value = null
+  try {
+    const result = await trainingRegistrationService.getRegistrations({
+      status: statusFilter.value || undefined,
+      program: programFilter.value || undefined,
+      search: searchQuery.value || undefined,
+      limit: 100, // Récupérer toutes les inscriptions
+    })
+    registrations.value = result.data
+    console.log('📚 Training Registrations chargées:', registrations.value.length)
+  } catch (err: any) {
+    console.error('Erreur lors du chargement des inscriptions:', err)
+    error.value = err.message || 'Erreur lors du chargement des inscriptions'
+    registrations.value = []
+  } finally {
+    loading.value = false
+  }
 }
 
 const viewRegistration = (registration: TrainingRegistration) => {
   selectedRegistration.value = registration
 }
 
-const updateStatus = (registration: TrainingRegistration) => {
-  if (registration.status === 'pending') {
-    registration.status = 'confirmed'
-    registration.confirmedAt = new Date().toISOString()
+const updateStatus = async (registration: TrainingRegistration) => {
+  if (!registration.id) return
+  
+  const newStatus = registration.status === 'pending' ? 'confirmed' : registration.status
+  try {
+    await trainingRegistrationService.updateRegistration(registration.id, {
+      status: newStatus as 'pending' | 'confirmed' | 'cancelled' | 'completed'
+    })
+    await loadRegistrations() // Recharger les données
+    
+    // Émettre un événement pour mettre à jour les notifications
+    window.dispatchEvent(new CustomEvent('dashboard:update-notifications'))
+  } catch (err: any) {
+    console.error('Erreur lors de la mise à jour du statut:', err)
+    alert('Erreur lors de la mise à jour du statut: ' + (err.message || 'Erreur inconnue'))
   }
 }
 
-const deleteRegistration = (id: number | string | undefined) => {
+const deleteRegistration = async (id: number | string | undefined) => {
   if (!id) return
   if (confirm('Êtes-vous sûr de vouloir supprimer cette inscription ?')) {
-    registrations.value = registrations.value.filter(r => r.id !== id)
+    try {
+      await trainingRegistrationService.deleteRegistration(id)
+      await loadRegistrations()
+      
+      // Émettre un événement pour mettre à jour les notifications
+      window.dispatchEvent(new CustomEvent('dashboard:update-notifications')) // Recharger les données
+    } catch (err: any) {
+      console.error('Erreur lors de la suppression:', err)
+      alert('Erreur lors de la suppression: ' + (err.message || 'Erreur inconnue'))
+    }
   }
 }
 
@@ -270,6 +324,11 @@ const formatDate = (date?: string) => {
     minute: '2-digit'
   })
 }
+
+// Watchers pour recharger automatiquement quand les filtres changent
+watch([statusFilter, programFilter], () => {
+  loadRegistrations()
+})
 
 onMounted(() => {
   loadRegistrations()

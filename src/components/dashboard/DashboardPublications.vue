@@ -26,10 +26,25 @@
       </div>
     </div>
 
+    <!-- Message d'erreur -->
+    <div v-if="error" class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl">
+      <div class="flex items-center gap-2">
+        <i class="fas fa-exclamation-circle"></i>
+        <span>{{ error }}</span>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div v-if="loading" class="text-center py-12">
+      <i class="fas fa-spinner fa-spin text-4xl text-blue-600 mb-4"></i>
+      <p class="text-gray-600">Chargement des demandes...</p>
+    </div>
+
     <!-- Filtres -->
-    <div class="bg-white rounded-xl p-4 shadow-lg border border-gray-100 flex items-center gap-4">
+    <div v-else class="bg-white rounded-xl p-4 shadow-lg border border-gray-100 flex items-center gap-4">
       <select
         v-model="statusFilter"
+        @change="loadRequests"
         class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
       >
         <option value="">Tous les statuts</option>
@@ -41,6 +56,7 @@
       </select>
       <select
         v-model="typeFilter"
+        @change="loadRequests"
         class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
       >
         <option value="">Tous les types</option>
@@ -52,6 +68,7 @@
       </select>
       <input
         v-model="searchQuery"
+        @input="loadRequests"
         type="text"
         placeholder="Rechercher..."
         class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
@@ -59,7 +76,7 @@
     </div>
 
     <!-- Liste -->
-    <div class="space-y-4">
+    <div v-if="!loading" class="space-y-4">
       <div
         v-for="request in filteredRequests"
         :key="request.id"
@@ -94,26 +111,44 @@
           </div>
           <div class="flex gap-2">
             <button
-              @click="viewRequest(request)"
-              class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-            >
-              <i class="fas fa-eye"></i>
-            </button>
-            <button
+              v-if="request.status !== 'accepted'"
               @click="updateStatus(request, 'accepted')"
-              class="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+              :disabled="saving"
+              class="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors disabled:opacity-50"
+              title="Accepter"
             >
               <i class="fas fa-check"></i>
             </button>
             <button
+              v-if="request.status !== 'rejected'"
               @click="updateStatus(request, 'rejected')"
-              class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+              :disabled="saving"
+              class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
+              title="Rejeter"
             >
               <i class="fas fa-times"></i>
             </button>
             <button
+              v-if="request.status === 'accepted' && request.status !== 'published'"
+              @click="updateStatus(request, 'published')"
+              :disabled="saving"
+              class="p-2 text-purple-600 hover:bg-purple-50 rounded-lg transition-colors disabled:opacity-50"
+              title="Publier"
+            >
+              <i class="fas fa-check-double"></i>
+            </button>
+            <button
+              @click="viewRequest(request)"
+              class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+              title="Voir les détails"
+            >
+              <i class="fas fa-eye"></i>
+            </button>
+            <button
               @click="deleteRequest(request.id!)"
-              class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+              :disabled="saving"
+              class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
+              title="Supprimer"
             >
               <i class="fas fa-trash"></i>
             </button>
@@ -126,9 +161,22 @@
           <p class="text-sm text-gray-700 mb-2">
             <strong>Domaines:</strong> {{ request.domains.join(', ') }}
           </p>
-          <p class="text-sm text-gray-700">
+          <p class="text-sm text-gray-700 mb-2">
             <strong>Résumé:</strong> {{ request.abstract?.substring(0, 200) }}{{ request.abstract && request.abstract.length > 200 ? '...' : '' }}
           </p>
+          <!-- Fichiers -->
+          <div class="flex gap-2 mt-3 pt-3 border-t border-gray-200">
+            <a
+              v-if="request.documentFileUrl || (request as any).document_file_url"
+              :href="request.documentFileUrl || (request as any).document_file_url"
+              target="_blank"
+              class="flex items-center gap-2 px-3 py-1.5 bg-blue-600 text-white rounded-lg text-xs font-medium hover:bg-blue-700 transition-colors"
+            >
+              <i class="fas fa-file-pdf"></i>
+              <span>Télécharger le document</span>
+            </a>
+            <span v-else class="text-xs text-gray-500">Aucun document</span>
+          </div>
         </div>
       </div>
       <div v-if="filteredRequests.length === 0" class="text-center py-12 text-gray-500">
@@ -196,6 +244,50 @@
             <label class="text-sm font-medium text-gray-600">Statut</label>
             <p class="text-gray-900">{{ getStatusLabel(selectedRequest.status) }}</p>
           </div>
+          
+          <!-- Fichiers -->
+          <div class="border-t border-gray-200 pt-4 mt-4">
+            <h4 class="text-sm font-semibold text-gray-900 mb-3">Fichiers</h4>
+            <div class="space-y-3">
+              <!-- Document PDF/Word -->
+              <div>
+                <label class="text-sm font-medium text-gray-600 mb-2 block">Document (PDF/Word)</label>
+                <a
+                  v-if="selectedRequest.documentFileUrl || (selectedRequest as any).document_file_url"
+                  :href="selectedRequest.documentFileUrl || (selectedRequest as any).document_file_url"
+                  target="_blank"
+                  class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
+                >
+                  <i class="fas fa-file-pdf"></i>
+                  <span>Télécharger le document</span>
+                  <i class="fas fa-external-link-alt text-xs"></i>
+                </a>
+                <p v-else class="text-sm text-gray-500">Aucun document disponible</p>
+              </div>
+              
+              <!-- Image du document -->
+              <div>
+                <label class="text-sm font-medium text-gray-600 mb-2 block">Image du document</label>
+                <div v-if="selectedRequest.documentImageUrl || (selectedRequest as any).document_image_url">
+                  <img
+                    :src="selectedRequest.documentImageUrl || (selectedRequest as any).document_image_url"
+                    :alt="selectedRequest.title"
+                    class="max-w-md rounded-lg border border-gray-200 mb-2"
+                    @error="(e: any) => e.target.style.display = 'none'"
+                  />
+                  <a
+                    :href="selectedRequest.documentImageUrl || (selectedRequest as any).document_image_url"
+                    target="_blank"
+                    class="inline-flex items-center gap-2 px-3 py-1.5 bg-gray-600 text-white rounded-lg text-xs font-medium hover:bg-gray-700 transition-colors"
+                  >
+                    <i class="fas fa-download"></i>
+                    <span>Télécharger l'image</span>
+                  </a>
+                </div>
+                <p v-else class="text-sm text-gray-500">Aucune image disponible</p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -204,13 +296,20 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
+import { useToast } from 'vue-toast-notification'
 import type { PublicationRequest } from '@/models'
+
+const toast = useToast()
+import publicationRequestService from '@/services/publication-request.service'
 
 const searchQuery = ref('')
 const statusFilter = ref('')
 const typeFilter = ref('')
 const requests = ref<PublicationRequest[]>([])
 const selectedRequest = ref<PublicationRequest | null>(null)
+const loading = ref(false)
+const error = ref<string | null>(null)
+const saving = ref(false)
 
 const filteredRequests = computed(() => {
   let filtered = requests.value
@@ -235,29 +334,103 @@ const pendingCount = computed(() => requests.value.filter(r => r.status === 'pen
 const acceptedCount = computed(() => requests.value.filter(r => r.status === 'accepted').length)
 const publishedCount = computed(() => requests.value.filter(r => r.status === 'published').length)
 
-const loadRequests = () => {
-  // TODO: Charger depuis l'API
-  requests.value = []
+const loadRequests = async () => {
+  loading.value = true
+  error.value = null
+  try {
+    const result = await publicationRequestService.getRequests({
+      status: statusFilter.value || undefined,
+      type: typeFilter.value || undefined,
+      search: searchQuery.value || undefined,
+      limit: 100,
+    })
+    requests.value = result.data
+  } catch (err: any) {
+    console.error('Erreur lors du chargement des demandes:', err)
+    error.value = err.message || 'Erreur lors du chargement des demandes'
+    requests.value = []
+  } finally {
+    loading.value = false
+  }
 }
 
 const viewRequest = (request: PublicationRequest) => {
   selectedRequest.value = request
 }
 
-const updateStatus = (request: PublicationRequest, status: string) => {
-  request.status = status as any
-  if (status === 'accepted' || status === 'under-review') {
-    request.reviewedAt = new Date().toISOString()
-  }
-  if (status === 'published') {
-    request.publishedAt = new Date().toISOString()
+const updateStatus = async (request: PublicationRequest, status: PublicationRequest['status']) => {
+  if (!request.id) return
+  
+  saving.value = true
+  error.value = null
+  try {
+    await publicationRequestService.updateRequestStatus(request.id, status)
+    // Recharger les données après la mise à jour
+    await loadRequests()
+    
+    const statusLabels: Record<string, string> = {
+      accepted: 'acceptée',
+      rejected: 'refusée',
+      published: 'publiée'
+    }
+    
+    toast.open({
+      message: `✅ Demande ${statusLabels[status] || 'mise à jour'} avec succès !`,
+      type: 'success',
+      position: 'top-right',
+      duration: 5000,
+    })
+    
+    // Émettre un événement pour mettre à jour les notifications
+    window.dispatchEvent(new CustomEvent('dashboard:update-notifications'))
+  } catch (err: any) {
+    console.error('Erreur lors de la mise à jour:', err)
+    const errorMessage = err.message || err.errors?.status?.[0] || 'Erreur lors de la mise à jour du statut'
+    error.value = errorMessage
+    toast.open({
+      message: `❌ ${errorMessage}`,
+      type: 'error',
+      position: 'top-right',
+      duration: 6000,
+    })
+  } finally {
+    saving.value = false
   }
 }
 
-const deleteRequest = (id: number | string | undefined) => {
+const deleteRequest = async (id: number | string | undefined) => {
   if (!id) return
-  if (confirm('Êtes-vous sûr de vouloir supprimer cette demande ?')) {
-    requests.value = requests.value.filter(r => r.id !== id)
+  if (!confirm('Êtes-vous sûr de vouloir supprimer cette demande ?')) {
+    return
+  }
+
+  saving.value = true
+  error.value = null
+  try {
+    await publicationRequestService.deleteRequest(id)
+    // Recharger les données après la suppression
+    await loadRequests()
+    toast.open({
+      message: '✅ Demande de publication supprimée avec succès !',
+      type: 'success',
+      position: 'top-right',
+      duration: 5000,
+    })
+    
+    // Émettre un événement pour mettre à jour les notifications
+    window.dispatchEvent(new CustomEvent('dashboard:update-notifications'))
+  } catch (err: any) {
+    console.error('Erreur lors de la suppression:', err)
+    const errorMessage = err.message || 'Erreur lors de la suppression'
+    error.value = errorMessage
+    toast.open({
+      message: `❌ ${errorMessage}`,
+      type: 'error',
+      position: 'top-right',
+      duration: 6000,
+    })
+  } finally {
+    saving.value = false
   }
 }
 

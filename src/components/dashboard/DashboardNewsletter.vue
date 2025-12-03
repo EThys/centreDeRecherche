@@ -43,13 +43,28 @@
       </div>
     </div>
 
+    <!-- Loading State -->
+    <div v-if="loading" class="text-center py-12">
+      <i class="fas fa-spinner fa-spin text-3xl text-blue-600 mb-4"></i>
+      <p class="text-gray-600">Chargement des abonnés...</p>
+    </div>
+
+    <!-- Error State -->
+    <div v-else-if="error" class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+      <div class="flex items-center gap-2">
+        <i class="fas fa-exclamation-circle"></i>
+        <span>{{ error }}</span>
+      </div>
+    </div>
+
     <!-- Liste -->
-    <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+    <div v-else class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
       <div class="p-4 border-b border-gray-200 flex items-center justify-between">
         <input
           v-model="searchQuery"
           type="text"
           placeholder="Rechercher un email..."
+          @input="loadSubscribers"
           class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
         />
         <button
@@ -77,8 +92,11 @@
               </td>
               <td class="px-6 py-4 text-gray-600">{{ formatDate(subscriber.subscribedAt || subscriber.createdAt) }}</td>
               <td class="px-6 py-4 text-center">
-                <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">
-                  Actif
+                <span
+                  class="px-3 py-1 rounded-full text-xs font-medium"
+                  :class="getStatusClass(subscriber.status)"
+                >
+                  {{ getStatusLabel(subscriber.status) }}
                 </span>
               </td>
               <td class="px-6 py-4">
@@ -107,9 +125,12 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import type { NewsletterSubscription } from '@/models'
+import newsletterService from '@/services/newsletter.service'
 
 const searchQuery = ref('')
 const subscribers = ref<NewsletterSubscription[]>([])
+const loading = ref(false)
+const error = ref<string | null>(null)
 
 const filteredSubscribers = computed(() => {
   if (!searchQuery.value) return subscribers.value
@@ -127,15 +148,38 @@ const newThisMonth = computed(() => {
   }).length
 })
 
-const loadSubscribers = () => {
-  // TODO: Charger depuis l'API
-  subscribers.value = []
+const loadSubscribers = async () => {
+  loading.value = true
+  error.value = null
+  try {
+    const result = await newsletterService.getAllSubscribers({
+      limit: 100, // Récupérer tous les abonnés
+      search: searchQuery.value || undefined,
+    })
+    subscribers.value = result.data
+    console.log('📧 Newsletter Subscribers chargés:', subscribers.value.length)
+  } catch (err: any) {
+    console.error('Erreur lors du chargement des abonnés:', err)
+    error.value = err.message || 'Erreur lors du chargement des abonnés'
+    subscribers.value = []
+  } finally {
+    loading.value = false
+  }
 }
 
-const deleteSubscriber = (id: number | string | undefined) => {
+const deleteSubscriber = async (id: number | string | undefined) => {
   if (!id) return
   if (confirm('Êtes-vous sûr de vouloir supprimer cet abonné ?')) {
-    subscribers.value = subscribers.value.filter(s => s.id !== id)
+    try {
+      await newsletterService.deleteSubscriber(id)
+      await loadSubscribers()
+      
+      // Émettre un événement pour mettre à jour les notifications
+      window.dispatchEvent(new CustomEvent('dashboard:update-notifications')) // Recharger les données
+    } catch (err: any) {
+      console.error('Erreur lors de la suppression:', err)
+      alert('Erreur lors de la suppression: ' + (err.message || 'Erreur inconnue'))
+    }
   }
 }
 
@@ -157,6 +201,24 @@ const formatDate = (date?: string) => {
     month: 'long',
     day: 'numeric'
   })
+}
+
+const getStatusLabel = (status: string) => {
+  const labels: Record<string, string> = {
+    active: 'Actif',
+    unsubscribed: 'Désabonné',
+    pending: 'En attente'
+  }
+  return labels[status] || status
+}
+
+const getStatusClass = (status: string) => {
+  const classes: Record<string, string> = {
+    active: 'bg-green-100 text-green-700',
+    unsubscribed: 'bg-red-100 text-red-700',
+    pending: 'bg-yellow-100 text-yellow-700'
+  }
+  return classes[status] || 'bg-gray-100 text-gray-700'
 }
 
 onMounted(() => {

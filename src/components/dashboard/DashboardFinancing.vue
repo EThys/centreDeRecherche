@@ -26,10 +26,25 @@
       </div>
     </div>
 
+    <!-- Message d'erreur -->
+    <div v-if="error" class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl">
+      <div class="flex items-center gap-2">
+        <i class="fas fa-exclamation-circle"></i>
+        <span>{{ error }}</span>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div v-if="loading" class="text-center py-12">
+      <i class="fas fa-spinner fa-spin text-4xl text-blue-600 mb-4"></i>
+      <p class="text-gray-600">Chargement des demandes...</p>
+    </div>
+
     <!-- Filtres -->
-    <div class="bg-white rounded-xl p-4 shadow-lg border border-gray-100 flex items-center gap-4">
+    <div v-else class="bg-white rounded-xl p-4 shadow-lg border border-gray-100 flex items-center gap-4">
       <select
         v-model="statusFilter"
+        @change="loadRequests"
         class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
       >
         <option value="">Tous les statuts</option>
@@ -41,6 +56,7 @@
       </select>
       <input
         v-model="searchQuery"
+        @input="loadRequests"
         type="text"
         placeholder="Rechercher..."
         class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
@@ -48,7 +64,7 @@
     </div>
 
     <!-- Liste -->
-    <div class="space-y-4">
+    <div v-if="!loading" class="space-y-4">
       <div
         v-for="request in filteredRequests"
         :key="request.id"
@@ -80,14 +96,35 @@
           </div>
           <div class="flex gap-2">
             <button
+              v-if="request.status !== 'approved'"
+              @click="updateStatus(request, 'approved')"
+              :disabled="saving"
+              class="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors disabled:opacity-50"
+              title="Approuver"
+            >
+              <i class="fas fa-check"></i>
+            </button>
+            <button
+              v-if="request.status !== 'rejected'"
+              @click="updateStatus(request, 'rejected')"
+              :disabled="saving"
+              class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
+              title="Rejeter"
+            >
+              <i class="fas fa-times"></i>
+            </button>
+            <button
               @click="viewRequest(request)"
               class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+              title="Voir les détails"
             >
               <i class="fas fa-eye"></i>
             </button>
             <button
               @click="deleteRequest(request.id!)"
-              class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+              :disabled="saving"
+              class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
+              title="Supprimer"
             >
               <i class="fas fa-trash"></i>
             </button>
@@ -159,12 +196,19 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
+import { useToast } from 'vue-toast-notification'
 import type { FinancingRequest } from '@/models'
+import financingRequestService from '@/services/financing-request.service'
+
+const toast = useToast()
 
 const searchQuery = ref('')
 const statusFilter = ref('')
 const requests = ref<FinancingRequest[]>([])
 const selectedRequest = ref<FinancingRequest | null>(null)
+const loading = ref(false)
+const error = ref<string | null>(null)
+const saving = ref(false)
 
 const filteredRequests = computed(() => {
   let filtered = requests.value
@@ -192,19 +236,103 @@ const newCount = computed(() => requests.value.filter(r => {
   return date >= weekAgo
 }).length)
 
-const loadRequests = () => {
-  // TODO: Charger depuis l'API
-  requests.value = []
+const loadRequests = async () => {
+  loading.value = true
+  error.value = null
+  try {
+    const result = await financingRequestService.getRequests({
+      status: statusFilter.value || undefined,
+      search: searchQuery.value || undefined,
+      limit: 100,
+    })
+    requests.value = result.data
+  } catch (err: any) {
+    console.error('Erreur lors du chargement des demandes:', err)
+    error.value = err.message || 'Erreur lors du chargement des demandes'
+    requests.value = []
+  } finally {
+    loading.value = false
+  }
 }
 
 const viewRequest = (request: FinancingRequest) => {
   selectedRequest.value = request
 }
 
-const deleteRequest = (id: number | string | undefined) => {
+const deleteRequest = async (id: number | string | undefined) => {
   if (!id) return
-  if (confirm('Êtes-vous sûr de vouloir supprimer cette demande ?')) {
-    requests.value = requests.value.filter(r => r.id !== id)
+  if (!confirm('Êtes-vous sûr de vouloir supprimer cette demande ?')) {
+    return
+  }
+
+  saving.value = true
+  error.value = null
+  try {
+    await financingRequestService.deleteRequest(id)
+    // Recharger les données après la suppression
+    await loadRequests()
+    toast.open({
+      message: '✅ Demande de financement supprimée avec succès !',
+      type: 'success',
+      position: 'top-right',
+      duration: 5000,
+    })
+    
+    // Émettre un événement pour mettre à jour les notifications
+    window.dispatchEvent(new CustomEvent('dashboard:update-notifications'))
+  } catch (err: any) {
+    console.error('Erreur lors de la suppression:', err)
+    const errorMessage = err.message || 'Erreur lors de la suppression'
+    error.value = errorMessage
+    toast.open({
+      message: `❌ ${errorMessage}`,
+      type: 'error',
+      position: 'top-right',
+      duration: 6000,
+    })
+  } finally {
+    saving.value = false
+  }
+}
+
+const updateStatus = async (request: FinancingRequest, status: FinancingRequest['status']) => {
+  if (!request.id) return
+  
+  saving.value = true
+  error.value = null
+  try {
+    await financingRequestService.updateRequestStatus(request.id, status)
+    // Recharger les données après la mise à jour
+    await loadRequests()
+    
+    const statusLabels: Record<string, string> = {
+      approved: 'approuvée',
+      rejected: 'refusée',
+      'under-review': 'mise en révision',
+      'on-hold': 'mise en attente'
+    }
+    
+    toast.open({
+      message: `✅ Demande ${statusLabels[status] || 'mise à jour'} avec succès !`,
+      type: 'success',
+      position: 'top-right',
+      duration: 5000,
+    })
+    
+    // Émettre un événement pour mettre à jour les notifications
+    window.dispatchEvent(new CustomEvent('dashboard:update-notifications'))
+  } catch (err: any) {
+    console.error('Erreur lors de la mise à jour:', err)
+    const errorMessage = err.message || err.errors?.status?.[0] || 'Erreur lors de la mise à jour du statut'
+    error.value = errorMessage
+    toast.open({
+      message: `❌ ${errorMessage}`,
+      type: 'error',
+      position: 'top-right',
+      duration: 6000,
+    })
+  } finally {
+    saving.value = false
   }
 }
 
