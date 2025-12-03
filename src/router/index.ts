@@ -12,6 +12,8 @@ import ActivityRecherche from "../views/ActivityRechercheView.vue";
 //@ts-ignore
 import AllActuality from "../views/AllActualityView.vue";
 //@ts-ignore
+import EntrepreneursView from '@/views/EntrepreneursView.vue';
+//@ts-ignore
 import PublicationDetail from "../views/PublicationDetailView.vue";
 //@ts-ignore
 import EventDetailView from '@/views/EventDetailView.vue';
@@ -21,8 +23,6 @@ import ContactView from '@/views/ContactView.vue';
 import AuthView from '@/views/AuthView.vue';
 //@ts-ignore
 import AboutView from '@/views/AboutView.vue';
-//@ts-ignore
-import EntrepreneursView from '@/views/EntrepreneursView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),

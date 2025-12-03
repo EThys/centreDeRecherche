@@ -2,6 +2,24 @@
   <div class="min-h-screen bg-white">
     <!-- Navbar -->
     <NavBarComponent />
+    
+    <!-- Error Boundary -->
+    <div v-if="hasError" class="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+      <div class="text-center max-w-md">
+        <i class="fas fa-exclamation-triangle text-6xl text-red-500 mb-4"></i>
+        <h1 class="text-2xl font-bold text-gray-900 mb-2">Erreur de chargement</h1>
+        <p class="text-gray-600 mb-6">Une erreur est survenue lors du chargement de la page.</p>
+        <button 
+          @click="reloadPage"
+          class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+        >
+          Recharger la page
+        </button>
+      </div>
+    </div>
+    
+    <!-- Contenu principal -->
+    <div v-else>
 
     <!-- Hero Section avec image de fond -->
     <section class="relative pt-28 sm:pt-32 lg:pt-40 pb-12 sm:pb-16 lg:pb-24 min-h-[50vh] sm:min-h-[60vh] lg:min-h-[70vh] flex items-center overflow-hidden">
@@ -555,19 +573,18 @@
     </section>
 
     <FooterComponent />
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, computed } from 'vue'
+import { ref, onMounted, onUnmounted, computed, onErrorCaptured } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { useToast } from 'vue-toast-notification'
 import type { TrainingRegistration, Event } from '@/models'
 import eventService from '@/services/event.service'
 import trainingRegistrationService from '@/services/training-registration.service'
-
-const toast = useToast()
 //@ts-ignore
 import NavBarComponent from '../components/navbar/NavBarComponent.vue'
 //@ts-ignore
@@ -581,28 +598,52 @@ import profImage from '../assets/prof.jpeg'
 
 const { t } = useI18n()
 const router = useRouter()
+const toast = useToast()
 
-// Témoignages
-const testimonials = ref([
-  {
-    text: t('entrepreneurs.testimonials.testimonial1.text'),
-    name: t('entrepreneurs.testimonials.testimonial1.name'),
-    role: t('entrepreneurs.testimonials.testimonial1.role'),
-    initials: 'MK'
-  },
-  {
-    text: t('entrepreneurs.testimonials.testimonial2.text'),
-    name: t('entrepreneurs.testimonials.testimonial2.name'),
-    role: t('entrepreneurs.testimonials.testimonial2.role'),
-    initials: 'JD'
-  },
-  {
-    text: t('entrepreneurs.testimonials.testimonial3.text'),
-    name: t('entrepreneurs.testimonials.testimonial3.name'),
-    role: t('entrepreneurs.testimonials.testimonial3.role'),
-    initials: 'PL'
+// Gestion d'erreur
+const hasError = ref(false)
+
+const reloadPage = () => {
+  window.location.reload()
+}
+
+// Gérer les erreurs globales
+onErrorCaptured((err: any) => {
+  console.error('Erreur capturée dans EntrepreneursView:', err)
+  hasError.value = true
+  return false // Empêcher la propagation de l'erreur
+})
+
+// Témoignages - utiliser ref avec fonction pour éviter les erreurs d'initialisation
+const getTestimonials = () => {
+  try {
+    return [
+      {
+        text: t('entrepreneurs.testimonials.testimonial1.text'),
+        name: t('entrepreneurs.testimonials.testimonial1.name'),
+        role: t('entrepreneurs.testimonials.testimonial1.role'),
+        initials: 'MK'
+      },
+      {
+        text: t('entrepreneurs.testimonials.testimonial2.text'),
+        name: t('entrepreneurs.testimonials.testimonial2.name'),
+        role: t('entrepreneurs.testimonials.testimonial2.role'),
+        initials: 'JD'
+      },
+      {
+        text: t('entrepreneurs.testimonials.testimonial3.text'),
+        name: t('entrepreneurs.testimonials.testimonial3.name'),
+        role: t('entrepreneurs.testimonials.testimonial3.role'),
+        initials: 'PL'
+      }
+    ]
+  } catch (error) {
+    console.error('Erreur lors de la récupération des témoignages:', error)
+    return []
   }
-])
+}
+
+const testimonials = computed(() => getTestimonials())
 
 // Événements à venir (dynamiques depuis le backend)
 const upcomingEvents = ref<Event[]>([])
@@ -693,25 +734,34 @@ const registerEvent = (eventId: string | number | undefined) => {
   router.push(`/events/${eventId}`)
 }
 
-// FAQ
-const faqs = ref([
-  {
-    question: t('entrepreneurs.faq.faq1.question'),
-    answer: t('entrepreneurs.faq.faq1.answer')
-  },
-  {
-    question: t('entrepreneurs.faq.faq2.question'),
-    answer: t('entrepreneurs.faq.faq2.answer')
-  },
-  {
-    question: t('entrepreneurs.faq.faq3.question'),
-    answer: t('entrepreneurs.faq.faq3.answer')
-  },
-  {
-    question: t('entrepreneurs.faq.faq4.question'),
-    answer: t('entrepreneurs.faq.faq4.answer')
+// FAQ - utiliser ref avec fonction pour éviter les erreurs d'initialisation
+const getFaqs = () => {
+  try {
+    return [
+      {
+        question: t('entrepreneurs.faq.faq1.question'),
+        answer: t('entrepreneurs.faq.faq1.answer')
+      },
+      {
+        question: t('entrepreneurs.faq.faq2.question'),
+        answer: t('entrepreneurs.faq.faq2.answer')
+      },
+      {
+        question: t('entrepreneurs.faq.faq3.question'),
+        answer: t('entrepreneurs.faq.faq3.answer')
+      },
+      {
+        question: t('entrepreneurs.faq.faq4.question'),
+        answer: t('entrepreneurs.faq.faq4.answer')
+      }
+    ]
+  } catch (error) {
+    console.error('Erreur lors de la récupération des FAQ:', error)
+    return []
   }
-])
+}
+
+const faqs = computed(() => getFaqs())
 
 const openFaqs = ref<number[]>([])
 
