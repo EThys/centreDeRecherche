@@ -111,10 +111,81 @@ const router = createRouter({
       path: '/dashboard',
       name: 'dashboard',
       component: () => import('../views/DashboardView.vue'),
+      meta: { requiresAuth: true, requiresAdmin: true },
+    },
+    {
+      path: '/unauthorized',
+      name: 'unauthorized',
+      component: () => import('../views/UnauthorizedView.vue'),
+    },
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'not-found',
+      component: () => import('../views/NotFoundView.vue'),
     },
   ],
   scrollBehavior(to, from, savedPosition) {
     return { top: 0, behavior: 'smooth' }
+  }
+})
+
+// Guard de route pour protéger les pages nécessitant une authentification
+router.beforeEach(async (to, from, next) => {
+  // Vérifier si la route nécessite une authentification
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    // Vérifier si l'utilisateur est authentifié (vérifier le token dans localStorage)
+    const token = localStorage.getItem('auth_token')
+    
+    if (!token) {
+      // Rediriger vers la page d'autorisation si non authentifié
+      next({
+        name: 'unauthorized',
+        query: { redirect: to.fullPath } // Sauvegarder la route demandée pour redirection après login
+      })
+      return
+    }
+
+    // Vérifier si la route nécessite le rôle admin (dashboard)
+    if (to.matched.some(record => record.meta.requiresAdmin)) {
+      const userStr = localStorage.getItem('user')
+      if (userStr) {
+        try {
+          const user = JSON.parse(userStr)
+          if (user && user.role === 'admin') {
+            // L'utilisateur est admin, continuer
+            next()
+            return
+          }
+        } catch (error) {
+          console.error('Erreur lors de la lecture de l\'utilisateur:', error)
+        }
+      }
+      
+      // Si pas d'utilisateur en localStorage ou pas admin, vérifier avec l'API
+      try {
+        const authService = (await import('@/services/auth.service')).default
+        const currentUser = await authService.getCurrentUser()
+        if (currentUser && currentUser.role === 'admin') {
+          next()
+          return
+        }
+      } catch (apiError) {
+        console.error('Erreur lors de la vérification de l\'utilisateur:', apiError)
+      }
+      
+      // Si on arrive ici, l'utilisateur n'est pas admin
+      next({
+        name: 'unauthorized',
+        query: { redirect: to.fullPath }
+      })
+      return
+    } else {
+      // La route nécessite seulement une authentification, continuer
+      next()
+    }
+  } else {
+    // La route ne nécessite pas d'authentification, continuer
+    next()
   }
 })
 
