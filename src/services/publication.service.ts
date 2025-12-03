@@ -2,7 +2,7 @@
  * Service pour la gestion des publications
  */
 
-import apiClient from './api.client'
+import apiClient, { getApiBaseUrl } from './api.client'
 import type { Publication, PublicationResponse } from '../models/publication.model'
 import type { PaginationMeta } from '../models/common.model'
 
@@ -26,14 +26,45 @@ export const publicationService = {
    * Récupère toutes les publications avec filtres et pagination
    */
   async getPublications(filters?: PublicationFilters): Promise<{ data: Publication[]; pagination: PaginationMeta }> {
-    const response = await apiClient.get<Publication[]>(ENDPOINT, filters as Record<string, string | number | boolean>)
+    // Convertir limit en per_page pour Laravel
+    const backendFilters: Record<string, string | number | boolean> = {}
+    if (filters) {
+      for (const key in filters) {
+        if (filters.hasOwnProperty(key)) {
+          const value = (filters as any)[key]
+          if (value !== undefined && value !== null && value !== '') {
+            if (key === 'limit') {
+              backendFilters['per_page'] = value
+            } else {
+              backendFilters[key] = value
+            }
+          }
+        }
+      }
+    }
+    
+    const response = await apiClient.get<any[]>(ENDPOINT, backendFilters)
+    
+    // Gérer différents formats de réponse
+    let publicationsData: any[] = []
+    
+    if (response) {
+      if (Array.isArray(response.data)) {
+        publicationsData = response.data
+      } else if (Array.isArray(response)) {
+        publicationsData = response
+      } else if (response.data && typeof response.data === 'object') {
+        publicationsData = Array.isArray(response.data) ? response.data : [response.data]
+      }
+    }
+    
     return {
-      data: response.data,
+      data: publicationsData as Publication[],
       pagination: response.pagination || {
         page: 1,
         limit: 10,
-        total: 0,
-        totalPages: 0,
+        total: publicationsData.length,
+        totalPages: 1,
       },
     }
   },
@@ -43,7 +74,19 @@ export const publicationService = {
    */
   async getPublicationById(id: number | string): Promise<Publication> {
     const response = await apiClient.get<Publication>(`${ENDPOINT}/${id}`)
-    return response.data
+    
+    // Gérer différents formats de réponse
+    let publicationData: any = null
+    
+    if (response) {
+      if (response.data) {
+        publicationData = response.data
+      } else if (typeof response === 'object') {
+        publicationData = response
+      }
+    }
+    
+    return publicationData as Publication
   },
 
   /**
@@ -89,7 +132,7 @@ export const publicationService = {
    * Télécharge le PDF d'une publication
    */
   async downloadPDF(id: number | string): Promise<Blob> {
-    const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api'}${ENDPOINT}/${id}/download`, {
+    const response = await fetch(`${getApiBaseUrl()}${ENDPOINT}/${id}/download`, {
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
       },
