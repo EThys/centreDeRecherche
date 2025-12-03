@@ -227,7 +227,7 @@ import { ref, onMounted, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useToast } from 'vue-toast-notification'
 import newsletterService from '@/services/newsletter.service'
-import logoImage from '../../assets/logoCreff-PME.png'
+import logoImage from '../../assets/logoCreff-PME.jpeg'
 
 const { t } = useI18n()
 const toast = useToast()

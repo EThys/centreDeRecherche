@@ -6,7 +6,7 @@ import authService from '@/services/auth.service'
 //@ts-ignore
 import authBg from '../assets/carousel-1.jpg'
 //@ts-ignore
-import logoImage from '../assets/logoCreff-PME.png'
+import logoImage from '../assets/logoCreff-PME.jpeg'
 
 const router = useRouter()
 const route = useRoute()

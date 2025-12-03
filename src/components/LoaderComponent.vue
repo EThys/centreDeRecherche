@@ -74,7 +74,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
-import logoImage from '@/assets/logoCreff-PME.png'
+import logoImage from '@/assets/logoCreff-PME.jpeg'
 
 const isLoading = ref(true)
 

@@ -429,7 +429,7 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 // Import du logo depuis assets
-import logoImage from '../../assets/logoCreff-PME.png'
+import logoImage from '../../assets/logoCreff-PME.jpeg'
 
 const route = useRoute()
 const { locale } = useI18n()

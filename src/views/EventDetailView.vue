@@ -874,7 +874,7 @@ const downloadBadge = () => {
   const addLogoAndSave = async () => {
     try {
       // Charger le logo depuis le dossier public
-      const logoUrl = '/logoCreff-PME.png'
+      const logoUrl = '/logoCreff-PME.jpeg'
       const response = await fetch(logoUrl)
       const blob = await response.blob()
       const reader = new FileReader()
@@ -1041,7 +1041,7 @@ const printBadge = () => {
   const addLogoAndPrint = async () => {
     try {
       // Charger le logo depuis le dossier public
-      const logoUrl = '/logoCreff-PME.png'
+      const logoUrl = '/logoCreff-PME.jpeg'
       const response = await fetch(logoUrl)
       const blob = await response.blob()
       const reader = new FileReader()
