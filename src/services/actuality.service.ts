@@ -182,8 +182,9 @@ export const actualityService = {
    * Crée une nouvelle actualité avec support pour l'upload d'image
    */
   async createActuality(
-    actuality: Omit<Actuality, 'id' | 'createdAt' | 'updatedAt'>, 
-    imageFile?: File
+    actuality: Omit<Actuality, 'id' | 'createdAt' | 'updatedAt' | 'image'>, 
+    imageFile?: File,
+    authorPhotoFile?: File
   ): Promise<Actuality> {
     const formData = new FormData()
     
@@ -228,6 +229,11 @@ export const actualityService = {
       formData.append('image', imageFile)
     }
 
+    // Ajouter la photo de l'auteur si fournie
+    if (authorPhotoFile) {
+      formData.append('author_photo', authorPhotoFile)
+    }
+
     // Utiliser la méthode upload du client API
     const response = await apiClient.upload<Actuality>(ENDPOINT, formData)
     
@@ -242,7 +248,8 @@ export const actualityService = {
   async updateActuality(
     id: number | string, 
     actuality: Partial<Actuality>,
-    imageFile?: File
+    imageFile?: File,
+    authorPhotoFile?: File
   ): Promise<Actuality> {
     const formData = new FormData()
     
@@ -285,6 +292,11 @@ export const actualityService = {
     // Ajouter l'image si fournie
     if (imageFile) {
       formData.append('image', imageFile)
+    }
+
+    // Ajouter la photo de l'auteur si fournie
+    if (authorPhotoFile) {
+      formData.append('author_photo', authorPhotoFile)
     }
 
     // Utiliser la méthode uploadPut du client API

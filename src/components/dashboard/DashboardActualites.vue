@@ -140,6 +140,38 @@
             placeholder="Formation, PME, Financement, RDC"
           />
         </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Auteur *</label>
+            <input
+              v-model="actualityForm.author"
+              type="text"
+              required
+              class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+              placeholder="Nom de l'auteur"
+            />
+            <p class="text-xs text-gray-500 mt-1">Nom de la personne qui publie l'actualité</p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Photo de l'auteur</label>
+            <input
+              @change="handleAuthorPhotoChange"
+              type="file"
+              accept="image/*"
+              class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+            />
+            <p class="text-xs text-gray-500 mt-1">Formats acceptés: JPEG, PNG, JPG, GIF (max 2MB)</p>
+            <!-- Preview de la photo de l'auteur -->
+            <div v-if="authorPhotoPreview" class="mt-3">
+              <img :src="authorPhotoPreview" alt="Preview auteur" class="w-24 h-24 object-cover rounded-full border border-gray-200" />
+            </div>
+            <!-- Photo existante si en mode édition -->
+            <div v-else-if="editingActuality && actualityForm.authorPhoto" class="mt-3">
+              <img :src="actualityForm.authorPhoto" alt="Photo auteur actuelle" class="w-24 h-24 object-cover rounded-full border border-gray-200" />
+              <p class="text-xs text-gray-500 mt-1">Photo actuelle</p>
+            </div>
+          </div>
+        </div>
         <div class="flex gap-4">
           <button
             type="submit"
@@ -230,6 +262,8 @@ const editingActuality = ref<Actuality | null>(null)
 const actualities = ref<Actuality[]>([])
 const imageFile = ref<File | null>(null)
 const imagePreview = ref<string | null>(null)
+const authorPhotoFile = ref<File | null>(null)
+const authorPhotoPreview = ref<string | null>(null)
 const loading = ref(false)
 const error = ref<string | null>(null)
 
@@ -241,6 +275,7 @@ const actualityForm = ref({
   content: '',
   image: '',
   author: 'Admin',
+  authorPhoto: '',
   readTime: 5
 })
 
@@ -258,6 +293,19 @@ const handleImageChange = (event: Event) => {
       imagePreview.value = e.target?.result as string
     }
     reader.readAsDataURL(imageFile.value)
+  }
+}
+
+const handleAuthorPhotoChange = (event: Event) => {
+  const target = event.target as HTMLInputElement
+  if (target.files && target.files[0]) {
+    authorPhotoFile.value = target.files[0]
+    // Créer une preview
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      authorPhotoPreview.value = e.target?.result as string
+    }
+    reader.readAsDataURL(authorPhotoFile.value)
   }
 }
 
@@ -323,7 +371,8 @@ const saveActuality = async () => {
         .filter(tag => tag.length > 0)
 
       // Préparer les données
-      const actualityData: Omit<Actuality, 'id' | 'createdAt' | 'updatedAt'> = {
+      // Note: 'image' est exclu car il est envoyé séparément via imageFile
+      const actualityData: Omit<Actuality, 'id' | 'createdAt' | 'updatedAt' | 'image'> = {
         title: actualityForm.value.title.trim(),
         summary: actualityForm.value.summary.trim(),
         content: actualityForm.value.content.trim(),
@@ -332,7 +381,6 @@ const saveActuality = async () => {
         author: actualityForm.value.author.trim(),
         readTime: actualityForm.value.readTime,
         status: 'published',
-        image: actualityForm.value.image || '',
         learningPoints: learningPoints, // Toujours envoyer un tableau, même vide
         keyPoints: keyPoints, // Toujours envoyer un tableau, même vide
         tags: tags // Toujours envoyer un tableau, même vide
@@ -343,11 +391,16 @@ const saveActuality = async () => {
       await actualityService.updateActuality(
         editingActuality.value.id!,
         actualityData,
-        imageFile.value || undefined
+        imageFile.value || undefined,
+        authorPhotoFile.value || undefined
       )
     } else {
       // Création
-      await actualityService.createActuality(actualityData, imageFile.value || undefined)
+      await actualityService.createActuality(
+        actualityData, 
+        imageFile.value || undefined,
+        authorPhotoFile.value || undefined
+      )
     }
     
     // Recharger la liste
@@ -419,6 +472,7 @@ const editActuality = (actuality: Actuality) => {
       content: actuality.content || '',
       image: actuality.image || '',
       author: actuality.author || 'Admin',
+      authorPhoto: actuality.authorPhoto || '',
       readTime: actuality.readTime || 5
     }
     learningPointsText.value = actuality.learningPoints ? actuality.learningPoints.join('\n') : ''
@@ -426,6 +480,8 @@ const editActuality = (actuality: Actuality) => {
     tagsText.value = actuality.tags ? actuality.tags.join(', ') : ''
     imageFile.value = null
     imagePreview.value = actuality.image || null
+    authorPhotoFile.value = null
+    authorPhotoPreview.value = actuality.authorPhoto || null
     showForm.value = true
   } catch (err) {
     console.error('Erreur lors de l\'édition de l\'actualité:', err)
@@ -456,6 +512,8 @@ const cancelForm = () => {
   editingActuality.value = null
   imageFile.value = null
   imagePreview.value = null
+  authorPhotoFile.value = null
+  authorPhotoPreview.value = null
   learningPointsText.value = ''
   keyPointsText.value = ''
   tagsText.value = ''
@@ -467,6 +525,7 @@ const cancelForm = () => {
     content: '',
     image: '',
     author: 'Admin',
+    authorPhoto: '',
     readTime: 5
   }
   error.value = null
