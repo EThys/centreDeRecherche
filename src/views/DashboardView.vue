@@ -239,6 +239,7 @@ import publicationRequestService from '@/services/publication-request.service'
 import eventService from '@/services/event.service'
 import actualityService from '@/services/actuality.service'
 import galleryService from '@/services/gallery.service'
+import authService from '@/services/auth.service'
 //@ts-ignore
 import DashboardEvents from '../components/dashboard/DashboardEvents.vue'
 //@ts-ignore
@@ -359,9 +360,21 @@ const getCurrentSectionLabel = () => {
   return item ? item.label : 'Dashboard'
 }
 
-const handleLogout = () => {
-  // TODO: Implémenter la déconnexion
-  router.push('/')
+const handleLogout = async () => {
+  try {
+    // Appeler le service de déconnexion pour supprimer le token côté serveur
+    await authService.logout()
+  } catch (error) {
+    console.error('Erreur lors de la déconnexion:', error)
+  } finally {
+    // S'assurer que le token et l'utilisateur sont supprimés du localStorage
+    localStorage.removeItem('auth_token')
+    localStorage.removeItem('user')
+    
+    // Forcer la redirection vers la page d'accueil
+    // Utiliser window.location pour forcer un rechargement complet et déclencher le guard
+    window.location.href = '/'
+  }
 }
 
 // Gestion responsive de la sidebar
