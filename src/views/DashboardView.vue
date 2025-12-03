@@ -232,13 +232,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import newsletterService from '@/services/newsletter.service'
-import financingRequestService from '@/services/financing-request.service'
-import trainingRegistrationService from '@/services/training-registration.service'
-import publicationRequestService from '@/services/publication-request.service'
-import eventService from '@/services/event.service'
-import actualityService from '@/services/actuality.service'
-import galleryService from '@/services/gallery.service'
+import { useDashboardStore } from '@/stores/dashboard.store'
 import authService from '@/services/auth.service'
 //@ts-ignore
 import DashboardEvents from '../components/dashboard/DashboardEvents.vue'
@@ -258,94 +252,13 @@ import DashboardTraining from '../components/dashboard/DashboardTraining.vue'
 import DashboardPublications from '../components/dashboard/DashboardPublications.vue'
 
 const router = useRouter()
+const dashboardStore = useDashboardStore()
 const sidebarOpen = ref(false)
 const activeSection = ref('overview')
 
-// Compteurs pour les badges
-const newsletterCount = ref(0)
-const financingCount = ref(0)
-const trainingCount = ref(0)
-const publicationsCount = ref(0)
-const eventRegistrationsCount = ref(0)
-
-// Compteurs pour les stats de la vue d'ensemble
-const eventsCount = ref(0)
-const actualitiesCount = ref(0)
-const photosCount = ref(0)
-const messagesCount = ref(0)
-
-// Valeurs précédentes pour calculer les pourcentages
-const previousEventsCount = ref(0)
-const previousActualitiesCount = ref(0)
-const previousPhotosCount = ref(0)
-const previousMessagesCount = ref(0)
-
-// Menu items avec badges dynamiques
-const menuItems = computed(() => [
-  { id: 'overview', label: 'Vue d\'ensemble', icon: 'fas fa-home', badge: null },
-  { id: 'events', label: 'Événements', icon: 'fas fa-calendar-alt', badge: null },
-  { id: 'event-registrations', label: 'Inscriptions Événements', icon: 'fas fa-user-check', badge: eventRegistrationsCount.value > 0 ? eventRegistrationsCount.value.toString() : null },
-  { id: 'actualites', label: 'Actualités', icon: 'fas fa-newspaper', badge: null },
-  { id: 'gallery', label: 'Galerie', icon: 'fas fa-images', badge: null },
-  { id: 'newsletter', label: 'Newsletter', icon: 'fas fa-envelope', badge: newsletterCount.value > 0 ? newsletterCount.value.toString() : null },
-  { id: 'financing', label: 'Demandes Financement', icon: 'fas fa-hand-holding-usd', badge: financingCount.value > 0 ? financingCount.value.toString() : null },
-  { id: 'training', label: 'Inscriptions Formation', icon: 'fas fa-user-graduate', badge: trainingCount.value > 0 ? trainingCount.value.toString() : null },
-  { id: 'publications', label: 'Demandes Publication', icon: 'fas fa-file-alt', badge: publicationsCount.value > 0 ? publicationsCount.value.toString() : null },
-])
-
-// Fonction pour calculer le pourcentage de changement
-const calculateChange = (current: number, previous: number): string => {
-  if (previous === 0) {
-    return current > 0 ? '+100%' : '0%'
-  }
-  const change = ((current - previous) / previous) * 100
-  const sign = change >= 0 ? '+' : ''
-  return `${sign}${Math.round(change)}%`
-}
-
-// Stats avec design amélioré - dynamiques
-const stats = computed(() => [
-  {
-    id: 'events',
-    label: 'Événements',
-    value: eventsCount.value.toString(),
-    change: calculateChange(eventsCount.value, previousEventsCount.value),
-    icon: 'fas fa-calendar-alt',
-    bgColor: 'bg-gradient-to-br from-blue-100 to-blue-200',
-    iconColor: 'text-blue-600',
-    badgeColor: eventsCount.value >= previousEventsCount.value ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-  },
-  {
-    id: 'actualites',
-    label: 'Actualités',
-    value: actualitiesCount.value.toString(),
-    change: calculateChange(actualitiesCount.value, previousActualitiesCount.value),
-    icon: 'fas fa-newspaper',
-    bgColor: 'bg-gradient-to-br from-indigo-100 to-indigo-200',
-    iconColor: 'text-indigo-600',
-    badgeColor: actualitiesCount.value >= previousActualitiesCount.value ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-  },
-  {
-    id: 'messages',
-    label: 'Messages',
-    value: messagesCount.value.toString(),
-    change: calculateChange(messagesCount.value, previousMessagesCount.value),
-    icon: 'fas fa-envelope',
-    bgColor: 'bg-gradient-to-br from-purple-100 to-purple-200',
-    iconColor: 'text-purple-600',
-    badgeColor: messagesCount.value >= previousMessagesCount.value ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-  },
-  {
-    id: 'photos',
-    label: 'Photos',
-    value: photosCount.value.toString(),
-    change: calculateChange(photosCount.value, previousPhotosCount.value),
-    icon: 'fas fa-images',
-    bgColor: 'bg-gradient-to-br from-pink-100 to-pink-200',
-    iconColor: 'text-pink-600',
-    badgeColor: photosCount.value >= previousPhotosCount.value ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-  }
-])
+// Utiliser les computed du store
+const menuItems = computed(() => dashboardStore.menuItems)
+const stats = computed(() => dashboardStore.statsWithChange)
 
 // Quick actions
 const quickActions = ref([
@@ -394,144 +307,51 @@ const handleClickOutside = (event: MouseEvent) => {
   }
 }
 
-// Charger les stats de la vue d'ensemble
-const loadOverviewStats = async () => {
-  try {
-    // Sauvegarder les valeurs précédentes
-    previousEventsCount.value = eventsCount.value
-    previousActualitiesCount.value = actualitiesCount.value
-    previousPhotosCount.value = photosCount.value
-    previousMessagesCount.value = messagesCount.value
-
-    // Événements
-    try {
-      const eventsResult = await eventService.getEvents({ limit: 1000 })
-      eventsCount.value = eventsResult.pagination?.total || eventsResult.data.length
-    } catch (err) {
-      console.error('Erreur lors du chargement des événements:', err)
-      eventsCount.value = 0
-    }
-
-    // Actualités
-    try {
-      const actualitiesResult = await actualityService.getActualities({ limit: 1000 })
-      actualitiesCount.value = actualitiesResult.pagination?.total || actualitiesResult.data.length
-    } catch (err) {
-      console.error('Erreur lors du chargement des actualités:', err)
-      actualitiesCount.value = 0
-    }
-
-    // Photos (Galerie)
-    try {
-      const photosResult = await galleryService.getPhotos({ limit: 1000 })
-      photosCount.value = photosResult.pagination?.total || photosResult.data.length
-    } catch (err) {
-      console.error('Erreur lors du chargement des photos:', err)
-      photosCount.value = 0
-    }
-
-    // Messages (Newsletter - toutes les inscriptions)
-    try {
-      const newsletterResult = await newsletterService.getAllSubscribers({ limit: 1000 })
-      messagesCount.value = newsletterResult.data.length
-    } catch (err) {
-      console.error('Erreur lors du chargement des messages:', err)
-      messagesCount.value = 0
-    }
-  } catch (err) {
-    console.error('Erreur lors du chargement des stats:', err)
-  }
-}
-
-// Charger les compteurs de notifications
-const loadNotificationCounts = async () => {
-  try {
-    // Newsletter - compter toutes les inscriptions actives (pour notification)
-    try {
-      const newsletterResult = await newsletterService.getAllSubscribers({ status: 'active', limit: 1000 })
-      // On compte toutes les inscriptions actives comme nouvelles notifications
-      newsletterCount.value = newsletterResult.data.length
-    } catch (err) {
-      console.error('Erreur lors du chargement des newsletters:', err)
-      newsletterCount.value = 0
-    }
-
-    // Demandes de financement - en attente (submitted ou under-review)
-    try {
-      const financingSubmitted = await financingRequestService.getRequests({ status: 'submitted', limit: 1000 })
-      const financingUnderReview = await financingRequestService.getRequests({ status: 'under-review', limit: 1000 })
-      financingCount.value = financingSubmitted.data.length + financingUnderReview.data.length
-    } catch (err) {
-      console.error('Erreur lors du chargement des demandes de financement:', err)
-      financingCount.value = 0
-    }
-
-    // Inscriptions aux formations - en attente
-    try {
-      const trainingResult = await trainingRegistrationService.getRegistrations({ status: 'pending', limit: 1000 })
-      trainingCount.value = trainingResult.data.length
-    } catch (err) {
-      console.error('Erreur lors du chargement des inscriptions aux formations:', err)
-      trainingCount.value = 0
-    }
-
-    // Demandes de publication - en attente
-    try {
-      const publicationsResult = await publicationRequestService.getRequests({ status: 'pending', limit: 1000 })
-      publicationsCount.value = publicationsResult.data.length
-    } catch (err) {
-      console.error('Erreur lors du chargement des demandes de publication:', err)
-      publicationsCount.value = 0
-    }
-
-    // Inscriptions aux événements - en attente
-    try {
-      const eventRegistrationsResult = await eventService.getAllRegistrations({ status: 'pending', limit: 1000 })
-      eventRegistrationsCount.value = eventRegistrationsResult.data.length
-    } catch (err) {
-      console.error('Erreur lors du chargement des inscriptions aux événements:', err)
-      eventRegistrationsCount.value = 0
-    }
-  } catch (err) {
-    console.error('Erreur lors du chargement des compteurs:', err)
-  }
-}
+// Utiliser les méthodes du store
+const loadOverviewStats = () => dashboardStore.loadOverviewStats()
+const loadNotificationCounts = () => dashboardStore.loadNotificationCounts()
+const refreshAll = () => dashboardStore.refreshAll()
 
 // Recharger les compteurs toutes les 30 secondes
 let notificationInterval: number | null = null
+
+// Handlers pour les événements
+const handleUpdateNotifications = () => {
+  refreshAll()
+}
+
+const handleUpdateStats = () => {
+  dashboardStore.loadOverviewStats(true) // Force refresh
+}
 
 onMounted(async () => {
   handleResize()
   window.addEventListener('resize', handleResize)
   document.addEventListener('click', handleClickOutside)
   
-  // Charger les stats de la vue d'ensemble initialement
-  await loadOverviewStats()
-  
-  // Charger les compteurs initialement
-  loadNotificationCounts()
+  // Charger les données initialement (utilise le cache si disponible)
+  await Promise.all([
+    loadOverviewStats(),
+    loadNotificationCounts()
+  ])
   
   // Écouter les événements de mise à jour des notifications
-  window.addEventListener('dashboard:update-notifications', () => {
-    loadNotificationCounts()
-    loadOverviewStats()
-  })
+  window.addEventListener('dashboard:update-notifications', handleUpdateNotifications)
+  window.addEventListener('dashboard:update-stats', handleUpdateStats)
   
-  // Écouter les événements de mise à jour des stats
-  window.addEventListener('dashboard:update-stats', loadOverviewStats)
-  
-  // Recharger toutes les 30 secondes
+  // Recharger toutes les 30 secondes (seulement si le cache est expiré)
   notificationInterval = window.setInterval(() => {
-    loadNotificationCounts()
-    loadOverviewStats()
+    if (!dashboardStore.isCacheValid) {
+      refreshAll()
+    }
   }, 30000)
 })
 
 onUnmounted(() => {
   window.removeEventListener('resize', handleResize)
   document.removeEventListener('click', handleClickOutside)
-  window.removeEventListener('dashboard:update-notifications', loadNotificationCounts)
-  window.removeEventListener('dashboard:update-stats', loadOverviewStats)
+  window.removeEventListener('dashboard:update-notifications', handleUpdateNotifications)
+  window.removeEventListener('dashboard:update-stats', handleUpdateStats)
   
   if (notificationInterval) {
     clearInterval(notificationInterval)
