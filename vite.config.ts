@@ -13,4 +13,15 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
+  build: {
+    outDir: 'dist',
+    // Copier .htaccess dans dist après le build
+    rollupOptions: {
+      output: {
+        // Configuration pour optimiser le build
+      },
+    },
+  },
+  // Base path pour la production (ajustez si votre site est dans un sous-dossier)
+  base: '/',
 })
