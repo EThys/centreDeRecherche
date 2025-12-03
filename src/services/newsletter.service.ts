@@ -12,8 +12,40 @@ export const newsletterService = {
    * S'abonne à la newsletter
    */
   async subscribe(subscription: Omit<NewsletterSubscription, 'id' | 'status' | 'subscribedAt' | 'createdAt' | 'updatedAt'>): Promise<NewsletterSubscription> {
-    const response = await apiClient.post<NewsletterSubscription>(`${ENDPOINT}/subscribe`, subscription)
-    return response.data
+    // Convertir camelCase vers snake_case pour l'API
+    const snakeCaseSubscription: any = {
+      email: subscription.email,
+    }
+    
+    if (subscription.firstName) {
+      snakeCaseSubscription.first_name = subscription.firstName
+    }
+    if (subscription.lastName) {
+      snakeCaseSubscription.last_name = subscription.lastName
+    }
+    if (subscription.preferences) {
+      snakeCaseSubscription.preferences = subscription.preferences
+    }
+    
+    const response = await apiClient.post<NewsletterSubscription>(`${ENDPOINT}/subscribe`, snakeCaseSubscription)
+    
+    // Convertir la réponse en camelCase
+    const convertToCamelCase = (obj: any): any => {
+      if (obj === null || obj === undefined) return obj
+      if (Array.isArray(obj)) return obj.map(item => convertToCamelCase(item))
+      if (typeof obj !== 'object') return obj
+      
+      const camelObj: any = {}
+      for (const key in obj) {
+        if (obj.hasOwnProperty(key)) {
+          const camelKey = key.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase())
+          camelObj[camelKey] = convertToCamelCase(obj[key])
+        }
+      }
+      return camelObj
+    }
+    
+    return convertToCamelCase(response.data) as NewsletterSubscription
   },
 
   /**
@@ -46,9 +78,47 @@ export const newsletterService = {
   /**
    * Récupère tous les abonnés (admin)
    */
-  async getAllSubscribers(): Promise<NewsletterSubscription[]> {
-    const response = await apiClient.get<NewsletterSubscription[]>(`${ENDPOINT}/subscribers`)
-    return response.data
+  async getAllSubscribers(filters?: { status?: string; search?: string; limit?: number }): Promise<{ data: NewsletterSubscription[]; pagination?: any }> {
+    const params: any = {}
+    if (filters?.status) params.status = filters.status
+    if (filters?.search) params.search = filters.search
+    params.per_page = filters?.limit || 100
+    
+    const response = await apiClient.get<NewsletterSubscription[]>(`${ENDPOINT}/subscribers`, params)
+    
+    // Convertir snake_case en camelCase
+    const convertToCamelCase = (obj: any): any => {
+      if (obj === null || obj === undefined) return obj
+      if (Array.isArray(obj)) return obj.map(item => convertToCamelCase(item))
+      if (typeof obj !== 'object') return obj
+      
+      const camelObj: any = {}
+      for (const key in obj) {
+        if (obj.hasOwnProperty(key)) {
+          const camelKey = key.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase())
+          camelObj[camelKey] = convertToCamelCase(obj[key])
+        }
+      }
+      return camelObj
+    }
+    
+    let subscribersData: any[] = []
+    if (response) {
+      if (Array.isArray(response.data)) {
+        subscribersData = response.data
+      } else if (Array.isArray(response)) {
+        subscribersData = response
+      } else if (response.data && typeof response.data === 'object') {
+        subscribersData = Array.isArray(response.data) ? response.data : [response.data]
+      }
+    }
+    
+    const subscribers = subscribersData.map(item => convertToCamelCase(item) as NewsletterSubscription)
+    
+    return {
+      data: subscribers,
+      pagination: response.pagination
+    }
   },
 
   /**
@@ -64,6 +134,13 @@ export const newsletterService = {
    */
   async sendCampaign(campaignId: number | string): Promise<void> {
     await apiClient.post<void>(`${ENDPOINT}/campaigns/${campaignId}/send`)
+  },
+
+  /**
+   * Supprime un abonné (admin)
+   */
+  async deleteSubscriber(id: number | string): Promise<void> {
+    await apiClient.delete<void>(`${ENDPOINT}/${id}`)
   },
 }
 

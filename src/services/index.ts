@@ -29,4 +29,10 @@ export * from './newsletter.service'
 export { default as financingRequestService } from './financing-request.service'
 export * from './financing-request.service'
 
+export { default as publicationRequestService } from './publication-request.service'
+export * from './publication-request.service'
+
+export { default as authService } from './auth.service'
+export * from './auth.service'
+
 
