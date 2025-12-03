@@ -258,29 +258,30 @@ const loadPublication = async () => {
     const pub = await publicationService.getPublicationById(publicationId)
     
     // Transformer les données pour correspondre au format attendu
+    const pubAny = pub as any
     publication.value = {
       ...pub,
-      publicationDate: pub.publication_date || pub.publicationDate || pub.created_at,
-      image: pub.image || pub.document_image || pub.document_image_url || 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80',
+      publicationDate: pubAny.publication_date || pub.publicationDate || pubAny.created_at,
+      image: pub.image || pubAny.document_image || pubAny.document_image_url || 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80',
       authors: Array.isArray(pub.authors) ? pub.authors : (pub.authors ? [{ id: 1, name: pub.authors }] : []),
       domains: Array.isArray(pub.domains) ? pub.domains : [],
       citations: pub.citations || 0,
       downloads: pub.downloads || 0,
       views: pub.views || 0,
-      pdfUrl: pub.pdf_url || pub.document_file || pub.document_file_url || null,
+      pdfUrl: pubAny.pdf_url || pub.pdfUrl || pubAny.document_file || pubAny.document_file_url || null,
       // Inclure toutes les données supplémentaires de la BDD
-      documentFile: pub.document_file || pub.document_file_url || null,
-      documentImage: pub.document_image || pub.document_image_url || null,
-      documentFileUrl: pub.document_file_url || pub.document_file || null,
-      documentImageUrl: pub.document_image_url || pub.document_image || null,
-      name: pub.name || null,
-      email: pub.email || null,
-      phone: pub.phone || null,
-      institution: pub.institution || null,
-      position: pub.position || null,
-      coAuthors: pub.co_authors || pub.coAuthors || null,
-      keywords: pub.keywords || null,
-      message: pub.message || null,
+      documentFile: pubAny.document_file || pubAny.document_file_url || null,
+      documentImage: pubAny.document_image || pubAny.document_image_url || null,
+      documentFileUrl: pubAny.document_file_url || pubAny.document_file || null,
+      documentImageUrl: pubAny.document_image_url || pubAny.document_image || null,
+      name: pubAny.name || null,
+      email: pubAny.email || null,
+      phone: pubAny.phone || null,
+      institution: pubAny.institution || null,
+      position: pubAny.position || null,
+      coAuthors: pubAny.co_authors || pubAny.coAuthors || null,
+      keywords: pubAny.keywords || null,
+      message: pubAny.message || null,
     } as Publication & any
   } catch (err: any) {
     console.error('Erreur lors du chargement de la publication:', err)
