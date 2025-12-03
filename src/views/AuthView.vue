@@ -1,13 +1,19 @@
 <!-- eslint-disable @typescript-eslint/ban-ts-comment -->
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+import authService from '@/services/auth.service'
 //@ts-ignore
 import authBg from '../assets/carousel-1.jpg'
 //@ts-ignore
 import logoImage from '../assets/logoCreff-PME.png'
 
+const router = useRouter()
+const route = useRoute()
+
 const isLogin = ref(true)
 const isLoading = ref(false)
+const error = ref<string | null>(null)
 
 // Form data
 const loginForm = ref({
@@ -28,26 +34,102 @@ const registerForm = ref({
 
 const switchToLogin = () => {
   isLogin.value = true
+  error.value = null
 }
 
 const switchToRegister = () => {
   isLogin.value = false
+  error.value = null
 }
 
 const handleLogin = async () => {
+  if (!loginForm.value.email || !loginForm.value.password) {
+    error.value = 'Veuillez remplir tous les champs'
+    return
+  }
+
   isLoading.value = true
-  // Simulate API call
-  await new Promise(resolve => setTimeout(resolve, 1500))
-  console.log('Login attempt:', loginForm.value)
-  isLoading.value = false
+  error.value = null
+
+  try {
+    const response = await authService.login({
+      email: loginForm.value.email,
+      password: loginForm.value.password,
+    })
+    
+    // Vérifier que le token est bien sauvegardé
+    const token = localStorage.getItem('auth_token')
+    if (!token) {
+      error.value = 'Erreur lors de la sauvegarde de la session. Veuillez réessayer.'
+      return
+    }
+    
+    // Vérifier le rôle si on redirige vers le dashboard
+    const redirectPath = (route.query.redirect as string) || '/dashboard'
+    if (redirectPath === '/dashboard' || redirectPath.includes('/dashboard')) {
+      const user = response.data?.user || JSON.parse(localStorage.getItem('user') || '{}')
+      if (user.role !== 'admin') {
+        error.value = 'Vous n\'avez pas les permissions nécessaires pour accéder au dashboard.'
+        return
+      }
+    }
+    
+    // Attendre un peu pour s'assurer que tout est sauvegardé
+    await new Promise(resolve => setTimeout(resolve, 100))
+    
+    // Rediriger vers la page demandée ou le dashboard
+    router.push(redirectPath)
+  } catch (err: any) {
+    console.error('Erreur de connexion:', err)
+    error.value = err.message || err.errors?.email?.[0] || 'Erreur lors de la connexion. Vérifiez vos identifiants.'
+  } finally {
+    isLoading.value = false
+  }
 }
 
 const handleRegister = async () => {
+  if (!registerForm.value.firstName || !registerForm.value.lastName || !registerForm.value.email || !registerForm.value.password) {
+    error.value = 'Veuillez remplir tous les champs obligatoires'
+    return
+  }
+
+  if (registerForm.value.password !== registerForm.value.confirmPassword) {
+    error.value = 'Les mots de passe ne correspondent pas'
+    return
+  }
+
+  if (!registerForm.value.acceptTerms) {
+    error.value = 'Vous devez accepter les conditions d\'utilisation'
+    return
+  }
+
   isLoading.value = true
-  // Simulate API call
-  await new Promise(resolve => setTimeout(resolve, 1500))
-  console.log('Register attempt:', registerForm.value)
-  isLoading.value = false
+  error.value = null
+
+  try {
+    await authService.register({
+      firstName: registerForm.value.firstName,
+      lastName: registerForm.value.lastName,
+      email: registerForm.value.email,
+      password: registerForm.value.password,
+      passwordConfirmation: registerForm.value.confirmPassword,
+      role: registerForm.value.userType === 'chercheur' ? 'researcher' : 'entrepreneur',
+    })
+    
+    // Rediriger vers le dashboard après inscription réussie
+    router.push('/dashboard')
+  } catch (err: any) {
+    console.error('Erreur d\'inscription:', err)
+    if (err.errors) {
+      // Afficher la première erreur de validation
+      const firstError = Object.values(err.errors)[0]
+      error.value = Array.isArray(firstError) ? firstError[0] : String(firstError)
+    } else {
+      error.value = err.message || 'Erreur lors de l\'inscription'
+    }
+  } finally {
+    isLoading.value = false
+  }
 }
 
 const passwordStrength = computed(() => {
@@ -115,6 +197,14 @@ const getPasswordStrengthColor = computed(() => {
 
         <!-- Login Form -->
         <div v-if="isLogin" class="space-y-6">
+          <!-- Message d'erreur -->
+          <div v-if="error" class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+            <div class="flex items-center gap-2">
+              <i class="fas fa-exclamation-circle"></i>
+              <span>{{ error }}</span>
+            </div>
+          </div>
+          
           <div>
             <h2 class="text-3xl font-bold text-gray-900">Content de vous revoir</h2>
             <p class="mt-2 text-sm text-gray-600">
