@@ -486,7 +486,7 @@
                     type="email"
                     required
                     class="w-full px-4 py-3.5 rounded-xl border-2 border-gray-200 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-300 text-sm bg-gray-50 focus:bg-white group-hover:border-gray-300"
-                    :placeholder="$t('entrepreneurs.registration.emailPlaceholder')"
+                    placeholder="exemple@email.com"
                   />
                 </div>
               </div>
@@ -582,26 +582,33 @@ const router = useRouter()
 const toast = useToast()
 
 // Témoignages
-const testimonials = computed(() => [
-  {
-    text: t('entrepreneurs.testimonials.testimonial1.text'),
-    name: t('entrepreneurs.testimonials.testimonial1.name'),
-    role: t('entrepreneurs.testimonials.testimonial1.role'),
-    initials: 'MK'
-  },
-  {
-    text: t('entrepreneurs.testimonials.testimonial2.text'),
-    name: t('entrepreneurs.testimonials.testimonial2.name'),
-    role: t('entrepreneurs.testimonials.testimonial2.role'),
-    initials: 'JD'
-  },
-  {
-    text: t('entrepreneurs.testimonials.testimonial3.text'),
-    name: t('entrepreneurs.testimonials.testimonial3.name'),
-    role: t('entrepreneurs.testimonials.testimonial3.role'),
-    initials: 'PL'
+const testimonials = computed(() => {
+  try {
+    return [
+      {
+        text: t('entrepreneurs.testimonials.testimonial1.text'),
+        name: t('entrepreneurs.testimonials.testimonial1.name'),
+        role: t('entrepreneurs.testimonials.testimonial1.role'),
+        initials: 'MK'
+      },
+      {
+        text: t('entrepreneurs.testimonials.testimonial2.text'),
+        name: t('entrepreneurs.testimonials.testimonial2.name'),
+        role: t('entrepreneurs.testimonials.testimonial2.role'),
+        initials: 'JD'
+      },
+      {
+        text: t('entrepreneurs.testimonials.testimonial3.text'),
+        name: t('entrepreneurs.testimonials.testimonial3.name'),
+        role: t('entrepreneurs.testimonials.testimonial3.role'),
+        initials: 'PL'
+      }
+    ]
+  } catch (error) {
+    console.error('Erreur lors de la récupération des témoignages:', error)
+    return []
   }
-])
+})
 
 // Événements à venir (dynamiques depuis le backend)
 const upcomingEvents = ref([])
@@ -615,13 +622,19 @@ const loadUpcomingEvents = async () => {
       limit: 10, // Limiter à 10 événements
     })
     
+    // Vérifier que result et result.data existent
+    if (!result || !result.data || !Array.isArray(result.data)) {
+      upcomingEvents.value = []
+      return
+    }
+    
     // Filtrer pour ne garder que les événements à venir (basé sur la date)
     const now = new Date()
     const nowDateOnly = new Date(now.getFullYear(), now.getMonth(), now.getDate())
     
     upcomingEvents.value = result.data
       .filter(event => {
-        if (!event.startDate) return false
+        if (!event || !event.startDate) return false
         try {
           const eventDate = new Date(event.startDate)
           if (isNaN(eventDate.getTime())) return false
@@ -693,24 +706,31 @@ const registerEvent = (eventId) => {
 }
 
 // FAQ
-const faqs = computed(() => [
-  {
-    question: t('entrepreneurs.faq.faq1.question'),
-    answer: t('entrepreneurs.faq.faq1.answer')
-  },
-  {
-    question: t('entrepreneurs.faq.faq2.question'),
-    answer: t('entrepreneurs.faq.faq2.answer')
-  },
-  {
-    question: t('entrepreneurs.faq.faq3.question'),
-    answer: t('entrepreneurs.faq.faq3.answer')
-  },
-  {
-    question: t('entrepreneurs.faq.faq4.question'),
-    answer: t('entrepreneurs.faq.faq4.answer')
+const faqs = computed(() => {
+  try {
+    return [
+      {
+        question: t('entrepreneurs.faq.faq1.question'),
+        answer: t('entrepreneurs.faq.faq1.answer')
+      },
+      {
+        question: t('entrepreneurs.faq.faq2.question'),
+        answer: t('entrepreneurs.faq.faq2.answer')
+      },
+      {
+        question: t('entrepreneurs.faq.faq3.question'),
+        answer: t('entrepreneurs.faq.faq3.answer')
+      },
+      {
+        question: t('entrepreneurs.faq.faq4.question'),
+        answer: t('entrepreneurs.faq.faq4.answer')
+      }
+    ]
+  } catch (error) {
+    console.error('Erreur lors de la récupération des FAQ:', error)
+    return []
   }
-])
+})
 
 const openFaqs = ref([])
 
@@ -823,8 +843,10 @@ const initScrollAnimations = () => {
 }
 
 onMounted(() => {
-  // Charger les événements à venir
-  loadUpcomingEvents()
+  // Charger les événements à venir (de manière asynchrone pour ne pas bloquer le rendu)
+  setTimeout(() => {
+    loadUpcomingEvents()
+  }, 0)
   
   setTimeout(() => {
     initScrollAnimations()
