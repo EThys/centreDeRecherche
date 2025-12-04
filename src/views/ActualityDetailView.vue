@@ -1,8 +1,14 @@
 <template>
   <NavBarComponent />
   
+  <!-- Loading State -->
+  <DetailLoader 
+    v-if="loading" 
+    title="Chargement de l'actualité"
+  />
+  
   <!-- Hero Section - Image pleine largeur avec contenu superposé -->
-  <div v-if="article" class="relative w-full h-screen max-h-[90vh] overflow-hidden">
+  <div v-if="article && !loading" class="relative w-full h-screen max-h-[90vh] overflow-hidden detail-fade-in">
     <!-- Image de fond -->
     <div class="absolute inset-0">
       <img
@@ -93,8 +99,8 @@
   </div>
 
   <!-- Contenu principal -->
-  <main class="min-h-screen bg-white">
-    <div v-if="article" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
+  <main v-if="article && !loading && !error" class="min-h-screen bg-white">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16 detail-fade-in-delay">
       <div class="grid grid-cols-1 lg:grid-cols-4 gap-8 lg:gap-12">
         <!-- Sidebar -->
         <div class="lg:col-span-1">
@@ -309,35 +315,28 @@
       </section>
     </div>
 
-    <!-- Loading State -->
-    <div v-else-if="loading" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 text-center">
-        <i class="fas fa-spinner fa-spin text-4xl text-blue-600 mb-4"></i>
-        <p class="text-gray-600">Chargement de l'article...</p>
-      </div>
-    </div>
-
-    <!-- Error State -->
-    <div v-else-if="error" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <div class="bg-white rounded-2xl shadow-lg border border-red-200 p-8 text-center">
-        <i class="fas fa-exclamation-triangle text-4xl text-red-600 mb-4"></i>
-        <h3 class="text-xl font-bold text-gray-900 mb-2">Erreur</h3>
-        <p class="text-gray-600 mb-6">{{ error }}</p>
-        <button
-          @click="loadArticle"
-          class="bg-blue-500 hover:bg-blue-600 text-white font-medium px-6 py-3 rounded-lg transition-colors"
-        >
-          Réessayer
-        </button>
-        <router-link
-          to="/actualites"
-          class="ml-4 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium px-6 py-3 rounded-lg transition-colors inline-block"
-        >
-          Retour aux actualités
-        </router-link>
-      </div>
-    </div>
   </main>
+
+  <!-- Error State -->
+  <div v-if="error && !loading && !article" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="bg-white rounded-2xl shadow-lg border border-red-200 p-8 text-center">
+      <i class="fas fa-exclamation-triangle text-4xl text-red-600 mb-4"></i>
+      <h3 class="text-xl font-bold text-gray-900 mb-2">Erreur</h3>
+      <p class="text-gray-600 mb-6">{{ error }}</p>
+      <button
+        @click="loadArticle"
+        class="bg-blue-500 hover:bg-blue-600 text-white font-medium px-6 py-3 rounded-lg transition-colors"
+      >
+        Réessayer
+      </button>
+      <router-link
+        to="/actualites"
+        class="ml-4 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium px-6 py-3 rounded-lg transition-colors inline-block"
+      >
+        Retour aux actualités
+      </router-link>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -348,6 +347,8 @@ import actualityService from '@/services/actuality.service'
 
 //@ts-ignore
 import NavBarComponent from '../components/navbar/NavBarComponent.vue'
+//@ts-ignore
+import DetailLoader from '../components/DetailLoader.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -573,8 +574,8 @@ onUnmounted(() => {
 
 /* Animations d'apparition */
 .fade-in-up {
-  opacity: 0;
-  transform: translateY(30px);
+  opacity: 1;
+  transform: translateY(0);
   transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -584,8 +585,8 @@ onUnmounted(() => {
 }
 
 .fade-in-right {
-  opacity: 0;
-  transform: translateX(30px);
+  opacity: 1;
+  transform: translateX(0);
   transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -595,8 +596,8 @@ onUnmounted(() => {
 }
 
 .stagger-item {
-  opacity: 0;
-  transform: translateY(20px);
+  opacity: 1;
+  transform: translateY(0);
   transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -605,11 +606,35 @@ onUnmounted(() => {
   transform: translateY(0);
 }
 
+/* Effet d'apparition après le loader */
+.detail-fade-in {
+  opacity: 1;
+  animation: detailFadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.detail-fade-in-delay {
+  opacity: 1;
+  animation: detailFadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
+}
+
+@keyframes detailFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* Support pour la réduction des animations */
 @media (prefers-reduced-motion: reduce) {
   .fade-in-up,
   .fade-in-right,
-  .stagger-item {
+  .stagger-item,
+  .detail-fade-in,
+  .detail-fade-in-delay {
     animation: none !important;
     transition: none !important;
     transform: none !important;

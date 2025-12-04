@@ -8,7 +8,7 @@
   />
   
   <!-- Hero Section - Image pleine largeur avec contenu superposé -->
-  <div v-if="publication && !loading" class="relative w-full h-screen max-h-[90vh] overflow-hidden">
+  <div v-if="publication && !loading" class="relative w-full h-screen max-h-[90vh] overflow-hidden detail-fade-in">
     <!-- Image de fond -->
     <div class="absolute inset-0">
       <img
@@ -48,7 +48,7 @@
 
   <!-- Contenu principal -->
   <main v-if="publication && !loading" class="min-h-screen bg-white">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16 detail-fade-in-delay">
       <!-- Section: Informations générales -->
       <section class="mb-12 pb-12 border-b border-gray-200">
         <h2 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 flex items-center">
@@ -378,12 +378,13 @@ onUnmounted(() => {
 
 /* Effet d'apparition après le loader */
 .detail-fade-in {
+  opacity: 1;
   animation: detailFadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .detail-fade-in-delay {
+  opacity: 1;
   animation: detailFadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
-  opacity: 0;
 }
 
 @keyframes detailFadeIn {

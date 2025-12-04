@@ -8,7 +8,7 @@
   />
   
   <!-- Hero Section - Image pleine largeur avec contenu superposé -->
-  <div v-if="event && !loading" class="relative w-full h-screen max-h-[90vh] overflow-hidden">
+  <div v-if="event && !loading" class="relative w-full h-screen max-h-[90vh] overflow-hidden detail-fade-in">
     <!-- Image de fond -->
     <div class="absolute inset-0">
       <img
@@ -124,7 +124,7 @@
 
   <!-- Contenu principal -->
   <main class="min-h-screen bg-white" v-if="event && !loading">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16 detail-fade-in-delay">
       <div class="grid grid-cols-1 lg:grid-cols-4 gap-8 lg:gap-12">
         <!-- Sidebar -->
         <div class="lg:col-span-1">
@@ -379,6 +379,17 @@
               </p>
             </section>
 
+            <!-- Contenu détaillé -->
+            <section v-if="event.content && event.content.trim()" class="mb-10 pb-10 border-b border-gray-200">
+              <h2 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 flex items-center">
+                <i class="fas fa-file-alt mr-3 text-blue-500"></i>
+                Contenu détaillé
+              </h2>
+              <div class="text-gray-700 leading-relaxed text-base prose max-w-none">
+                <div v-html="formatContent(event.content)"></div>
+              </div>
+            </section>
+
             <!-- Speakers Section -->
             <section v-if="event.speakers && event.speakers.length > 0" class="mb-10 pb-10 border-b border-gray-200">
               <h2 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 flex items-center">
@@ -477,7 +488,7 @@
   </main>
 
   <!-- Error State -->
-  <div v-if="error && !loading" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+  <div v-if="error && !loading && !event" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
     <div class="bg-white rounded-2xl shadow-lg border border-red-200 p-8 text-center">
       <i class="fas fa-exclamation-triangle text-4xl text-red-600 mb-4"></i>
       <h3 class="text-xl font-bold text-gray-900 mb-2">Erreur</h3>
@@ -624,19 +635,36 @@ const formatFullDate = (dateString: string | undefined) => {
   }
 }
 
-// Formater l'heure pour n'afficher que HH:MM
+// Formater l'heure au format H:m (sans zéro devant pour les heures)
 const formatTime = (timeString: string | undefined) => {
   if (!timeString) return ''
-  // Supprimer les secondes (HH:MM:SS ou HH:MM:SS.mmm -> HH:MM)
   const timeStr = timeString.trim()
   if (timeStr.includes(':')) {
     const parts = timeStr.split(':')
     if (parts.length >= 2) {
-      // Prendre seulement les heures et minutes
-      return `${parts[0].padStart(2, '0')}:${parts[1].padStart(2, '0')}`
+      const hours = parseInt(parts[0], 10)
+      const minutes = parts[1].padStart(2, '0')
+      return `${hours}:${minutes}`
     }
   }
   return timeStr
+}
+
+// Formater le contenu HTML
+const formatContent = (content: string | undefined | null) => {
+  if (!content || typeof content !== 'string') return ''
+  const trimmedContent = content.trim()
+  if (!trimmedContent) return ''
+  // Si le contenu contient déjà du HTML, le retourner tel quel
+  if (trimmedContent.includes('<') && trimmedContent.includes('>')) {
+    return trimmedContent
+  }
+  // Sinon, convertir les retours à la ligne en paragraphes
+  return trimmedContent
+    .split('\n')
+    .filter(line => line.trim())
+    .map(line => `<p>${line.trim()}</p>`)
+    .join('')
 }
 
 const submitRegistration = async () => {
@@ -737,54 +765,96 @@ const shareOnTwitter = () => {
 }
 
 const checkRegistrationStatus = async () => {
-  // Vérifier d'abord dans localStorage pour un chargement rapide
+  // Toujours commencer par false
+  isRegistered.value = false
+  
+  // Vérifier dans localStorage
   const registeredEvents = JSON.parse(localStorage.getItem('registeredEvents') || '[]')
   const wasInLocalStorage = registeredEvents.includes(eventId)
   
-  // Charger les données d'inscription sauvegardées si présentes dans localStorage
-  if (wasInLocalStorage) {
-    const registrationDataKey = `registration_${eventId}`
-    const savedData = localStorage.getItem(registrationDataKey)
-    if (savedData) {
+  // Si l'ID n'est pas dans localStorage, l'utilisateur n'est pas inscrit
+  if (!wasInLocalStorage) {
+    isRegistered.value = false
+    return
+  }
+  
+  // Charger les données d'inscription sauvegardées
+  const registrationDataKey = `registration_${eventId}`
+  const savedData = localStorage.getItem(registrationDataKey)
+  
+  // Si pas de données sauvegardées, nettoyer localStorage et considérer comme non inscrit
+  if (!savedData) {
+    const updatedEvents = registeredEvents.filter((id: number | string) => id !== eventId)
+    localStorage.setItem('registeredEvents', JSON.stringify(updatedEvents))
+    isRegistered.value = false
+    return
+  }
+  
+  try {
+    const parsedData = JSON.parse(savedData)
+    
+    // Si pas d'email, nettoyer et considérer comme non inscrit
+    if (!parsedData.email || !parsedData.email.trim()) {
+      const updatedEvents = registeredEvents.filter((id: number | string) => id !== eventId)
+      localStorage.setItem('registeredEvents', JSON.stringify(updatedEvents))
+      localStorage.removeItem(registrationDataKey)
+      isRegistered.value = false
+      return
+    }
+    
+    // Vérifier avec le backend si l'email est vraiment inscrit
+    if (event.value?.id) {
       try {
-        const parsedData = JSON.parse(savedData)
-        savedRegistrationData.value = parsedData
+        const isActuallyRegistered = await eventService.checkEmailRegistration(event.value.id, parsedData.email.trim())
         
-        // Vérifier avec le backend si l'email est vraiment inscrit
-        if (parsedData.email && event.value?.id) {
-          try {
-            const isActuallyRegistered = await eventService.checkEmailRegistration(event.value.id, parsedData.email)
-            if (!isActuallyRegistered) {
-              // L'email n'est pas inscrit dans le backend, nettoyer localStorage
-              const updatedEvents = registeredEvents.filter((id: number | string) => id !== eventId)
-              localStorage.setItem('registeredEvents', JSON.stringify(updatedEvents))
-              localStorage.removeItem(registrationDataKey)
-              isRegistered.value = false
-              savedRegistrationData.value = {
-                firstName: '',
-                lastName: '',
-                email: '',
-                phone: '',
-                company: '',
-                position: ''
-              }
-              return
-            }
-          } catch (error) {
-            // Si la vérification échoue, on garde l'état localStorage mais on log l'erreur
-            console.warn('Could not verify registration with backend:', error)
+        if (isActuallyRegistered) {
+          // L'email est inscrit dans le backend, confirmer l'inscription
+          savedRegistrationData.value = parsedData
+          isRegistered.value = true
+        } else {
+          // L'email n'est pas inscrit dans le backend, nettoyer localStorage
+          const updatedEvents = registeredEvents.filter((id: number | string) => id !== eventId)
+          localStorage.setItem('registeredEvents', JSON.stringify(updatedEvents))
+          localStorage.removeItem(registrationDataKey)
+          savedRegistrationData.value = {
+            firstName: '',
+            lastName: '',
+            email: '',
+            phone: '',
+            company: '',
+            position: ''
           }
+          isRegistered.value = false
         }
-        
-        isRegistered.value = true
-      } catch (e) {
-        console.error('Error loading registration data:', e)
+      } catch (error) {
+        // Si la vérification échoue, nettoyer localStorage par sécurité
+        console.warn('Could not verify registration with backend:', error)
+        const updatedEvents = registeredEvents.filter((id: number | string) => id !== eventId)
+        localStorage.setItem('registeredEvents', JSON.stringify(updatedEvents))
+        localStorage.removeItem(registrationDataKey)
+        savedRegistrationData.value = {
+          firstName: '',
+          lastName: '',
+          email: '',
+          phone: '',
+          company: '',
+          position: ''
+        }
         isRegistered.value = false
       }
     } else {
+      // Pas d'ID d'événement, nettoyer localStorage
+      const updatedEvents = registeredEvents.filter((id: number | string) => id !== eventId)
+      localStorage.setItem('registeredEvents', JSON.stringify(updatedEvents))
+      localStorage.removeItem(registrationDataKey)
       isRegistered.value = false
     }
-  } else {
+  } catch (e) {
+    // Erreur de parsing, nettoyer localStorage
+    console.error('Error loading registration data:', e)
+    const updatedEvents = registeredEvents.filter((id: number | string) => id !== eventId)
+    localStorage.setItem('registeredEvents', JSON.stringify(updatedEvents))
+    localStorage.removeItem(registrationDataKey)
     isRegistered.value = false
   }
 }
@@ -1316,12 +1386,13 @@ onUnmounted(() => {
 
 /* Effet d'apparition après le loader */
 .detail-fade-in {
+  opacity: 1;
   animation: detailFadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .detail-fade-in-delay {
+  opacity: 1;
   animation: detailFadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
-  opacity: 0;
 }
 
 @keyframes detailFadeIn {
