@@ -307,7 +307,7 @@
                     :src="getEventImage(event.image)"
                     :alt="event.title"
                     class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                    @error="(e) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80' }"
+                    @error="handleImageError"
                   />
                   <div class="absolute top-3 left-3 bg-blue-600 text-white text-xs font-semibold px-3 py-1 rounded-lg">
                     {{ event.type }}
@@ -555,11 +555,10 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
-import type { TrainingRegistration, Event } from '@/models'
 import eventService from '@/services/event.service'
 import trainingRegistrationService from '@/services/training-registration.service'
 //@ts-ignore
@@ -601,7 +600,7 @@ const testimonials = ref([
 ])
 
 // Événements à venir (dynamiques depuis le backend)
-const upcomingEvents = ref<Event[]>([])
+const upcomingEvents = ref([])
 const loadingEvents = ref(false)
 
 // Charger les événements depuis le backend
@@ -635,7 +634,7 @@ const loadUpcomingEvents = async () => {
         return dateA - dateB
       })
       .slice(0, 6) // Limiter à 6 événements pour l'affichage
-  } catch (err: any) {
+  } catch (err) {
     console.error('Erreur lors du chargement des événements:', err)
     upcomingEvents.value = []
   } finally {
@@ -644,7 +643,7 @@ const loadUpcomingEvents = async () => {
 }
 
 // Formater la date de l'événement
-const formatEventDate = (dateString: string | undefined) => {
+const formatEventDate = (dateString) => {
   if (!dateString) return ''
   try {
     const date = new Date(dateString)
@@ -660,8 +659,8 @@ const formatEventDate = (dateString: string | undefined) => {
 }
 
 // Formater l'heure au format H:m (sans zéro devant pour les heures)
-const formatEventTime = (startTime: string | undefined, endTime: string | undefined) => {
-  const formatTime = (timeStr: string | undefined) => {
+const formatEventTime = (startTime, endTime) => {
+  const formatTime = (timeStr) => {
     if (!timeStr) return ''
     const time = timeStr.trim()
     if (time.includes(':')) {
@@ -685,7 +684,7 @@ const formatEventTime = (startTime: string | undefined, endTime: string | undefi
 }
 
 // Obtenir l'URL de l'image de l'événement
-const getEventImage = (image?: string | null): string => {
+const getEventImage = (image) => {
   if (!image) {
     return 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'
   }
@@ -693,13 +692,13 @@ const getEventImage = (image?: string | null): string => {
 }
 
 // Ouvrir la page de détail de l'événement
-const openEvent = (eventId: string | number | undefined) => {
+const openEvent = (eventId) => {
   if (!eventId) return
   router.push(`/events/${eventId}`)
 }
 
 // S'inscrire à un événement
-const registerEvent = (eventId: string | number | undefined) => {
+const registerEvent = (eventId) => {
   if (!eventId) return
   // Navigation vers la page de détail pour l'inscription
   router.push(`/events/${eventId}`)
@@ -725,9 +724,9 @@ const faqs = ref([
   }
 ])
 
-const openFaqs = ref<number[]>([])
+const openFaqs = ref([])
 
-const toggleFaq = (index: number) => {
+const toggleFaq = (index) => {
   const idx = openFaqs.value.indexOf(index)
   if (idx > -1) {
     openFaqs.value.splice(idx, 1)
@@ -737,7 +736,7 @@ const toggleFaq = (index: number) => {
 }
 
 // Formulaire d'inscription
-const registrationForm = ref<Omit<TrainingRegistration, 'id' | 'status' | 'registrationDate' | 'createdAt' | 'updatedAt' | 'confirmedAt' | 'cancelledAt'>>({
+const registrationForm = ref({
   name: '',
   email: '',
   program: '',
@@ -758,7 +757,7 @@ const submitRegistration = async () => {
   
   try {
     // Mapper le nom du programme depuis la valeur du select
-    const programNames: Record<string, string> = {
+    const programNames = {
       'training1': t('entrepreneurs.activities.training1.title'),
       'training2': t('entrepreneurs.activities.training2.title'),
       'training3': t('entrepreneurs.activities.training3.title'),
@@ -777,16 +776,16 @@ const submitRegistration = async () => {
     
     // Réinitialiser le formulaire
     registrationForm.value = { name: '', email: '', program: '', message: '' }
-  } catch (err: any) {
+  } catch (err) {
     console.error('Erreur lors de l\'inscription:', err)
-    registrationError.value = err.message || 'Une erreur est survenue lors de l\'envoi de votre inscription. Veuillez réessayer.'
+    registrationError.value = err?.message || 'Une erreur est survenue lors de l\'envoi de votre inscription. Veuillez réessayer.'
     alert(registrationError.value)
   } finally {
     isSubmitting.value = false
   }
 }
 
-let observer: IntersectionObserver | null = null
+let observer = null
 
 const initScrollAnimations = () => {
   const observerOptions = {
@@ -796,7 +795,7 @@ const initScrollAnimations = () => {
 
   observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
-      if (entry.isIntersecting && observer) {
+      if (entry.isIntersecting) {
         entry.target.classList.add('animate-in')
         observer.unobserve(entry.target)
       }
