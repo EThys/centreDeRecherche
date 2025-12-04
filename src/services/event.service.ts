@@ -324,10 +324,11 @@ export const eventService = {
    */
   async checkEmailRegistration(eventId: number | string, email: string): Promise<boolean> {
     try {
-      const response = await apiClient.get<{ registered: boolean }>(`${ENDPOINT}/${eventId}/check-registration`, { email })
-      return response.data?.registered || false
+      const response = await apiClient.get<{ isRegistered?: boolean; registered?: boolean }>(`${ENDPOINT}/${eventId}/check-registration`, { email })
+      // Gérer les deux formats possibles de réponse
+      return response.data?.isRegistered === true || response.data?.registered === true
     } catch (error) {
-      // Si l'endpoint n'existe pas encore, retourner false
+      // Si l'endpoint n'existe pas encore ou erreur, retourner false
       console.warn('Check registration endpoint not available:', error)
       return false
     }
