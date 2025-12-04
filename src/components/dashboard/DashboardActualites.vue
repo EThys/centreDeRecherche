@@ -371,8 +371,7 @@ const saveActuality = async () => {
         .filter(tag => tag.length > 0)
 
       // Préparer les données
-      // Note: 'image' est exclu car il est envoyé séparément via imageFile
-      const actualityData: Omit<Actuality, 'id' | 'createdAt' | 'updatedAt' | 'image'> = {
+      const actualityData: Omit<Actuality, 'id' | 'createdAt' | 'updatedAt'> = {
         title: actualityForm.value.title.trim(),
         summary: actualityForm.value.summary.trim(),
         content: actualityForm.value.content.trim(),

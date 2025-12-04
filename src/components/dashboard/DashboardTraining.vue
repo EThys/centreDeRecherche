@@ -52,6 +52,7 @@
         v-model="searchQuery"
         type="text"
         placeholder="Rechercher..."
+        @input="watchFilters"
         class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
       />
     </div>
@@ -258,9 +259,6 @@ const updateStatus = async (registration: TrainingRegistration) => {
       status: newStatus as 'pending' | 'confirmed' | 'cancelled' | 'completed'
     })
     await loadRegistrations() // Recharger les données
-    
-    // Émettre un événement pour mettre à jour les notifications
-    window.dispatchEvent(new CustomEvent('dashboard:update-notifications'))
   } catch (err: any) {
     console.error('Erreur lors de la mise à jour du statut:', err)
     alert('Erreur lors de la mise à jour du statut: ' + (err.message || 'Erreur inconnue'))
@@ -272,10 +270,7 @@ const deleteRegistration = async (id: number | string | undefined) => {
   if (confirm('Êtes-vous sûr de vouloir supprimer cette inscription ?')) {
     try {
       await trainingRegistrationService.deleteRegistration(id)
-      await loadRegistrations()
-      
-      // Émettre un événement pour mettre à jour les notifications
-      window.dispatchEvent(new CustomEvent('dashboard:update-notifications')) // Recharger les données
+      await loadRegistrations() // Recharger les données
     } catch (err: any) {
       console.error('Erreur lors de la suppression:', err)
       alert('Erreur lors de la suppression: ' + (err.message || 'Erreur inconnue'))

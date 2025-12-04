@@ -172,10 +172,7 @@ const deleteSubscriber = async (id: number | string | undefined) => {
   if (confirm('Êtes-vous sûr de vouloir supprimer cet abonné ?')) {
     try {
       await newsletterService.deleteSubscriber(id)
-      await loadSubscribers()
-      
-      // Émettre un événement pour mettre à jour les notifications
-      window.dispatchEvent(new CustomEvent('dashboard:update-notifications')) // Recharger les données
+      await loadSubscribers() // Recharger les données
     } catch (err: any) {
       console.error('Erreur lors de la suppression:', err)
       alert('Erreur lors de la suppression: ' + (err.message || 'Erreur inconnue'))
