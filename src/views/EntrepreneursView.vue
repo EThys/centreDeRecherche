@@ -286,10 +286,9 @@
           </h2>
         </div>
 
-        <!-- Loading State -->
-        <div v-if="loadingEvents" class="text-center py-12">
-          <i class="fas fa-spinner fa-spin text-3xl text-blue-600 mb-4"></i>
-          <p class="text-gray-600 text-sm">Chargement des programmes...</p>
+        <!-- Loading State with Shimmer -->
+        <div v-if="loadingEvents" class="space-y-6">
+          <ShimmerCard v-for="n in 3" :key="n" />
         </div>
 
         <!-- Events Grid -->
@@ -297,9 +296,7 @@
           <div 
             v-for="(event, index) in upcomingEvents" 
             :key="event.id"
-            class="group bg-white rounded-xl p-6 sm:p-8 shadow-md hover:shadow-xl border border-gray-100 transition-all duration-300 fade-in-up stagger-item overflow-hidden cursor-pointer"
-            :style="{ animationDelay: `${index * 150}ms` }"
-            data-animate
+            class="group bg-white rounded-xl p-6 sm:p-8 shadow-md hover:shadow-xl border border-gray-100 transition-all duration-300 overflow-hidden cursor-pointer"
             @click="openEvent(event.id)"
           >
             <div class="flex flex-col md:flex-row gap-6">
@@ -568,6 +565,8 @@ import trainingRegistrationService from '@/services/training-registration.servic
 //@ts-ignore
 import NavBarComponent from '../components/navbar/NavBarComponent.vue'
 //@ts-ignore
+import ShimmerCard from '../components/ShimmerCard.vue'
+//@ts-ignore
 import FooterComponent from '../components/footer/FooterComponent.vue'
 
 // Import des images
@@ -660,13 +659,29 @@ const formatEventDate = (dateString: string | undefined) => {
   }
 }
 
-// Formater l'heure de l'événement
+// Formater l'heure au format H:m (sans zéro devant pour les heures)
 const formatEventTime = (startTime: string | undefined, endTime: string | undefined) => {
-  if (!startTime) return ''
-  if (endTime) {
-    return `${startTime} - ${endTime}`
+  const formatTime = (timeStr: string | undefined) => {
+    if (!timeStr) return ''
+    const time = timeStr.trim()
+    if (time.includes(':')) {
+      const parts = time.split(':')
+      if (parts.length >= 2) {
+        const hours = parseInt(parts[0], 10)
+        const minutes = parts[1].padStart(2, '0')
+        return `${hours}:${minutes}`
+      }
+    }
+    return time
   }
-  return startTime
+  
+  if (!startTime) return ''
+  const formattedStart = formatTime(startTime)
+  if (endTime) {
+    const formattedEnd = formatTime(endTime)
+    return `${formattedStart} - ${formattedEnd}`
+  }
+  return formattedStart
 }
 
 // Obtenir l'URL de l'image de l'événement
@@ -815,8 +830,8 @@ onUnmounted(() => {
 <style scoped>
 /* Animations d'apparition */
 .fade-in-up {
-  opacity: 0;
-  transform: translateY(30px);
+  opacity: 1;
+  transform: translateY(0);
   transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -826,8 +841,8 @@ onUnmounted(() => {
 }
 
 .fade-in-right {
-  opacity: 0;
-  transform: translateX(30px);
+  opacity: 1;
+  transform: translateX(0);
   transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -837,8 +852,8 @@ onUnmounted(() => {
 }
 
 .stagger-item {
-  opacity: 0;
-  transform: translateY(30px);
+  opacity: 1;
+  transform: translateY(0);
   transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
