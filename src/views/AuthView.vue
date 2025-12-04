@@ -6,7 +6,7 @@ import authService from '@/services/auth.service'
 //@ts-ignore
 import authBg from '../assets/carousel-1.jpg'
 //@ts-ignore
-import logoImage from '../assets/logoCreff-PME.jpeg'
+import logoImage from '../assets/logoCreff-PME.png'
 
 const router = useRouter()
 const route = useRoute()
@@ -52,32 +52,13 @@ const handleLogin = async () => {
   error.value = null
 
   try {
-    const response = await authService.login({
+    await authService.login({
       email: loginForm.value.email,
       password: loginForm.value.password,
     })
     
-    // Vérifier que le token est bien sauvegardé
-    const token = localStorage.getItem('auth_token')
-    if (!token) {
-      error.value = 'Erreur lors de la sauvegarde de la session. Veuillez réessayer.'
-      return
-    }
-    
-    // Vérifier le rôle si on redirige vers le dashboard
-    const redirectPath = (route.query.redirect as string) || '/dashboard'
-    if (redirectPath === '/dashboard' || redirectPath.includes('/dashboard')) {
-      const user = response.data?.user || JSON.parse(localStorage.getItem('user') || '{}')
-      if (user.role !== 'admin') {
-        error.value = 'Vous n\'avez pas les permissions nécessaires pour accéder au dashboard.'
-        return
-      }
-    }
-    
-    // Attendre un peu pour s'assurer que tout est sauvegardé
-    await new Promise(resolve => setTimeout(resolve, 100))
-    
     // Rediriger vers la page demandée ou le dashboard
+    const redirectPath = (route.query.redirect as string) || '/dashboard'
     router.push(redirectPath)
   } catch (err: any) {
     console.error('Erreur de connexion:', err)
