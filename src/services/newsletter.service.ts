@@ -28,16 +28,28 @@ export const newsletterService = {
    * S'abonne à la newsletter (route publique)
    */
   async subscribe(subscription: Omit<NewsletterSubscription, 'id' | 'status' | 'subscribedAt' | 'createdAt' | 'updatedAt' | 'unsubscribedAt'>): Promise<NewsletterSubscription> {
-    // Convertir camelCase vers snake_case pour l'API
-    const snakeCaseSubscription: any = {
-      email: subscription.email,
-      first_name: subscription.firstName,
-      last_name: subscription.lastName,
-      preferences: subscription.preferences,
+    try {
+      // Convertir camelCase vers snake_case pour l'API
+      const snakeCaseSubscription: any = {
+        email: subscription.email,
+        first_name: subscription.firstName,
+        last_name: subscription.lastName,
+        preferences: subscription.preferences,
+      }
+      
+      const response = await apiClient.post<NewsletterSubscription>(`${ENDPOINT}/subscribe`, snakeCaseSubscription)
+      
+      // Gérer la structure de réponse
+      let subscriptionData: any = response.data
+      if (response.data && typeof response.data === 'object' && 'data' in response.data) {
+        subscriptionData = (response.data as any).data
+      }
+      
+      return toCamelCase(subscriptionData) as NewsletterSubscription
+    } catch (error: any) {
+      console.error('Erreur lors de l\'abonnement à la newsletter:', error)
+      throw error
     }
-    
-    const response = await apiClient.post<NewsletterSubscription>(`${ENDPOINT}/subscribe`, snakeCaseSubscription)
-    return toCamelCase(response.data) as NewsletterSubscription
   },
 
   /**
@@ -71,24 +83,32 @@ export const newsletterService = {
     if (filters?.search) params.search = filters.search
     params.per_page = filters?.limit || 100
     
-    const response = await apiClient.get<any>(`${ENDPOINT}/subscribers`, params)
-    
-    let subscribersData: any[] = []
-    if (response) {
-      if (Array.isArray(response.data)) {
-        subscribersData = response.data
+    try {
+      const response = await apiClient.get<any>(`${ENDPOINT}/subscribers`, params)
+      
+      let subscribersData: any[] = []
+      
+      // Gérer la structure de réponse du backend Laravel
+      if (response && response.data) {
+        if (Array.isArray(response.data)) {
+          subscribersData = response.data
+        } else if (typeof response.data === 'object' && 'data' in response.data) {
+          // Si c'est une réponse imbriquée
+          subscribersData = Array.isArray(response.data.data) ? response.data.data : [response.data.data]
+        }
       } else if (Array.isArray(response)) {
         subscribersData = response
-      } else if (response.data && typeof response.data === 'object') {
-        subscribersData = Array.isArray(response.data) ? response.data : [response.data]
       }
-    }
-    
-    const subscribers = subscribersData.map(item => toCamelCase(item) as NewsletterSubscription)
-    
-    return {
-      data: subscribers,
-      pagination: response.pagination
+      
+      const subscribers = subscribersData.map(item => toCamelCase(item) as NewsletterSubscription)
+      
+      return {
+        data: subscribers,
+        pagination: response?.pagination || response?.data?.pagination
+      }
+    } catch (error: any) {
+      console.error('Erreur lors de la récupération des abonnés:', error)
+      throw error
     }
   },
 
@@ -102,24 +122,32 @@ export const newsletterService = {
     if (filters?.page) params.page = filters.page
     params.per_page = filters?.limit || 15
     
-    const response = await apiClient.get<any>(ENDPOINT, params)
-    
-    let subscribersData: any[] = []
-    if (response) {
-      if (Array.isArray(response.data)) {
-        subscribersData = response.data
+    try {
+      const response = await apiClient.get<any>(ENDPOINT, params)
+      
+      let subscribersData: any[] = []
+      
+      // Gérer la structure de réponse du backend Laravel
+      if (response && response.data) {
+        if (Array.isArray(response.data)) {
+          subscribersData = response.data
+        } else if (typeof response.data === 'object' && 'data' in response.data) {
+          // Si c'est une réponse imbriquée
+          subscribersData = Array.isArray(response.data.data) ? response.data.data : [response.data.data]
+        }
       } else if (Array.isArray(response)) {
         subscribersData = response
-      } else if (response.data && typeof response.data === 'object') {
-        subscribersData = Array.isArray(response.data) ? response.data : [response.data]
       }
-    }
-    
-    const subscribers = subscribersData.map(item => toCamelCase(item) as NewsletterSubscription)
-    
-    return {
-      data: subscribers,
-      pagination: response.pagination
+      
+      const subscribers = subscribersData.map(item => toCamelCase(item) as NewsletterSubscription)
+      
+      return {
+        data: subscribers,
+        pagination: response?.pagination || response?.data?.pagination
+      }
+    } catch (error: any) {
+      console.error('Erreur lors de la récupération des abonnements:', error)
+      throw error
     }
   },
 

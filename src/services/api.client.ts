@@ -14,18 +14,7 @@ export const getApiBaseUrl = (): string => {
   
   // Détection automatique de l'environnement
   // En mode développement (npm run dev) ou si on est sur localhost
-  const isLocal = import.meta.env.DEV || 
-                  typeof window !== 'undefined' && (
-                    window.location.hostname === 'localhost' || 
-                    window.location.hostname === '127.0.0.1' ||
-                    window.location.hostname === '0.0.0.0' ||
-                    window.location.hostname.startsWith('192.168.') ||
-                    window.location.hostname.startsWith('10.0.')
-                  )
   
-  if (isLocal) {
-    return 'http://localhost:8000/api'
-  }
   
   // En production, utiliser l'URL du serveur
   return 'https://backend.creffpme.org/api'
