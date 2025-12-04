@@ -361,7 +361,7 @@
     >
       <div
         v-if="isMobile && isMobileMenuOpen"
-        class="lg:hidden bg-white/98 backdrop-blur-xl border-t border-gray-200 shadow-2xl absolute top-20 sm:top-24 inset-x-0 pb-8 pt-6 max-h-[85vh] overflow-y-auto custom-scrollbar"
+        class="lg:hidden bg-white/98 backdrop-blur-xl border-t border-gray-200 shadow-2xl fixed top-20 sm:top-24 inset-x-0 pb-8 pt-6 max-h-[85vh] overflow-y-auto custom-scrollbar z-[101]"
       >
         <div class="px-4 sm:px-6 space-y-1">
           <!-- Accueil Mobile -->
