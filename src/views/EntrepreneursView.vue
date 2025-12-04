@@ -342,9 +342,9 @@
                       {{ event.currentAttendees || 0 }}/{{ event.maxAttendees }} places
                     </div>
                   </div>
-                  <div v-if="event.price !== undefined && event.price !== null" class="mb-4">
+                  <div v-if="event.price !== undefined && event.price !== null && event.price !== ''" class="mb-4">
                     <span class="text-blue-600 font-semibold text-lg">
-                      {{ event.price === 0 ? 'Gratuit' : `${event.price} ${event.currency || 'USD'}` }}
+                      {{ event.price === 0 || event.price === '0' ? 'Gratuit' : `${event.price} ${event.currency || 'USD'}` }}
                     </span>
                   </div>
                 </div>
@@ -820,7 +820,11 @@ const initScrollAnimations = () => {
 
 onMounted(() => {
   // Charger les événements à venir
-  loadUpcomingEvents()
+  try {
+    loadUpcomingEvents()
+  } catch (err) {
+    console.error('Erreur lors du chargement initial des événements:', err)
+  }
   
   setTimeout(() => {
     initScrollAnimations()
