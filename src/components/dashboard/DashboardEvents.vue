@@ -174,6 +174,56 @@
               </div>
             </div>
           </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Type de tarification *</label>
+            <div class="flex items-center gap-4 mt-2">
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input
+                  v-model="eventForm.isFree"
+                  :value="true"
+                  type="radio"
+                  name="pricing"
+                  class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                />
+                <span class="text-sm text-gray-700">Gratuit</span>
+              </label>
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input
+                  v-model="eventForm.isFree"
+                  :value="false"
+                  type="radio"
+                  name="pricing"
+                  class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                />
+                <span class="text-sm text-gray-700">Payant</span>
+              </label>
+            </div>
+          </div>
+          <div v-if="eventForm.isFree === false" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Prix *</label>
+              <input
+                v-model.number="eventForm.price"
+                type="number"
+                min="0"
+                step="0.01"
+                class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                placeholder="0.00"
+              />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Devise *</label>
+              <select
+                v-model="eventForm.currency"
+                class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+              >
+                <option value="USD">USD ($)</option>
+                <option value="EUR">EUR (€)</option>
+                <option value="CDF">CDF (FC)</option>
+                <option value="XAF">XAF (FCFA)</option>
+              </select>
+            </div>
+          </div>
         <div class="flex gap-4">
           <button
             type="submit"
@@ -220,7 +270,7 @@
               </td>
               <td class="px-6 py-4 text-gray-600">
                 <div>{{ formatDate(event.startDate) }}</div>
-                <div class="text-xs text-gray-500">{{ event.startTime }}</div>
+                <div class="text-xs text-gray-500">{{ formatTime(event.startTime) }}</div>
               </td>
               <td class="px-6 py-4">
                 <span class="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-700">
@@ -291,6 +341,9 @@ const eventForm = ref<{
   endTime?: string
   address?: string
   content?: string
+  isFree?: boolean
+  price?: number
+  currency?: string
 }>({
   title: '',
   startDate: '',
@@ -303,7 +356,10 @@ const eventForm = ref<{
   endDate: '',
   endTime: '',
   address: '',
-  content: ''
+  content: '',
+  isFree: true,
+  price: undefined,
+  currency: 'USD'
 })
 
 const loadEvents = async () => {
@@ -436,6 +492,20 @@ const saveEvent = async () => {
     const normalizedStartDate = normalizeDate(startDateValue)
     const normalizedStartTime = normalizeTime(startTimeValue)
     
+    // Valider le prix si l'événement est payant
+    if (eventForm.value.isFree === false) {
+      if (!eventForm.value.price || eventForm.value.price <= 0) {
+        error.value = 'Veuillez entrer un prix valide pour un événement payant'
+        loading.value = false
+        return
+      }
+      if (!eventForm.value.currency) {
+        error.value = 'Veuillez sélectionner une devise pour un événement payant'
+        loading.value = false
+        return
+      }
+    }
+    
     const eventData: Omit<Event, 'id' | 'createdAt' | 'updatedAt'> = {
       title: eventForm.value.title.trim(),
       description: eventForm.value.description.trim(),
@@ -446,6 +516,15 @@ const saveEvent = async () => {
       startTime: normalizedStartTime,
       location: eventForm.value.location.trim(),
       registrationRequired: eventForm.value.registrationRequired,
+    }
+    
+    // Ajouter le prix et la devise
+    if (eventForm.value.isFree === false && eventForm.value.price && eventForm.value.price > 0) {
+      eventData.price = eventForm.value.price
+      eventData.currency = eventForm.value.currency || 'USD'
+    } else {
+      // Si gratuit, mettre le prix à 0 ou undefined
+      eventData.price = 0
     }
     
     // Ajouter les champs optionnels seulement s'ils ne sont pas vides
@@ -554,6 +633,21 @@ const normalizeDate = (dateString?: string | null): string => {
   }
 }
 
+// Formater l'heure au format H:m pour l'affichage (sans zéro devant pour les heures)
+const formatTime = (timeString?: string | null): string => {
+  if (!timeString) return ''
+  const time = timeString.trim()
+  if (time.includes(':')) {
+    const parts = time.split(':')
+    if (parts.length >= 2) {
+      const hours = parseInt(parts[0], 10)
+      const minutes = parts[1].padStart(2, '0')
+      return `${hours}:${minutes}`
+    }
+  }
+  return time
+}
+
 // Fonction pour normaliser une heure au format HH:MM pour l'input time
 const normalizeTime = (timeString?: string | null): string => {
   if (!timeString || typeof timeString !== 'string') return ''
@@ -614,6 +708,8 @@ const isValidTime = (timeString: string): boolean => {
 const editEvent = (event: Event) => {
   try {
     editingEvent.value = event
+    // Déterminer si l'événement est gratuit ou payant
+    const isFree = !event.price || event.price === 0
     eventForm.value = {
       title: event.title || '',
       startDate: normalizeDate(event.startDate),
@@ -626,7 +722,10 @@ const editEvent = (event: Event) => {
       endDate: normalizeDate(event.endDate),
       endTime: normalizeTime(event.endTime),
       address: event.address || '',
-      content: event.content || ''
+      content: event.content || '',
+      isFree: isFree,
+      price: event.price && event.price > 0 ? event.price : undefined,
+      currency: event.currency || 'USD'
     }
     imageFile.value = null
     imagePreview.value = event.image || null
@@ -689,7 +788,10 @@ const cancelForm = () => {
     endDate: '',
     endTime: '',
     address: '',
-    content: ''
+    content: '',
+    isFree: true,
+    price: undefined,
+    currency: 'USD'
   }
 }
 
