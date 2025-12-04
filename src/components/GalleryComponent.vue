@@ -30,10 +30,9 @@
       </div>
 
 
-      <!-- Loading State -->
-      <div v-if="loading && photos.length === 0" class="text-center py-12">
-        <i class="fas fa-spinner fa-spin text-4xl text-blue-600 mb-4"></i>
-        <p class="text-gray-600">Chargement de la galerie...</p>
+      <!-- Loading State with Shimmer -->
+      <div v-if="loading && photos.length === 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-8">
+        <ShimmerCard v-for="n in 8" :key="n" />
       </div>
 
       <!-- Error State -->
@@ -158,6 +157,8 @@ import VueEasyLightbox from 'vue-easy-lightbox'
 import 'vue-easy-lightbox/dist/external-css/vue-easy-lightbox.css'
 import type { GalleryPhoto, GalleryCategory } from '@/models'
 import galleryService from '@/services/gallery.service'
+// @ts-ignore
+import ShimmerCard from './ShimmerCard.vue'
 
 const { t } = useI18n()
 

@@ -39,7 +39,6 @@
           v-for="(article, index) in news"
           :key="article.id"
           class="group bg-white/80 backdrop-blur-sm rounded-xl sm:rounded-2xl border border-gray-200/80 hover:border-blue-300 shadow-md sm:shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden cursor-pointer transform hover:-translate-y-1 sm:hover:-translate-y-2"
-          :class="['stagger-item', `delay-${index * 150}`]"
           @click="openArticle(article.id)"
         >
           <div class="relative h-48 sm:h-56 lg:h-64 overflow-hidden bg-gray-100">
@@ -64,11 +63,11 @@
               </span>
             </div>
             
-            <h3 class="text-base sm:text-lg font-bold text-gray-900 mb-2 sm:mb-3 line-clamp-2 group-hover:text-blue-600 transition-colors duration-300 leading-tight fade-in-up">
+            <h3 class="text-base sm:text-lg font-bold text-gray-900 mb-2 sm:mb-3 line-clamp-2 group-hover:text-blue-600 transition-colors duration-300 leading-tight">
               {{ article.title }}
             </h3>
             
-            <p class="text-gray-600 text-xs sm:text-sm mb-4 sm:mb-5 line-clamp-3 leading-relaxed group-hover:text-gray-700 transition-colors duration-300 fade-in-up" data-delay="50">
+            <p class="text-gray-600 text-xs sm:text-sm mb-4 sm:mb-5 line-clamp-3 leading-relaxed group-hover:text-gray-700 transition-colors duration-300">
               {{ article.summary }}
             </p>
             
@@ -85,16 +84,9 @@
         </article>
       </div>
 
-      <!-- État de chargement pour les actualités -->
-      <div v-else-if="loadingNews" class="bg-white/80 backdrop-blur-sm rounded-xl sm:rounded-2xl border border-gray-200/80 shadow-md sm:shadow-lg p-8 sm:p-12 mb-6 sm:mb-8 text-center fade-in-up">
-        <div class="max-w-md mx-auto">
-          <div class="w-20 h-20 sm:w-24 sm:h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6">
-            <i class="fas fa-spinner fa-spin text-3xl sm:text-4xl text-blue-500"></i>
-          </div>
-          <h3 class="text-xl sm:text-2xl font-bold text-gray-900 mb-2 sm:mb-3">
-            Chargement des actualités...
-          </h3>
-        </div>
+      <!-- État de chargement pour les actualités avec Shimmer -->
+      <div v-else-if="loadingNews" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6 sm:mb-8">
+        <ShimmerCard v-for="n in 3" :key="n" />
       </div>
 
       <!-- État vide pour les actualités -->
@@ -152,10 +144,9 @@
         </div>
       </div>
 
-      <!-- État de chargement -->
-      <div v-if="loadingEvents" class="text-center py-12">
-        <i class="fas fa-spinner fa-spin text-3xl text-blue-600 mb-4"></i>
-        <p class="text-gray-600 text-sm">Chargement des événements...</p>
+      <!-- État de chargement avec Shimmer -->
+      <div v-if="loadingEvents" class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 mb-6 sm:mb-8">
+        <ShimmerCard v-for="n in 2" :key="n" />
       </div>
 
       <!-- Grille des événements -->
@@ -165,7 +156,6 @@
           v-for="(event, index) in events"
           :key="event.id"
           class="group bg-white/80 backdrop-blur-sm rounded-xl sm:rounded-2xl border border-gray-200/80 hover:border-blue-300 shadow-md sm:shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden transform hover:-translate-y-1 sm:hover:-translate-y-2"
-          :class="['stagger-item', `delay-${index * 200 + 800}`]"
         >
           <div class="flex flex-col md:flex-row h-full">
             <!-- Date Section -->
@@ -173,8 +163,8 @@
               <div class="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent"></div>
               <div class="absolute top-0 left-0 w-full h-1 bg-white/30 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
               <p class="text-2xl sm:text-3xl font-bold mb-1 relative z-10 transform group-hover:scale-110 transition-transform duration-300 pop-in">{{ getEventDay(event.startDate) }}</p>
-              <p class="text-xs sm:text-sm font-semibold relative z-10 transform group-hover:translate-y-1 transition-transform duration-300 fade-in-up" data-delay="50">{{ getEventMonth(event.startDate) }}</p>
-              <p class="text-xs opacity-90 relative z-10 mt-1 fade-in-up" data-delay="100">{{ getEventYear(event.startDate) }}</p>
+              <p class="text-xs sm:text-sm font-semibold relative z-10 transform group-hover:translate-y-1 transition-transform duration-300">{{ getEventMonth(event.startDate) }}</p>
+              <p class="text-xs opacity-90 relative z-10 mt-1">{{ getEventYear(event.startDate) }}</p>
               <div class="absolute bottom-3 w-8 h-0.5 bg-white/50 rounded-full transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 delay-200"></div>
             </div>
             
@@ -183,7 +173,7 @@
               <div>
                 <div class="flex flex-wrap items-center gap-2 mb-3 sm:mb-4">
                   <span class="text-blue-500 text-xs font-medium flex items-center bg-blue-50 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg group-hover:bg-blue-100 transition-colors duration-300 scale-in" data-delay="150">
-                    <i class="far fa-clock mr-1.5 text-xs"></i>{{ event.startTime }}
+                    <i class="far fa-clock mr-1.5 text-xs"></i>{{ formatEventTime(event.startTime, event.endTime) }}
                   </span>
                   <span class="text-gray-600 text-xs font-medium flex items-center bg-gray-100 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg group-hover:bg-gray-200 transition-colors duration-300 scale-in" data-delay="200">
                     <i class="fas fa-globe mr-1.5 text-xs" v-if="event.type === 'webinar'"></i>
@@ -192,31 +182,19 @@
                   </span>
                 </div>
                 
-                <h3 class="text-lg sm:text-xl font-bold text-gray-900 mb-2 sm:mb-3 group-hover:text-blue-600 transition-colors duration-300 line-clamp-2 leading-tight fade-in-up" data-delay="250">
+                <h3 class="text-lg sm:text-xl font-bold text-gray-900 mb-2 sm:mb-3 group-hover:text-blue-600 transition-colors duration-300 line-clamp-2 leading-tight">
                   {{ event.title }}
                 </h3>
                 
-                <p class="text-gray-600 text-xs sm:text-sm mb-4 sm:mb-6 leading-relaxed line-clamp-2 group-hover:text-gray-700 transition-colors duration-300 fade-in-up" data-delay="300">
+                <p class="text-gray-600 text-xs sm:text-sm mb-4 sm:mb-6 leading-relaxed line-clamp-2 group-hover:text-gray-700 transition-colors duration-300">
                   {{ event.description }}
                 </p>
               </div>
               
               <div class="flex flex-wrap gap-2 sm:gap-3">
                 <button 
-                  class="group/btn bg-blue-500 hover:bg-blue-600 text-white font-medium text-xs sm:text-sm px-4 sm:px-5 py-2 sm:py-2.5 rounded-lg sm:rounded-xl shadow-md sm:shadow-lg hover:shadow-xl transition-all duration-300 flex items-center transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed slide-in-up flex-1 sm:flex-none"
-                  data-delay="350"
-                  @click.stop="registerEvent(event.id)"
-                  :disabled="isLoading"
-                >
-                  <div class="w-4 h-4 sm:w-5 sm:h-5 bg-white/20 rounded-full mr-2 flex items-center justify-center group-hover/btn:scale-110 transition-transform duration-300 flex-shrink-0">
-                    <i class="fas fa-user-plus text-white text-xs"></i>
-                  </div>
-                  <span v-if="isLoading" class="text-xs sm:text-sm">{{ $t('actuality.events.registering') }}</span>
-                  <span v-else class="text-xs sm:text-sm">{{ $t('actuality.events.register') }}</span>
-                </button>
-                <button 
                   class="group/btn border border-blue-500 text-blue-600 hover:bg-blue-50 font-medium text-xs sm:text-sm px-4 sm:px-5 py-2 sm:py-2.5 rounded-lg sm:rounded-xl transition-all duration-300 flex items-center transform hover:scale-105 slide-in-up flex-1 sm:flex-none"
-                  data-delay="400"
+                  data-delay="350"
                   @click.stop="viewEventDetails(event.id)"
                 >
                   <div class="w-4 h-4 sm:w-5 sm:h-5 bg-blue-500 rounded-full mr-2 flex items-center justify-center group-hover/btn:scale-110 transition-transform duration-300 flex-shrink-0">
@@ -263,13 +241,14 @@ import { useI18n } from 'vue-i18n'
 import type { Actuality, Event } from '@/models'
 import eventService from '@/services/event.service'
 import actualityService from '@/services/actuality.service'
+// @ts-ignore
+import ShimmerCard from './ShimmerCard.vue'
 
 const { t } = useI18n()
 
 const router = useRouter()
 
 // État réactif
-const isLoading = ref(false)
 const isVisible = ref(false)
 const loadingEvents = ref(false)
 const loadingNews = ref(false)
@@ -341,15 +320,29 @@ const openArticle = (articleId: number | string | undefined) => {
   router.push(`/actualites/${articleId}`)
 }
 
-const registerEvent = (eventId: number | string | undefined) => {
-  if (!eventId) return
-  console.log(`Inscription à l'événement ${eventId}`)
-  isLoading.value = true
-  // Simulation d'une requête API
-  setTimeout(() => {
-    isLoading.value = false
-    alert(`Inscription réussie à l'événement ${eventId}`)
-  }, 1000)
+// Formater l'heure au format H:m (sans zéro devant pour les heures)
+const formatEventTime = (startTime: string | undefined, endTime: string | undefined) => {
+  const formatTime = (timeStr: string | undefined) => {
+    if (!timeStr) return ''
+    const time = timeStr.trim()
+    if (time.includes(':')) {
+      const parts = time.split(':')
+      if (parts.length >= 2) {
+        const hours = parseInt(parts[0], 10)
+        const minutes = parts[1].padStart(2, '0')
+        return `${hours}:${minutes}`
+      }
+    }
+    return time
+  }
+  
+  if (!startTime) return ''
+  const formattedStart = formatTime(startTime)
+  if (endTime) {
+    const formattedEnd = formatTime(endTime)
+    return `${formattedStart} - ${formattedEnd}`
+  }
+  return formattedStart
 }
 
 const viewEventDetails = (eventId: number | string | undefined) => {
@@ -438,7 +431,7 @@ const loadEvents = async () => {
         const dateB = new Date(b.startDate || '').getTime()
         return dateA - dateB
       })
-      .slice(0, 3) // Limiter à 3 événements
+      .slice(0, 2) // Limiter à 2 événements
   } catch (err: any) {
     console.error('Erreur lors du chargement des événements:', err)
     events.value = []
