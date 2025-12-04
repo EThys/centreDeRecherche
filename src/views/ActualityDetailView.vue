@@ -144,7 +144,7 @@
                 <article
                   v-for="related in relatedArticles"
                   :key="related.id"
-                  @click="openArticle(related.id)"
+                  @click="related.id && openArticle(related.id)"
                   class="cursor-pointer group"
                 >
                   <div class="flex items-start space-x-3">
@@ -272,7 +272,7 @@
           <article
             v-for="(related, index) in relatedArticles"
             :key="related.id"
-            @click="openArticle(related.id)"
+            @click="related.id && openArticle(related.id)"
             class="bg-white rounded-xl border border-gray-200 hover:border-blue-300 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden cursor-pointer group fade-in-up stagger-item"
             :style="{ animationDelay: `${index * 100}ms` }"
             data-animate
@@ -489,7 +489,7 @@ const shareOnTwitter = () => {
   window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank')
 }
 
-const openArticle = (articleId) => {
+const openArticle = (articleId: number | string) => {
   router.push(`/actualites/${articleId}`)
 }
 
@@ -503,14 +503,18 @@ const initScrollAnimations = () => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
         entry.target.classList.add('animate-in')
-        observer.unobserve(entry.target)
+        if (observer) {
+          observer.unobserve(entry.target)
+        }
       }
     })
   }, observerOptions)
 
   // Observer tous les éléments avec data-animate
   document.querySelectorAll('[data-animate]').forEach(el => {
-    observer.observe(el)
+    if (observer) {
+      observer.observe(el)
+    }
   })
 }
 

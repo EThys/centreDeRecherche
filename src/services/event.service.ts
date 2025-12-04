@@ -320,6 +320,20 @@ export const eventService = {
   },
 
   /**
+   * Vérifie si un email est déjà inscrit à un événement
+   */
+  async checkEmailRegistration(eventId: number | string, email: string): Promise<boolean> {
+    try {
+      const response = await apiClient.get<{ registered: boolean }>(`${ENDPOINT}/${eventId}/check-registration`, { email })
+      return response.data?.registered || false
+    } catch (error) {
+      // Si l'endpoint n'existe pas encore, retourner false
+      console.warn('Check registration endpoint not available:', error)
+      return false
+    }
+  },
+
+  /**
    * Récupère les inscriptions d'un événement
    */
   async getEventRegistrations(eventId: number | string): Promise<EventRegistration[]> {

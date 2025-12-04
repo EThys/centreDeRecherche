@@ -55,7 +55,7 @@
               required
               :min="new Date().toISOString().split('T')[0]"
               class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-              @input="eventForm.startDate = $event.target.value"
+              @input="eventForm.startDate = ($event.target as HTMLInputElement).value"
             />
           </div>
           <div>
@@ -65,7 +65,7 @@
               type="time"
               required
               class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-              @input="eventForm.startTime = $event.target.value"
+              @input="eventForm.startTime = ($event.target as HTMLInputElement).value"
             />
           </div>
           <div>
@@ -139,7 +139,7 @@
                 type="date"
                 :min="eventForm.startDate || new Date().toISOString().split('T')[0]"
                 class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                @input="eventForm.endDate = $event.target.value"
+                @input="eventForm.endDate = ($event.target as HTMLInputElement).value"
               />
             </div>
             <div>
@@ -148,7 +148,7 @@
                 v-model="eventForm.endTime"
                 type="time"
                 class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                @input="eventForm.endTime = $event.target.value"
+                @input="eventForm.endTime = ($event.target as HTMLInputElement).value"
               />
             </div>
             <div>
@@ -346,8 +346,8 @@ const loadEvents = async () => {
   }
 }
 
-const handleImageChange = (event: Event) => {
-  const target = event.target as HTMLInputElement
+const handleImageChange = (e: globalThis.Event) => {
+  const target = (e.target as HTMLInputElement)
   if (target.files && target.files[0]) {
     imageFile.value = target.files[0]
     // Créer une preview
@@ -441,6 +441,7 @@ const saveEvent = async () => {
       description: eventForm.value.description.trim(),
       type: eventForm.value.type,
       status: 'upcoming',
+      image: eventForm.value.image || '', // Image requise
       startDate: normalizedStartDate,
       startTime: normalizedStartTime,
       location: eventForm.value.location.trim(),

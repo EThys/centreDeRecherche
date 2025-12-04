@@ -129,7 +129,7 @@
               <i class="fas fa-times"></i>
             </button>
             <button
-              v-if="request.status === 'accepted' && request.status !== 'published'"
+              v-if="request.status === 'accepted'"
               @click="updateStatus(request, 'published')"
               :disabled="saving"
               class="p-2 text-purple-600 hover:bg-purple-50 rounded-lg transition-colors disabled:opacity-50"

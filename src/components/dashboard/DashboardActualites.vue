@@ -380,6 +380,7 @@ const saveActuality = async () => {
         author: actualityForm.value.author.trim(),
         readTime: actualityForm.value.readTime,
         status: 'published',
+        image: actualityForm.value.image || '', // Image requise
         learningPoints: learningPoints, // Toujours envoyer un tableau, même vide
         keyPoints: keyPoints, // Toujours envoyer un tableau, même vide
         tags: tags // Toujours envoyer un tableau, même vide
