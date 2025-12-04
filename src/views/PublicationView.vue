@@ -10,6 +10,8 @@ import publicationService from '@/services/publication.service'
 import NavBarComponent from '../components/navbar/NavBarComponent.vue'
 //@ts-ignore
 import FooterComponent from '../components/footer/FooterComponent.vue'
+//@ts-ignore
+import ShimmerCard from '../components/ShimmerCard.vue'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -774,16 +776,20 @@ const submitPublicationRequest = async () => {
       >
         Tout effacer
       </button>
+      </div>
     </div>
-  </div>
+
+      <!-- Loading State with Shimmer -->
+      <div v-if="loading" class="space-y-4 sm:space-y-6 mb-8">
+        <ShimmerCard v-for="n in 5" :key="n" />
+      </div>
 
       <!-- Liste des Publications - Une par ligne -->
-      <div class="space-y-4 sm:space-y-6 mb-8">
+      <div v-else class="space-y-4 sm:space-y-6 mb-8">
         <article
           v-for="(publication, index) in paginatedPublications"
           :key="publication.id"
-          class="group bg-white rounded-xl border border-gray-200 hover:border-blue-300 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden cursor-pointer fade-in-up"
-          :style="`animation-delay: ${index * 100}ms;`"
+          class="group bg-white rounded-xl border border-gray-200 hover:border-blue-300 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden cursor-pointer"
           @click="openPublication(publication.id)"
         >
           <div class="flex flex-col lg:flex-row">

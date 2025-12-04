@@ -516,22 +516,24 @@ const formatEventDate = (dateString: string | undefined) => {
 }
 
 const formatEventTime = (startTime: string | undefined, endTime: string | undefined) => {
-  if (!startTime) return ''
-  // Fonction pour supprimer les secondes
-  const removeSeconds = (timeStr: string) => {
+  const formatTime = (timeStr: string | undefined) => {
     if (!timeStr) return ''
     const time = timeStr.trim()
     if (time.includes(':')) {
       const parts = time.split(':')
       if (parts.length >= 2) {
-        return `${parts[0].padStart(2, '0')}:${parts[1].padStart(2, '0')}`
+        const hours = parseInt(parts[0], 10)
+        const minutes = parts[1].padStart(2, '0')
+        return `${hours}:${minutes}`
       }
     }
     return time
   }
-  const formattedStart = removeSeconds(startTime)
+  
+  if (!startTime) return ''
+  const formattedStart = formatTime(startTime)
   if (endTime) {
-    const formattedEnd = removeSeconds(endTime)
+    const formattedEnd = formatTime(endTime)
     return `${formattedStart} - ${formattedEnd}`
   }
   return formattedStart
