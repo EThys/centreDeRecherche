@@ -182,7 +182,7 @@ export const actualityService = {
    * Crée une nouvelle actualité avec support pour l'upload d'image
    */
   async createActuality(
-    actuality: Omit<Actuality, 'id' | 'createdAt' | 'updatedAt' | 'image'>, 
+    actuality: Omit<Actuality, 'id' | 'createdAt' | 'updatedAt'>, 
     imageFile?: File,
     authorPhotoFile?: File
   ): Promise<Actuality> {
@@ -212,7 +212,7 @@ export const actualityService = {
        formData.append('learning_points', JSON.stringify(Array.isArray(actuality.learningPoints) ? actuality.learningPoints : []))
      } else {
        formData.append('learning_points', JSON.stringify([]))
-    }
+     }
      if (actuality.keyPoints !== undefined) {
        formData.append('key_points', JSON.stringify(Array.isArray(actuality.keyPoints) ? actuality.keyPoints : []))
      } else {
@@ -222,7 +222,7 @@ export const actualityService = {
        formData.append('related_articles', JSON.stringify(Array.isArray(actuality.relatedArticles) ? actuality.relatedArticles : []))
      } else {
        formData.append('related_articles', JSON.stringify([]))
-    }
+     }
 
     // Ajouter l'image si fournie
     if (imageFile) {
@@ -287,7 +287,7 @@ export const actualityService = {
        formData.append('related_articles', JSON.stringify(Array.isArray(actuality.relatedArticles) ? actuality.relatedArticles : []))
      } else {
        formData.append('related_articles', JSON.stringify([]))
-    }
+     }
 
     // Ajouter l'image si fournie
     if (imageFile) {
