@@ -36,7 +36,7 @@
         </div>
 
         <!-- Titre -->
-        <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-4 sm:mb-6 leading-tight drop-shadow-2xl line-clamp-3">
+        <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-4 sm:mb-6 leading-tight drop-shadow-2xl">
           {{ article.title }}
         </h1>
 
@@ -144,7 +144,7 @@
                 <article
                   v-for="related in relatedArticles"
                   :key="related.id"
-                  @click="related.id && openArticle(related.id)"
+                  @click="openArticle(related.id)"
                   class="cursor-pointer group"
                 >
                   <div class="flex items-start space-x-3">
@@ -212,7 +212,7 @@
                 <!-- Points clés à retenir -->
                 <div v-if="article.keyPoints && article.keyPoints.length > 0" class="mt-6 fade-in-up" data-animate>
                   <h3 class="text-xl font-semibold mb-3 text-gray-900">Points clés à retenir :</h3>
-                <ul class="list-disc list-inside space-y-2 mb-6">
+                  <ul class="list-disc list-inside space-y-2 mb-6">
                     <li 
                       v-for="(point, index) in article.keyPoints" 
                       :key="index"
@@ -222,7 +222,7 @@
                     >
                       {{ point }}
                     </li>
-                </ul>
+                  </ul>
                 </div>
 
                 <div class="bg-blue-50 rounded-xl p-6 mt-6 border-l-4 border-blue-500 fade-in-up" data-animate>
@@ -235,26 +235,6 @@
                     sur le financement de votre PME. Le CReFF-PME propose des services d'accompagnement 
                     adaptés à vos besoins spécifiques.
                   </p>
-                </div>
-              </div>
-            </section>
-
-            <!-- Auteur -->
-            <section v-if="article.author" class="mb-10 pb-10 border-b border-gray-200 fade-in-up" data-animate>
-              <h2 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 flex items-center">
-                <i class="fas fa-user mr-3 text-blue-500"></i>
-                Auteur
-              </h2>
-              <div class="flex items-center space-x-4">
-                <img
-                  :src="getAuthorAvatar(article.authorPhoto)"
-                  :alt="article.author"
-                  class="w-16 h-16 rounded-full object-cover border-2 border-blue-200"
-                  @error="(e) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80' }"
-                />
-                <div>
-                  <p class="text-lg font-semibold text-gray-900">{{ article.author }}</p>
-                  <p class="text-sm text-gray-600">Auteur de l'article</p>
                 </div>
               </div>
             </section>
@@ -292,12 +272,12 @@
           <article
             v-for="(related, index) in relatedArticles"
             :key="related.id"
-            @click="related.id && openArticle(related.id)"
+            @click="openArticle(related.id)"
             class="bg-white rounded-xl border border-gray-200 hover:border-blue-300 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden cursor-pointer group fade-in-up stagger-item"
             :style="{ animationDelay: `${index * 100}ms` }"
             data-animate
           >
-            <div class="h-40 relative overflow-hidden">
+              <div class="h-40 relative overflow-hidden">
               <img
                 :src="getArticleImage(related.image)"
                 :alt="related.title"
@@ -436,18 +416,18 @@ const getAuthorAvatar = (authorPhoto?: string | null): string => {
     return 'https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80'
   }
   return actualityService.getImageUrl(authorPhoto) || 'https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80'
-    }
+}
 
 const formatDate = (dateString: string | undefined) => {
   if (!dateString) return ''
   try {
-  const date = new Date(dateString)
+    const date = new Date(dateString)
     if (isNaN(date.getTime())) return dateString
-  return date.toLocaleDateString('fr-FR', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric'
-  })
+    return date.toLocaleDateString('fr-FR', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric'
+    })
   } catch {
     return dateString
   }
@@ -509,7 +489,7 @@ const shareOnTwitter = () => {
   window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank')
 }
 
-const openArticle = (articleId: string | number) => {
+const openArticle = (articleId) => {
   router.push(`/actualites/${articleId}`)
 }
 
@@ -523,18 +503,14 @@ const initScrollAnimations = () => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
         entry.target.classList.add('animate-in')
-        if (observer) {
         observer.unobserve(entry.target)
-        }
       }
     })
   }, observerOptions)
 
   // Observer tous les éléments avec data-animate
   document.querySelectorAll('[data-animate]').forEach(el => {
-    if (observer) {
     observer.observe(el)
-    }
   })
 }
 
@@ -635,14 +611,5 @@ onUnmounted(() => {
     transform: none !important;
     opacity: 1 !important;
   }
-}
-
-/* Limiter le nombre de lignes pour le titre */
-.line-clamp-3 {
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 </style>

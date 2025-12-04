@@ -99,7 +99,6 @@ import { useI18n } from 'vue-i18n'
 import type { Partner } from '@/models'
 import solvayLogo from '../assets/solvay.jpeg'
 import aresLogo from '../assets/ares.jpeg'
-import kongoLogo from '../assets/kongo.jpeg'
 
 const { t } = useI18n()
 
@@ -123,16 +122,6 @@ const partners = ref<Partner[]>([
     active: true,
     website: 'https://www.ares-ac.be',
     email: 'info@ares-ac.be'
-  },
-  {
-    id: 3,
-    name: 'Université Kongo',
-    description: 'Partenariat académique',
-    logo: kongoLogo,
-    type: 'academic',
-    active: true,
-    website: 'https://www.universite-kongo.org',
-    email: 'contact@universite-kongo.org'
   }
 ])
 

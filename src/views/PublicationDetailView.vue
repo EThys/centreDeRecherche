@@ -1,8 +1,14 @@
 <template>
   <NavBarComponent />
   
+  <!-- Loading State -->
+  <DetailLoader 
+    v-if="loading" 
+    title="Chargement de la publication"
+  />
+  
   <!-- Hero Section - Image pleine largeur avec contenu superposé -->
-  <div v-if="publication" class="relative w-full h-screen max-h-[90vh] overflow-hidden">
+  <div v-if="publication && !loading" class="relative w-full h-screen max-h-[90vh] overflow-hidden">
     <!-- Image de fond -->
     <div class="absolute inset-0">
       <img
@@ -41,10 +47,10 @@
   </div>
 
   <!-- Contenu principal -->
-  <main class="min-h-screen bg-white">
-    <div v-if="publication" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
+  <main v-if="publication && !loading" class="min-h-screen bg-white">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
       <!-- Section: Informations générales -->
-      <section class="mb-12 pb-12 border-b border-gray-200 fade-in-up" data-animate>
+      <section class="mb-12 pb-12 border-b border-gray-200">
         <h2 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 flex items-center">
           <i class="fas fa-info-circle mr-3 text-blue-500"></i>
           Informations générales
@@ -132,7 +138,7 @@
       </section>
 
       <!-- Section: Fichiers -->
-      <section class="mb-12 pb-12 border-b border-gray-200 fade-in-up" data-animate>
+      <section class="mb-12 pb-12 border-b border-gray-200">
         <h2 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 flex items-center">
           <i class="fas fa-download mr-3 text-green-500"></i>
           Fichiers du document
@@ -178,7 +184,7 @@
       </section>
 
       <!-- Section: Related works & more -->
-      <section class="mb-12 pb-12 border-b border-gray-200 fade-in-up" data-animate>
+      <section class="mb-12 pb-12 border-b border-gray-200">
         <h2 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 flex items-center">
           <i class="fas fa-book mr-3 text-purple-500"></i>
           Related works & more
@@ -194,7 +200,7 @@
       </section>
 
       <!-- Section: Corrections -->
-      <section class="mb-12 fade-in-up" data-animate>
+      <section class="mb-12">
         <h2 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 flex items-center">
           <i class="fas fa-edit mr-3 text-orange-500"></i>
           Corrections
@@ -204,29 +210,21 @@
         </div>
       </section>
     </div>
-
-    <!-- Loading State -->
-    <div v-else-if="loading" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 text-center">
-        <i class="fas fa-spinner fa-spin text-4xl text-blue-600 mb-4"></i>
-        <p class="text-gray-600">Chargement de la publication...</p>
-      </div>
-    </div>
-
-    <!-- Error State -->
-    <div v-else-if="error" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <div class="bg-red-50 rounded-2xl shadow-lg border border-red-200 p-8 text-center">
-        <i class="fas fa-exclamation-circle text-4xl text-red-600 mb-4"></i>
-        <p class="text-red-600 mb-4">{{ error }}</p>
-        <button
-          @click="loadPublication"
-          class="px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
-        >
-          Réessayer
-        </button>
-      </div>
-    </div>
   </main>
+
+  <!-- Error State -->
+  <div v-if="error && !loading" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="bg-red-50 rounded-2xl shadow-lg border border-red-200 p-8 text-center">
+      <i class="fas fa-exclamation-circle text-4xl text-red-600 mb-4"></i>
+      <p class="text-red-600 mb-4">{{ error }}</p>
+      <button
+        @click="loadPublication"
+        class="px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
+      >
+        Réessayer
+      </button>
+    </div>
+  </div>
 
   <FooterComponent />
 </template>
@@ -241,11 +239,13 @@ import publicationService from '@/services/publication.service'
 import NavBarComponent from '../components/navbar/NavBarComponent.vue'
 //@ts-ignore
 import FooterComponent from '../components/footer/FooterComponent.vue'
+//@ts-ignore
+import DetailLoader from '../components/DetailLoader.vue'
 
 const route = useRoute()
 const router = useRouter()
 const publication = ref<Publication | null>(null)
-const loading = ref(false)
+const loading = ref(true)
 const error = ref<string | null>(null)
 let observer: IntersectionObserver | null = null
 
@@ -374,5 +374,26 @@ onUnmounted(() => {
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+/* Effet d'apparition après le loader */
+.detail-fade-in {
+  animation: detailFadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.detail-fade-in-delay {
+  animation: detailFadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
+  opacity: 0;
+}
+
+@keyframes detailFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 </style>

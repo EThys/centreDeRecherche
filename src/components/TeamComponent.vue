@@ -155,7 +155,7 @@ const teamMembers = ref<TeamMember[]>([
       "Co-fondateur du Centre CReFF-PME",
       "Expert en finance entrepreneuriale"
     ],
-    education: "Doctorat en sciences économiques et de gestion (ULB)",
+    education: "Doctorat en sciences économiques et de gestion (ULB) (2024)",
     email: "jean.nsonsumuna@creff-pme.org"
   },
   {
