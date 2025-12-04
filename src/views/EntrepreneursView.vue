@@ -310,7 +310,7 @@
                     :src="getEventImage(event.image)"
                     :alt="event.title"
                     class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                    @error="(e) => { e.target.src = 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80' }"
+                    @error="(e) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80' }"
                   />
                   <div class="absolute top-3 left-3 bg-blue-600 text-white text-xs font-semibold px-3 py-1 rounded-lg">
                     {{ event.type }}
@@ -328,12 +328,12 @@
                     {{ event.description }}
                   </p>
                   <div class="flex flex-wrap gap-4 text-sm text-gray-600 mb-4">
-                  <div class="flex items-center">
-                    <i class="fas fa-calendar-alt mr-2 text-blue-600"></i>
+                    <div class="flex items-center">
+                      <i class="fas fa-calendar-alt mr-2 text-blue-600"></i>
                       {{ formatEventDate(event.startDate) }}
-                  </div>
-                  <div class="flex items-center">
-                    <i class="fas fa-clock mr-2 text-blue-600"></i>
+                    </div>
+                    <div class="flex items-center">
+                      <i class="fas fa-clock mr-2 text-blue-600"></i>
                       {{ formatEventTime(event.startTime, event.endTime) }}
                     </div>
                     <div class="flex items-center">
@@ -356,8 +356,8 @@
                     @click.stop="registerEvent(event.id)"
                     class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-all duration-300 transform hover:scale-105"
                   >
-                  {{ $t('entrepreneurs.upcoming.register') }}
-                </button>
+                    {{ $t('entrepreneurs.upcoming.register') }}
+                  </button>
                   <button 
                     @click.stop="openEvent(event.id)"
                     class="text-blue-600 hover:text-blue-700 font-medium text-sm flex items-center gap-2 transition-colors"
@@ -486,7 +486,7 @@
                     type="email"
                     required
                     class="w-full px-4 py-3.5 rounded-xl border-2 border-gray-200 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-300 text-sm bg-gray-50 focus:bg-white group-hover:border-gray-300"
-                    placeholder="exemple@email.com"
+                    :placeholder="$t('entrepreneurs.registration.emailPlaceholder')"
                   />
                 </div>
               </div>
@@ -558,14 +558,15 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
-import { useToast } from 'vue-toast-notification'
+import type { TrainingRegistration, Event } from '@/models'
+import eventService from '@/services/event.service'
+import trainingRegistrationService from '@/services/training-registration.service'
 //@ts-ignore
 import NavBarComponent from '../components/navbar/NavBarComponent.vue'
-const { t } = useI18n()
 //@ts-ignore
 import FooterComponent from '../components/footer/FooterComponent.vue'
 
@@ -575,43 +576,33 @@ import carousel2 from '../assets/carousel-2.jpg'
 import carousel4 from '../assets/carousel-4.jpg'
 import profImage from '../assets/prof.jpeg'
 
-import eventService from '@/services/event.service'
-import trainingRegistrationService from '@/services/training-registration.service'
-
+const { t } = useI18n()
 const router = useRouter()
-const toast = useToast()
 
 // Témoignages
-const testimonials = computed(() => {
-  try {
-    return [
-      {
-        text: t('entrepreneurs.testimonials.testimonial1.text'),
-        name: t('entrepreneurs.testimonials.testimonial1.name'),
-        role: t('entrepreneurs.testimonials.testimonial1.role'),
-        initials: 'MK'
-      },
-      {
-        text: t('entrepreneurs.testimonials.testimonial2.text'),
-        name: t('entrepreneurs.testimonials.testimonial2.name'),
-        role: t('entrepreneurs.testimonials.testimonial2.role'),
-        initials: 'JD'
-      },
-      {
-        text: t('entrepreneurs.testimonials.testimonial3.text'),
-        name: t('entrepreneurs.testimonials.testimonial3.name'),
-        role: t('entrepreneurs.testimonials.testimonial3.role'),
-        initials: 'PL'
-      }
-    ]
-  } catch (error) {
-    console.error('Erreur lors de la récupération des témoignages:', error)
-    return []
+const testimonials = ref([
+  {
+    text: t('entrepreneurs.testimonials.testimonial1.text'),
+    name: t('entrepreneurs.testimonials.testimonial1.name'),
+    role: t('entrepreneurs.testimonials.testimonial1.role'),
+    initials: 'MK'
+  },
+  {
+    text: t('entrepreneurs.testimonials.testimonial2.text'),
+    name: t('entrepreneurs.testimonials.testimonial2.name'),
+    role: t('entrepreneurs.testimonials.testimonial2.role'),
+    initials: 'JD'
+  },
+  {
+    text: t('entrepreneurs.testimonials.testimonial3.text'),
+    name: t('entrepreneurs.testimonials.testimonial3.name'),
+    role: t('entrepreneurs.testimonials.testimonial3.role'),
+    initials: 'PL'
   }
-})
+])
 
 // Événements à venir (dynamiques depuis le backend)
-const upcomingEvents = ref([])
+const upcomingEvents = ref<Event[]>([])
 const loadingEvents = ref(false)
 
 // Charger les événements depuis le backend
@@ -622,19 +613,13 @@ const loadUpcomingEvents = async () => {
       limit: 10, // Limiter à 10 événements
     })
     
-    // Vérifier que result et result.data existent
-    if (!result || !result.data || !Array.isArray(result.data)) {
-      upcomingEvents.value = []
-      return
-    }
-    
     // Filtrer pour ne garder que les événements à venir (basé sur la date)
     const now = new Date()
     const nowDateOnly = new Date(now.getFullYear(), now.getMonth(), now.getDate())
     
     upcomingEvents.value = result.data
       .filter(event => {
-        if (!event || !event.startDate) return false
+        if (!event.startDate) return false
         try {
           const eventDate = new Date(event.startDate)
           if (isNaN(eventDate.getTime())) return false
@@ -651,7 +636,7 @@ const loadUpcomingEvents = async () => {
         return dateA - dateB
       })
       .slice(0, 6) // Limiter à 6 événements pour l'affichage
-  } catch (err) {
+  } catch (err: any) {
     console.error('Erreur lors du chargement des événements:', err)
     upcomingEvents.value = []
   } finally {
@@ -660,7 +645,7 @@ const loadUpcomingEvents = async () => {
 }
 
 // Formater la date de l'événement
-const formatEventDate = (dateString) => {
+const formatEventDate = (dateString: string | undefined) => {
   if (!dateString) return ''
   try {
     const date = new Date(dateString)
@@ -676,7 +661,7 @@ const formatEventDate = (dateString) => {
 }
 
 // Formater l'heure de l'événement
-const formatEventTime = (startTime, endTime) => {
+const formatEventTime = (startTime: string | undefined, endTime: string | undefined) => {
   if (!startTime) return ''
   if (endTime) {
     return `${startTime} - ${endTime}`
@@ -685,7 +670,7 @@ const formatEventTime = (startTime, endTime) => {
 }
 
 // Obtenir l'URL de l'image de l'événement
-const getEventImage = (image) => {
+const getEventImage = (image?: string | null): string => {
   if (!image) {
     return 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'
   }
@@ -693,48 +678,41 @@ const getEventImage = (image) => {
 }
 
 // Ouvrir la page de détail de l'événement
-const openEvent = (eventId) => {
+const openEvent = (eventId: string | number | undefined) => {
   if (!eventId) return
   router.push(`/events/${eventId}`)
 }
 
 // S'inscrire à un événement
-const registerEvent = (eventId) => {
+const registerEvent = (eventId: string | number | undefined) => {
   if (!eventId) return
   // Navigation vers la page de détail pour l'inscription
   router.push(`/events/${eventId}`)
 }
 
 // FAQ
-const faqs = computed(() => {
-  try {
-    return [
-      {
-        question: t('entrepreneurs.faq.faq1.question'),
-        answer: t('entrepreneurs.faq.faq1.answer')
-      },
-      {
-        question: t('entrepreneurs.faq.faq2.question'),
-        answer: t('entrepreneurs.faq.faq2.answer')
-      },
-      {
-        question: t('entrepreneurs.faq.faq3.question'),
-        answer: t('entrepreneurs.faq.faq3.answer')
-      },
-      {
-        question: t('entrepreneurs.faq.faq4.question'),
-        answer: t('entrepreneurs.faq.faq4.answer')
-      }
-    ]
-  } catch (error) {
-    console.error('Erreur lors de la récupération des FAQ:', error)
-    return []
+const faqs = ref([
+  {
+    question: t('entrepreneurs.faq.faq1.question'),
+    answer: t('entrepreneurs.faq.faq1.answer')
+  },
+  {
+    question: t('entrepreneurs.faq.faq2.question'),
+    answer: t('entrepreneurs.faq.faq2.answer')
+  },
+  {
+    question: t('entrepreneurs.faq.faq3.question'),
+    answer: t('entrepreneurs.faq.faq3.answer')
+  },
+  {
+    question: t('entrepreneurs.faq.faq4.question'),
+    answer: t('entrepreneurs.faq.faq4.answer')
   }
-})
+])
 
-const openFaqs = ref([])
+const openFaqs = ref<number[]>([])
 
-const toggleFaq = (index) => {
+const toggleFaq = (index: number) => {
   const idx = openFaqs.value.indexOf(index)
   if (idx > -1) {
     openFaqs.value.splice(idx, 1)
@@ -744,7 +722,7 @@ const toggleFaq = (index) => {
 }
 
 // Formulaire d'inscription
-const registrationForm = ref({
+const registrationForm = ref<Omit<TrainingRegistration, 'id' | 'status' | 'registrationDate' | 'createdAt' | 'updatedAt' | 'confirmedAt' | 'cancelledAt'>>({
   name: '',
   email: '',
   program: '',
@@ -752,17 +730,11 @@ const registrationForm = ref({
 })
 
 const isSubmitting = ref(false)
-const registrationError = ref(null)
+const registrationError = ref<string | null>(null)
 
 const submitRegistration = async () => {
   if (!registrationForm.value.name || !registrationForm.value.email || !registrationForm.value.program) {
     registrationError.value = 'Veuillez remplir tous les champs obligatoires'
-    toast.open({
-      message: '⚠️ Veuillez remplir tous les champs obligatoires',
-      type: 'warning',
-      position: 'top-right',
-      duration: 4000,
-    })
     return
   }
   
@@ -771,7 +743,7 @@ const submitRegistration = async () => {
   
   try {
     // Mapper le nom du programme depuis la valeur du select
-    const programNames = {
+    const programNames: Record<string, string> = {
       'training1': t('entrepreneurs.activities.training1.title'),
       'training2': t('entrepreneurs.activities.training2.title'),
       'training3': t('entrepreneurs.activities.training3.title'),
@@ -784,42 +756,22 @@ const submitRegistration = async () => {
     }
     
     await trainingRegistrationService.submitRegistration(registrationData)
-  
-  // Afficher le message de succès
-    toast.open({
-      message: `✅ ${t('entrepreneurs.registration.success') || 'Votre inscription a été enregistrée avec succès ! Nous vous contacterons bientôt.'}`,
-      type: 'success',
-      position: 'top-right',
-      duration: 6000,
-    })
-  
-  // Réinitialiser le formulaire
-  registrationForm.value = { name: '', email: '', program: '', message: '' }
-  } catch (err) {
+    
+    // Afficher le message de succès
+    alert(t('entrepreneurs.registration.success') || 'Votre inscription a été enregistrée avec succès ! Nous vous contacterons bientôt.')
+    
+    // Réinitialiser le formulaire
+    registrationForm.value = { name: '', email: '', program: '', message: '' }
+  } catch (err: any) {
     console.error('Erreur lors de l\'inscription:', err)
-    let errorMessage = 'Une erreur est survenue lors de l\'envoi de votre inscription. Veuillez réessayer.'
-    
-    if (err.status === 422) {
-      const errors = err.errors || {};
-      const firstError = Object.values(errors)[0];
-      errorMessage = firstError?.[0] || 'Veuillez vérifier les informations saisies.';
-    } else if (err.message) {
-      errorMessage = err.message;
-    }
-    
-    registrationError.value = errorMessage
-    toast.open({
-      message: `❌ ${errorMessage}`,
-      type: 'error',
-      position: 'top-right',
-      duration: 6000,
-    })
+    registrationError.value = err.message || 'Une erreur est survenue lors de l\'envoi de votre inscription. Veuillez réessayer.'
+    alert(registrationError.value)
   } finally {
     isSubmitting.value = false
   }
 }
 
-let observer = null
+let observer: IntersectionObserver | null = null
 
 const initScrollAnimations = () => {
   const observerOptions = {
@@ -829,7 +781,7 @@ const initScrollAnimations = () => {
 
   observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
-      if (entry.isIntersecting) {
+      if (entry.isIntersecting && observer) {
         entry.target.classList.add('animate-in')
         observer.unobserve(entry.target)
       }
@@ -838,15 +790,15 @@ const initScrollAnimations = () => {
 
   // Observer tous les éléments avec data-animate
   document.querySelectorAll('[data-animate]').forEach(el => {
-    observer.observe(el)
+    if (observer) {
+      observer.observe(el)
+    }
   })
 }
 
 onMounted(() => {
-  // Charger les événements à venir (de manière asynchrone pour ne pas bloquer le rendu)
-  setTimeout(() => {
-    loadUpcomingEvents()
-  }, 0)
+  // Charger les événements à venir
+  loadUpcomingEvents()
   
   setTimeout(() => {
     initScrollAnimations()
