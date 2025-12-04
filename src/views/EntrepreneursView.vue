@@ -691,6 +691,13 @@ const getEventImage = (image) => {
   return eventService.getImageUrl(image) || 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'
 }
 
+// Gérer l'erreur de chargement d'image
+const handleImageError = (e) => {
+  if (e && e.target) {
+    e.target.src = 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'
+  }
+}
+
 // Ouvrir la page de détail de l'événement
 const openEvent = (eventId) => {
   if (!eventId) return
