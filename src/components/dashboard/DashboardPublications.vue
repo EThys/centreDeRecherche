@@ -129,7 +129,7 @@
               <i class="fas fa-times"></i>
             </button>
             <button
-              v-if="request.status === 'accepted'"
+              v-if="request.status === 'accepted' && request.status !== 'published'"
               @click="updateStatus(request, 'published')"
               :disabled="saving"
               class="p-2 text-purple-600 hover:bg-purple-50 rounded-lg transition-colors disabled:opacity-50"
@@ -161,22 +161,9 @@
           <p class="text-sm text-gray-700 mb-2">
             <strong>Domaines:</strong> {{ request.domains.join(', ') }}
           </p>
-          <p class="text-sm text-gray-700 mb-2">
+          <p class="text-sm text-gray-700">
             <strong>Résumé:</strong> {{ request.abstract?.substring(0, 200) }}{{ request.abstract && request.abstract.length > 200 ? '...' : '' }}
           </p>
-          <!-- Fichiers -->
-          <div class="flex gap-2 mt-3 pt-3 border-t border-gray-200">
-            <a
-              v-if="(request as any).documentFileUrl || (request as any).document_file_url"
-              :href="(request as any).documentFileUrl || (request as any).document_file_url"
-              target="_blank"
-              class="flex items-center gap-2 px-3 py-1.5 bg-blue-600 text-white rounded-lg text-xs font-medium hover:bg-blue-700 transition-colors"
-            >
-              <i class="fas fa-file-pdf"></i>
-              <span>Télécharger le document</span>
-            </a>
-            <span v-else class="text-xs text-gray-500">Aucun document</span>
-          </div>
         </div>
       </div>
       <div v-if="filteredRequests.length === 0" class="text-center py-12 text-gray-500">
@@ -244,50 +231,6 @@
             <label class="text-sm font-medium text-gray-600">Statut</label>
             <p class="text-gray-900">{{ getStatusLabel(selectedRequest.status) }}</p>
           </div>
-          
-          <!-- Fichiers -->
-          <div class="border-t border-gray-200 pt-4 mt-4">
-            <h4 class="text-sm font-semibold text-gray-900 mb-3">Fichiers</h4>
-            <div class="space-y-3">
-              <!-- Document PDF/Word -->
-              <div>
-                <label class="text-sm font-medium text-gray-600 mb-2 block">Document (PDF/Word)</label>
-                <a
-                  v-if="(selectedRequest as any).documentFileUrl || (selectedRequest as any).document_file_url"
-                  :href="(selectedRequest as any).documentFileUrl || (selectedRequest as any).document_file_url"
-                  target="_blank"
-                  class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
-                >
-                  <i class="fas fa-file-pdf"></i>
-                  <span>Télécharger le document</span>
-                  <i class="fas fa-external-link-alt text-xs"></i>
-                </a>
-                <p v-else class="text-sm text-gray-500">Aucun document disponible</p>
-              </div>
-              
-              <!-- Image du document -->
-              <div>
-                <label class="text-sm font-medium text-gray-600 mb-2 block">Image du document</label>
-                <div v-if="(selectedRequest as any).documentImageUrl || (selectedRequest as any).document_image_url">
-                  <img
-                    :src="(selectedRequest as any).documentImageUrl || (selectedRequest as any).document_image_url"
-                    :alt="selectedRequest.title"
-                    class="max-w-md rounded-lg border border-gray-200 mb-2"
-                    @error="(e: any) => e.target.style.display = 'none'"
-                  />
-                  <a
-                    :href="(selectedRequest as any).documentImageUrl || (selectedRequest as any).document_image_url"
-                    target="_blank"
-                    class="inline-flex items-center gap-2 px-3 py-1.5 bg-gray-600 text-white rounded-lg text-xs font-medium hover:bg-gray-700 transition-colors"
-                  >
-                    <i class="fas fa-download"></i>
-                    <span>Télécharger l'image</span>
-                  </a>
-                </div>
-                <p v-else class="text-sm text-gray-500">Aucune image disponible</p>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </div>
@@ -296,10 +239,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { useToast } from 'vue-toast-notification'
 import type { PublicationRequest } from '@/models'
-
-const toast = useToast()
 import publicationRequestService from '@/services/publication-request.service'
 
 const searchQuery = ref('')
@@ -367,32 +307,11 @@ const updateStatus = async (request: PublicationRequest, status: PublicationRequ
     await publicationRequestService.updateRequestStatus(request.id, status)
     // Recharger les données après la mise à jour
     await loadRequests()
-    
-    const statusLabels: Record<string, string> = {
-      accepted: 'acceptée',
-      rejected: 'refusée',
-      published: 'publiée'
-    }
-    
-    toast.open({
-      message: `✅ Demande ${statusLabels[status] || 'mise à jour'} avec succès !`,
-      type: 'success',
-      position: 'top-right',
-      duration: 5000,
-    })
-    
-    // Émettre un événement pour mettre à jour les notifications
-    window.dispatchEvent(new CustomEvent('dashboard:update-notifications'))
   } catch (err: any) {
     console.error('Erreur lors de la mise à jour:', err)
     const errorMessage = err.message || err.errors?.status?.[0] || 'Erreur lors de la mise à jour du statut'
     error.value = errorMessage
-    toast.open({
-      message: `❌ ${errorMessage}`,
-      type: 'error',
-      position: 'top-right',
-      duration: 6000,
-    })
+    alert(`Erreur: ${errorMessage}`)
   } finally {
     saving.value = false
   }
@@ -410,25 +329,11 @@ const deleteRequest = async (id: number | string | undefined) => {
     await publicationRequestService.deleteRequest(id)
     // Recharger les données après la suppression
     await loadRequests()
-    toast.open({
-      message: '✅ Demande de publication supprimée avec succès !',
-      type: 'success',
-      position: 'top-right',
-      duration: 5000,
-    })
-    
-    // Émettre un événement pour mettre à jour les notifications
-    window.dispatchEvent(new CustomEvent('dashboard:update-notifications'))
   } catch (err: any) {
     console.error('Erreur lors de la suppression:', err)
     const errorMessage = err.message || 'Erreur lors de la suppression'
     error.value = errorMessage
-    toast.open({
-      message: `❌ ${errorMessage}`,
-      type: 'error',
-      position: 'top-right',
-      duration: 6000,
-    })
+    alert(`Erreur: ${errorMessage}`)
   } finally {
     saving.value = false
   }

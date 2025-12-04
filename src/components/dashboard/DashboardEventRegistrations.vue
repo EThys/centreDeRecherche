@@ -35,7 +35,7 @@
               <i class="fas fa-calendar-alt absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-200 text-sm z-10"></i>
               <select
                 v-model="selectedEventId"
-                @change="loadRegistrations"
+                @change="() => loadRegistrations(true)"
                 class="w-full pl-10 pr-4 py-2.5 bg-white/90 backdrop-blur-sm border border-white/30 rounded-xl text-gray-900 font-medium text-sm focus:ring-2 focus:ring-white/50 focus:border-white transition-all shadow-sm appearance-none"
               >
                 <option value="">Tous les événements</option>
@@ -51,7 +51,7 @@
               <i class="fas fa-filter absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-200 text-sm z-10"></i>
               <select
                 v-model="selectedStatus"
-                @change="loadRegistrations"
+                @change="() => loadRegistrations(true)"
                 class="w-full pl-10 pr-4 py-2.5 bg-white/90 backdrop-blur-sm border border-white/30 rounded-xl text-gray-900 font-medium text-sm focus:ring-2 focus:ring-white/50 focus:border-white transition-all shadow-sm appearance-none"
               >
                 <option value="">Tous les statuts</option>
@@ -397,18 +397,35 @@ const pendingCount = computed(() => {
   return registrations.value.filter(r => r.status === 'pending').length
 })
 
+// Cache simple pour éviter les requêtes multiples
+const lastFetchTime = ref<number | null>(null)
+const cacheDuration = 5000 // 5 secondes de cache
+
 // Charger les événements
-const loadEvents = async () => {
+const loadEvents = async (force = false) => {
+  // Utiliser le cache si valide et pas de force refresh
+  if (!force && lastFetchTime.value && Date.now() - lastFetchTime.value < cacheDuration && events.value.length > 0) {
+    return
+  }
+
   try {
     const result = await eventService.getEvents({ limit: 100 })
     events.value = result.data
+    lastFetchTime.value = Date.now()
   } catch (err) {
     console.error('Erreur lors du chargement des événements:', err)
   }
 }
 
 // Charger les inscriptions
-const loadRegistrations = async () => {
+const loadRegistrations = async (force = false) => {
+  // Utiliser le cache si valide et pas de force refresh (sauf si filtres actifs)
+  if (!force && !selectedEventId.value && !selectedStatus.value && lastFetchTime.value && Date.now() - lastFetchTime.value < cacheDuration && registrations.value.length > 0) {
+    return
+  }
+
+  if (loading.value) return
+
   loading.value = true
   error.value = null
   try {
@@ -418,6 +435,7 @@ const loadRegistrations = async () => {
       limit: 100,
     })
     registrations.value = result.data
+    lastFetchTime.value = Date.now()
   } catch (err: any) {
     console.error('Erreur lors du chargement des inscriptions:', err)
     error.value = err.message || 'Erreur lors du chargement des inscriptions'
@@ -451,7 +469,7 @@ const updateStatus = async (registrationId: number | string, status: 'pending' |
   error.value = null
   try {
     await eventService.updateRegistrationStatus(registrationId, status)
-    await loadRegistrations()
+    await loadRegistrations(true) // Force refresh
     
     const statusLabels: Record<string, string> = {
       confirmed: 'confirmée',
@@ -493,7 +511,7 @@ const deleteRegistration = async (registrationId: number | string) => {
   error.value = null
   try {
     await eventService.deleteRegistration(registrationId)
-    await loadRegistrations()
+    await loadRegistrations(true) // Force refresh
     toast.open({
       message: '✅ Inscription supprimée avec succès !',
       type: 'success',
@@ -542,8 +560,11 @@ const formatDate = (dateString: string | undefined) => {
 }
 
 onMounted(async () => {
-  await loadEvents()
-  await loadRegistrations()
+  // Charger les événements et les inscriptions en parallèle pour un chargement plus rapide
+  await Promise.all([
+    loadEvents(),
+    loadRegistrations()
+  ])
 })
 </script>
 

@@ -196,11 +196,8 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { useToast } from 'vue-toast-notification'
 import type { FinancingRequest } from '@/models'
 import financingRequestService from '@/services/financing-request.service'
-
-const toast = useToast()
 
 const searchQuery = ref('')
 const statusFilter = ref('')
@@ -271,25 +268,11 @@ const deleteRequest = async (id: number | string | undefined) => {
     await financingRequestService.deleteRequest(id)
     // Recharger les données après la suppression
     await loadRequests()
-    toast.open({
-      message: '✅ Demande de financement supprimée avec succès !',
-      type: 'success',
-      position: 'top-right',
-      duration: 5000,
-    })
-    
-    // Émettre un événement pour mettre à jour les notifications
-    window.dispatchEvent(new CustomEvent('dashboard:update-notifications'))
   } catch (err: any) {
     console.error('Erreur lors de la suppression:', err)
     const errorMessage = err.message || 'Erreur lors de la suppression'
     error.value = errorMessage
-    toast.open({
-      message: `❌ ${errorMessage}`,
-      type: 'error',
-      position: 'top-right',
-      duration: 6000,
-    })
+    alert(`Erreur: ${errorMessage}`)
   } finally {
     saving.value = false
   }
@@ -304,33 +287,11 @@ const updateStatus = async (request: FinancingRequest, status: FinancingRequest[
     await financingRequestService.updateRequestStatus(request.id, status)
     // Recharger les données après la mise à jour
     await loadRequests()
-    
-    const statusLabels: Record<string, string> = {
-      approved: 'approuvée',
-      rejected: 'refusée',
-      'under-review': 'mise en révision',
-      'on-hold': 'mise en attente'
-    }
-    
-    toast.open({
-      message: `✅ Demande ${statusLabels[status] || 'mise à jour'} avec succès !`,
-      type: 'success',
-      position: 'top-right',
-      duration: 5000,
-    })
-    
-    // Émettre un événement pour mettre à jour les notifications
-    window.dispatchEvent(new CustomEvent('dashboard:update-notifications'))
   } catch (err: any) {
     console.error('Erreur lors de la mise à jour:', err)
     const errorMessage = err.message || err.errors?.status?.[0] || 'Erreur lors de la mise à jour du statut'
     error.value = errorMessage
-    toast.open({
-      message: `❌ ${errorMessage}`,
-      type: 'error',
-      position: 'top-right',
-      duration: 6000,
-    })
+    alert(`Erreur: ${errorMessage}`)
   } finally {
     saving.value = false
   }

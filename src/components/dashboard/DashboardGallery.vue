@@ -134,7 +134,7 @@
       <h3 class="text-xl font-bold text-gray-900 mb-2">Erreur</h3>
       <p class="text-gray-600 mb-6">{{ error }}</p>
       <button
-        @click="loadPhotos"
+        @click="() => loadPhotos()"
         class="bg-blue-500 hover:bg-blue-600 text-white font-medium px-6 py-3 rounded-lg transition-colors"
       >
         Réessayer
@@ -228,8 +228,19 @@ const handleImageChange = (event: Event) => {
   }
 }
 
+// Cache simple pour éviter les requêtes multiples
+const lastFetchTime = ref<number | null>(null)
+const cacheDuration = 5000 // 5 secondes de cache
+
 // Charger les photos depuis le backend
-const loadPhotos = async () => {
+const loadPhotos = async (force = false) => {
+  // Utiliser le cache si valide et pas de force refresh
+  if (!force && lastFetchTime.value && Date.now() - lastFetchTime.value < cacheDuration && photos.value.length > 0) {
+    return
+  }
+
+  if (loading.value) return
+
   loading.value = true
   error.value = null
   try {
@@ -237,10 +248,11 @@ const loadPhotos = async () => {
       limit: 100 // Charger toutes les photos pour le dashboard
     })
     photos.value = result.data
+    lastFetchTime.value = Date.now()
   } catch (err: any) {
     console.error('Erreur lors du chargement des photos:', err)
     error.value = err.message || 'Erreur lors du chargement de la galerie'
-  photos.value = []
+    photos.value = []
   } finally {
     loading.value = false
   }
@@ -333,8 +345,8 @@ const savePhoto = async () => {
       author: photoForm.value.author
     })
     
-    // Ajouter la nouvelle photo à la liste
-    photos.value.unshift(newPhoto)
+    // Recharger les photos pour avoir les données complètes
+    await loadPhotos(true) // Force refresh
     
     // Réinitialiser le formulaire
     cancelUpload()
@@ -378,8 +390,8 @@ const deletePhoto = async (id: number | string | undefined) => {
   try {
     await galleryService.deletePhoto(id)
     
-    // Retirer la photo de la liste
-    photos.value = photos.value.filter(p => p.id !== id)
+    // Recharger les photos pour synchroniser avec le backend
+    await loadPhotos(true) // Force refresh
     
     toast.open({
       message: '✅ Photo supprimée de la galerie avec succès !',
@@ -444,9 +456,11 @@ const cancelUpload = () => {
 }
 
 onMounted(async () => {
-  // Charger les catégories puis les photos
-  await loadCategories()
-  await loadPhotos()
+  // Charger les catégories et les photos en parallèle pour un chargement plus rapide
+  await Promise.all([
+    loadCategories(),
+    loadPhotos()
+  ])
 })
 </script>
 

@@ -55,7 +55,7 @@
               required
               :min="new Date().toISOString().split('T')[0]"
               class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-              @input="eventForm.startDate = ($event.target as HTMLInputElement).value"
+              @input="eventForm.startDate = $event.target.value"
             />
           </div>
           <div>
@@ -65,7 +65,7 @@
               type="time"
               required
               class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-              @input="eventForm.startTime = ($event.target as HTMLInputElement).value"
+              @input="eventForm.startTime = $event.target.value"
             />
           </div>
           <div>
@@ -95,7 +95,7 @@
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">Image</label>
             <input
-              @change="(e) => handleImageChange(e as any)"
+              @change="handleImageChange"
               type="file"
               accept="image/*"
               class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
@@ -139,7 +139,7 @@
                 type="date"
                 :min="eventForm.startDate || new Date().toISOString().split('T')[0]"
                 class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                @input="eventForm.endDate = ($event.target as HTMLInputElement).value"
+                @input="eventForm.endDate = $event.target.value"
               />
             </div>
             <div>
@@ -148,7 +148,7 @@
                 v-model="eventForm.endTime"
                 type="time"
                 class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                @input="eventForm.endTime = ($event.target as HTMLInputElement).value"
+                @input="eventForm.endTime = $event.target.value"
               />
             </div>
             <div>
@@ -347,8 +347,8 @@ const loadEvents = async () => {
 }
 
 const handleImageChange = (event: Event) => {
-  const target = (event as unknown as { target: HTMLInputElement | null }).target
-  if (target && target.files && target.files[0]) {
+  const target = event.target as HTMLInputElement
+  if (target.files && target.files[0]) {
     imageFile.value = target.files[0]
     // Créer une preview
     const reader = new FileReader()
@@ -445,7 +445,6 @@ const saveEvent = async () => {
       startTime: normalizedStartTime,
       location: eventForm.value.location.trim(),
       registrationRequired: eventForm.value.registrationRequired,
-      image: eventForm.value.image || '',
     }
     
     // Ajouter les champs optionnels seulement s'ils ne sont pas vides

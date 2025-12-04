@@ -69,7 +69,7 @@
           </nav>
 
           <!-- Footer Sidebar avec Logout -->
-          <div class="p-4 pt-2 border-t border-slate-200/60 bg-gradient-to-t from-slate-50/50 to-transparent">
+          <div class="p-4 pt-2 border-t border-slate-200/60 bg-gradient-to-t from-slate-50/50 to-transparent mt-auto">
             <div class="mb-3 px-4">
               <div class="flex items-center gap-3 p-3 rounded-xl bg-slate-100/60 border border-slate-200/60">
                 <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-md">
@@ -84,7 +84,7 @@
             
             <button
               @click="handleLogout"
-              class="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl text-slate-700 hover:bg-red-50 hover:text-red-600 transition-all duration-300 group border border-transparent hover:border-red-200"
+              class="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl text-slate-700 hover:bg-red-50 hover:text-red-600 transition-all duration-300 group border border-transparent hover:border-red-200 relative z-10"
             >
               <div class="w-5 h-5 flex items-center justify-center">
                 <i class="fas fa-sign-out-alt text-base group-hover:translate-x-0.5 transition-transform"></i>
@@ -147,7 +147,26 @@
 
         <!-- Stats Cards Améliorées -->
         <div v-if="activeSection === 'overview'" class="p-4 sm:p-6 lg:p-8">
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+          <!-- Loading state pour les stats -->
+          <div v-if="dashboardStore.isLoading && stats.length === 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+            <div 
+              v-for="n in 4"
+              :key="n"
+              class="group relative bg-white rounded-2xl p-6 shadow-lg shadow-slate-900/5 border border-slate-200/60 animate-pulse"
+            >
+              <div class="flex items-center justify-between mb-4">
+                <div class="w-14 h-14 rounded-2xl bg-gray-200"></div>
+                <div class="w-12 h-6 bg-gray-200 rounded-full"></div>
+              </div>
+              <div class="h-8 bg-gray-200 rounded mb-2"></div>
+              <div class="h-4 bg-gray-200 rounded w-2/3"></div>
+            </div>
+          </div>
+          
+          <div 
+            v-else
+            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8"
+          >
             <div 
               v-for="stat in stats"
               :key="stat.id"
@@ -274,6 +293,11 @@ const getCurrentSectionLabel = () => {
 }
 
 const handleLogout = async () => {
+  // Demander confirmation avant de se déconnecter
+  if (!confirm('Êtes-vous sûr de vouloir vous déconnecter ?')) {
+    return
+  }
+  
   try {
     // Appeler le service de déconnexion pour supprimer le token côté serveur
     await authService.logout()
@@ -307,10 +331,8 @@ const handleClickOutside = (event: MouseEvent) => {
   }
 }
 
-// Utiliser les méthodes du store
-const loadOverviewStats = () => dashboardStore.loadOverviewStats()
-const loadNotificationCounts = () => dashboardStore.loadNotificationCounts()
-const refreshAll = () => dashboardStore.refreshAll()
+// Utiliser directement les méthodes du store
+const { loadOverviewStats, loadNotificationCounts, refreshAll } = dashboardStore
 
 // Recharger les compteurs toutes les 30 secondes
 let notificationInterval: number | null = null
@@ -321,7 +343,7 @@ const handleUpdateNotifications = () => {
 }
 
 const handleUpdateStats = () => {
-  dashboardStore.loadOverviewStats(true) // Force refresh
+  loadOverviewStats(true) // Force refresh
 }
 
 onMounted(async () => {
@@ -329,11 +351,21 @@ onMounted(async () => {
   window.addEventListener('resize', handleResize)
   document.addEventListener('click', handleClickOutside)
   
-  // Charger les données initialement (utilise le cache si disponible)
-  await Promise.all([
-    loadOverviewStats(),
-    loadNotificationCounts()
-  ])
+  // Charger les données en parallèle de manière optimisée
+  // Le store gère déjà le cache, donc on peut appeler les deux en même temps
+  // sans attendre, pour un chargement plus rapide
+  const loadData = async () => {
+    // Charger les stats critiques en premier (pour l'affichage immédiat)
+    await loadOverviewStats()
+    
+    // Charger les notifications en parallèle (moins critique)
+    loadNotificationCounts().catch(err => {
+      console.warn('Erreur lors du chargement des notifications:', err)
+    })
+  }
+  
+  // Démarrer le chargement immédiatement
+  loadData()
   
   // Écouter les événements de mise à jour des notifications
   window.addEventListener('dashboard:update-notifications', handleUpdateNotifications)

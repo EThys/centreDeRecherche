@@ -185,37 +185,37 @@ export const useDashboardStore = defineStore('dashboard', () => {
       // Sauvegarder les valeurs précédentes
       previousStats.value = { ...stats.value }
 
-      // Événements
-      try {
-        const eventsResult = await eventService.getEvents({ limit: 1000 })
-        stats.value.events = eventsResult.pagination?.total || eventsResult.data.length
-      } catch (err) {
-        console.error('Erreur lors du chargement des événements:', err)
-        // Ne pas réinitialiser à 0 pour garder les valeurs précédentes
+      // Charger toutes les données en parallèle pour un chargement plus rapide
+      const [eventsResult, actualitiesResult, photosResult, newsletterResult] = await Promise.allSettled([
+        eventService.getEvents({ limit: 1000 }),
+        actualityService.getActualities({ limit: 1000 }),
+        galleryService.getPhotos({ limit: 1000 }),
+        newsletterService.getAllSubscribers({ limit: 1000 })
+      ])
+
+      // Traiter les résultats
+      if (eventsResult.status === 'fulfilled') {
+        stats.value.events = eventsResult.value.pagination?.total || eventsResult.value.data.length
+      } else {
+        console.error('Erreur lors du chargement des événements:', eventsResult.reason)
       }
 
-      // Actualités
-      try {
-        const actualitiesResult = await actualityService.getActualities({ limit: 1000 })
-        stats.value.actualities = actualitiesResult.pagination?.total || actualitiesResult.data.length
-      } catch (err) {
-        console.error('Erreur lors du chargement des actualités:', err)
+      if (actualitiesResult.status === 'fulfilled') {
+        stats.value.actualities = actualitiesResult.value.pagination?.total || actualitiesResult.value.data.length
+      } else {
+        console.error('Erreur lors du chargement des actualités:', actualitiesResult.reason)
       }
 
-      // Photos (Galerie)
-      try {
-        const photosResult = await galleryService.getPhotos({ limit: 1000 })
-        stats.value.photos = photosResult.pagination?.total || photosResult.data.length
-      } catch (err) {
-        console.error('Erreur lors du chargement des photos:', err)
+      if (photosResult.status === 'fulfilled') {
+        stats.value.photos = photosResult.value.pagination?.total || photosResult.value.data.length
+      } else {
+        console.error('Erreur lors du chargement des photos:', photosResult.reason)
       }
 
-      // Messages (Newsletter - toutes les inscriptions)
-      try {
-        const newsletterResult = await newsletterService.getAllSubscribers({ limit: 1000 })
-        stats.value.messages = newsletterResult.data.length
-      } catch (err) {
-        console.error('Erreur lors du chargement des messages:', err)
+      if (newsletterResult.status === 'fulfilled') {
+        stats.value.messages = newsletterResult.value.data.length
+      } else if (newsletterResult.status === 'rejected') {
+        console.error('Erreur lors du chargement des messages:', newsletterResult.reason)
       }
 
       lastFetchTime.value = Date.now()
@@ -234,45 +234,58 @@ export const useDashboardStore = defineStore('dashboard', () => {
     }
 
     try {
-      // Newsletter - compter toutes les inscriptions actives
-      try {
-        const newsletterResult = await newsletterService.getAllSubscribers({ status: 'active', limit: 1000 })
-        notificationCounts.value.newsletter = newsletterResult.data.length
-      } catch (err) {
-        console.error('Erreur lors du chargement des newsletters:', err)
+      // Charger toutes les notifications en parallèle pour un chargement plus rapide
+      const [
+        newsletterResult,
+        financingSubmittedResult,
+        financingUnderReviewResult,
+        trainingResult,
+        publicationsResult,
+        eventRegistrationsResult
+      ] = await Promise.allSettled([
+        newsletterService.getAllSubscribers({ status: 'active', limit: 1000 }),
+        financingRequestService.getRequests({ status: 'submitted', limit: 1000 }),
+        financingRequestService.getRequests({ status: 'under-review', limit: 1000 }),
+        trainingRegistrationService.getRegistrations({ status: 'pending', limit: 1000 }),
+        publicationRequestService.getRequests({ status: 'pending', limit: 1000 }),
+        eventService.getAllRegistrations({ status: 'pending', limit: 1000 })
+      ])
+
+      // Traiter les résultats
+      if (newsletterResult.status === 'fulfilled') {
+        notificationCounts.value.newsletter = newsletterResult.value.data.length
+      } else if (newsletterResult.status === 'rejected') {
+        console.error('Erreur lors du chargement des newsletters:', newsletterResult.reason)
       }
 
-      // Demandes de financement - en attente
-      try {
-        const financingSubmitted = await financingRequestService.getRequests({ status: 'submitted', limit: 1000 })
-        const financingUnderReview = await financingRequestService.getRequests({ status: 'under-review', limit: 1000 })
-        notificationCounts.value.financing = financingSubmitted.data.length + financingUnderReview.data.length
-      } catch (err) {
-        console.error('Erreur lors du chargement des demandes de financement:', err)
+      if (financingSubmittedResult.status === 'fulfilled' && financingUnderReviewResult.status === 'fulfilled') {
+        notificationCounts.value.financing = 
+          financingSubmittedResult.value.data.length + financingUnderReviewResult.value.data.length
+      } else {
+        const financingError = financingSubmittedResult.status === 'rejected' 
+          ? financingSubmittedResult.reason 
+          : financingUnderReviewResult.status === 'rejected' 
+            ? financingUnderReviewResult.reason 
+            : 'Erreur inconnue'
+        console.error('Erreur lors du chargement des demandes de financement:', financingError)
       }
 
-      // Inscriptions aux formations - en attente
-      try {
-        const trainingResult = await trainingRegistrationService.getRegistrations({ status: 'pending', limit: 1000 })
-        notificationCounts.value.training = trainingResult.data.length
-      } catch (err) {
-        console.error('Erreur lors du chargement des inscriptions aux formations:', err)
+      if (trainingResult.status === 'fulfilled') {
+        notificationCounts.value.training = trainingResult.value.data.length
+      } else if (trainingResult.status === 'rejected') {
+        console.error('Erreur lors du chargement des inscriptions aux formations:', trainingResult.reason)
       }
 
-      // Demandes de publication - en attente
-      try {
-        const publicationsResult = await publicationRequestService.getRequests({ status: 'pending', limit: 1000 })
-        notificationCounts.value.publications = publicationsResult.data.length
-      } catch (err) {
-        console.error('Erreur lors du chargement des demandes de publication:', err)
+      if (publicationsResult.status === 'fulfilled') {
+        notificationCounts.value.publications = publicationsResult.value.data.length
+      } else if (publicationsResult.status === 'rejected') {
+        console.error('Erreur lors du chargement des demandes de publication:', publicationsResult.reason)
       }
 
-      // Inscriptions aux événements - en attente
-      try {
-        const eventRegistrationsResult = await eventService.getAllRegistrations({ status: 'pending', limit: 1000 })
-        notificationCounts.value.eventRegistrations = eventRegistrationsResult.data.length
-      } catch (err) {
-        console.error('Erreur lors du chargement des inscriptions aux événements:', err)
+      if (eventRegistrationsResult.status === 'fulfilled') {
+        notificationCounts.value.eventRegistrations = eventRegistrationsResult.value.data.length
+      } else {
+        console.error('Erreur lors du chargement des inscriptions aux événements:', eventRegistrationsResult.reason)
       }
 
       if (!lastFetchTime.value) {
