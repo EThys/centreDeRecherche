@@ -1,8 +1,14 @@
 <template>
   <NavBarComponent/>
   
+  <!-- Loading State -->
+  <DetailLoader 
+    v-if="loading" 
+    title="Chargement de l'événement"
+  />
+  
   <!-- Hero Section - Image pleine largeur avec contenu superposé -->
-  <div v-if="event" class="relative w-full h-screen max-h-[90vh] overflow-hidden">
+  <div v-if="event && !loading" class="relative w-full h-screen max-h-[90vh] overflow-hidden">
     <!-- Image de fond -->
     <div class="absolute inset-0">
       <img
@@ -117,7 +123,7 @@
   </div>
 
   <!-- Contenu principal -->
-  <main class="min-h-screen bg-white" v-if="event">
+  <main class="min-h-screen bg-white" v-if="event && !loading">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
       <div class="grid grid-cols-1 lg:grid-cols-4 gap-8 lg:gap-12">
         <!-- Sidebar -->
@@ -304,7 +310,7 @@
             </div>
 
             <!-- Event Info -->
-            <div class="bg-gray-50 rounded-xl p-6 border border-gray-200 fade-in-right" data-animate>
+            <div class="bg-gray-50 rounded-xl p-6 border border-gray-200">
               <h3 class="text-sm font-semibold text-gray-700 mb-4 flex items-center">
                 <i class="fas fa-info-circle mr-2 text-blue-500"></i>
                 Informations
@@ -334,7 +340,7 @@
             </div>
 
             <!-- Partage -->
-            <div class="bg-gray-50 rounded-xl p-6 border border-gray-200 fade-in-right" data-animate>
+            <div class="bg-gray-50 rounded-xl p-6 border border-gray-200">
               <h3 class="text-sm font-semibold text-gray-700 mb-3 flex items-center">
                 <i class="fas fa-share-alt mr-2 text-blue-500"></i>
                 Partager
@@ -363,7 +369,7 @@
         <div class="lg:col-span-3">
           <div class="prose prose-lg max-w-none">
             <!-- Description -->
-            <section class="mb-10 pb-10 border-b border-gray-200 fade-in-up" data-animate>
+            <section class="mb-10 pb-10 border-b border-gray-200">
               <h2 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 flex items-center">
                 <i class="fas fa-align-left mr-3 text-blue-500"></i>
                 Description de l'événement
@@ -374,7 +380,7 @@
             </section>
 
             <!-- Speakers Section -->
-            <section v-if="event.speakers && event.speakers.length > 0" class="mb-10 pb-10 border-b border-gray-200 fade-in-up" data-animate>
+            <section v-if="event.speakers && event.speakers.length > 0" class="mb-10 pb-10 border-b border-gray-200">
               <h2 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 flex items-center">
                 <i class="fas fa-users mr-3 text-blue-500"></i>
                 Intervenants
@@ -383,9 +389,7 @@
                 <div
                   v-for="(speaker, index) in event.speakers"
                   :key="speaker.id"
-                  class="flex items-start space-x-4 p-4 rounded-xl border border-gray-200 hover:border-blue-300 transition-colors bg-gray-50 stagger-item"
-                  :style="{ animationDelay: `${index * 100}ms` }"
-                  data-animate
+                  class="flex items-start space-x-4 p-4 rounded-xl border border-gray-200 hover:border-blue-300 transition-colors bg-gray-50"
                 >
                   <img
                     :src="getSpeakerPhoto(speaker.photo)"
@@ -406,7 +410,7 @@
             </section>
 
             <!-- Agenda Section -->
-            <section v-if="event.agenda && event.agenda.length > 0" class="fade-in-up" data-animate>
+            <section v-if="event.agenda && event.agenda.length > 0">
               <h2 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 flex items-center">
                 <i class="fas fa-calendar-check mr-3 text-blue-500"></i>
                 Programme
@@ -415,12 +419,10 @@
                 <div
                   v-for="(session, index) in event.agenda"
                   :key="index"
-                  class="flex items-start space-x-4 p-4 rounded-xl border border-gray-200 hover:border-blue-100 transition-colors bg-gray-50 stagger-item"
-                  :style="{ animationDelay: `${index * 80}ms` }"
-                  data-animate
+                  class="flex items-start space-x-4 p-4 rounded-xl border border-gray-200 hover:border-blue-100 transition-colors bg-gray-50"
                 >
                   <div class="flex-shrink-0 w-16 h-16 bg-blue-100 rounded-xl flex items-center justify-center">
-                    <span class="text-blue-600 font-semibold text-sm">{{ session.time }}</span>
+                    <span class="text-blue-600 font-semibold text-sm">{{ formatTime(session.time) }}</span>
                   </div>
                   <div class="flex-1">
                     <h3 class="font-semibold text-gray-900 mb-1">{{ session.title }}</h3>
@@ -438,9 +440,6 @@
     <!-- Registration Success Modal -->
     <div v-if="showSuccessModal" class="fixed inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center z-50 p-4" @click.self="showSuccessModal = false">
       <div class="bg-white rounded-2xl shadow-2xl border-2 border-green-200 p-8 max-w-lg w-full text-center transform transition-all duration-300 scale-100">
-        <div class="w-20 h-20 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg animate-bounce">
-          <i class="fas fa-check text-white text-3xl"></i>
-        </div>
         <h3 class="text-2xl font-bold text-gray-900 mb-3">Inscription confirmée !</h3>
         <p class="text-gray-600 mb-6 text-lg">
           Félicitations ! Votre inscription à l'événement <strong class="text-blue-600">"{{ event.title }}"</strong> a été enregistrée avec succès.
@@ -454,7 +453,7 @@
             <p class="text-blue-800"><strong class="text-blue-900">Nom :</strong> {{ savedRegistrationData.firstName }} {{ savedRegistrationData.lastName }}</p>
             <p class="text-blue-800"><strong class="text-blue-900">Email :</strong> {{ savedRegistrationData.email }}</p>
             <p class="text-blue-800"><strong class="text-blue-900">Événement :</strong> {{ event.title }}</p>
-            <p class="text-blue-800"><strong class="text-blue-900">Date :</strong> {{ formatFullDate(event.startDate) }} à {{ event.startTime }}</p>
+            <p class="text-blue-800"><strong class="text-blue-900">Date :</strong> {{ formatFullDate(event.startDate) }} à {{ formatTime(event.startTime) }}</p>
             <p v-if="event.location" class="text-blue-800"><strong class="text-blue-900">Lieu :</strong> {{ event.location }}</p>
           </div>
         </div>
@@ -473,42 +472,30 @@
         >
           Fermer
         </button>
-        <p class="text-xs text-gray-500 mt-4">
-          <i class="fas fa-info-circle mr-1"></i>
-          Un email de confirmation vous a été envoyé
-        </p>
-      </div>
-    </div>
-
-    <!-- Loading State -->
-    <div v-else-if="loading" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 text-center">
-        <i class="fas fa-spinner fa-spin text-4xl text-blue-600 mb-4"></i>
-        <p class="text-gray-600">Chargement de l'événement...</p>
-      </div>
-    </div>
-
-    <!-- Error State -->
-    <div v-else-if="error" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <div class="bg-white rounded-2xl shadow-lg border border-red-200 p-8 text-center">
-        <i class="fas fa-exclamation-triangle text-4xl text-red-600 mb-4"></i>
-        <h3 class="text-xl font-bold text-gray-900 mb-2">Erreur</h3>
-        <p class="text-gray-600 mb-6">{{ error }}</p>
-        <button
-          @click="loadEvent"
-          class="bg-blue-500 hover:bg-blue-600 text-white font-medium px-6 py-3 rounded-lg transition-colors"
-        >
-          Réessayer
-        </button>
-        <router-link
-          to="/evenements"
-          class="ml-4 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium px-6 py-3 rounded-lg transition-colors inline-block"
-        >
-          Retour aux événements
-        </router-link>
       </div>
     </div>
   </main>
+
+  <!-- Error State -->
+  <div v-if="error && !loading" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="bg-white rounded-2xl shadow-lg border border-red-200 p-8 text-center">
+      <i class="fas fa-exclamation-triangle text-4xl text-red-600 mb-4"></i>
+      <h3 class="text-xl font-bold text-gray-900 mb-2">Erreur</h3>
+      <p class="text-gray-600 mb-6">{{ error }}</p>
+      <button
+        @click="loadEvent"
+        class="bg-blue-500 hover:bg-blue-600 text-white font-medium px-6 py-3 rounded-lg transition-colors"
+      >
+        Réessayer
+      </button>
+      <router-link
+        to="/evenements"
+        class="ml-4 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium px-6 py-3 rounded-lg transition-colors inline-block"
+      >
+        Retour aux événements
+      </router-link>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -524,6 +511,8 @@ const eventId = route.params.id as string
 
 //@ts-ignore
 import NavBarComponent from '../components/navbar/NavBarComponent.vue'
+//@ts-ignore
+import DetailLoader from '../components/DetailLoader.vue'
 
 // Reactive data
 const event = ref<Event | null>(null)
@@ -638,11 +627,16 @@ const formatFullDate = (dateString: string | undefined) => {
 // Formater l'heure pour n'afficher que HH:MM
 const formatTime = (timeString: string | undefined) => {
   if (!timeString) return ''
-  // Si l'heure contient des secondes (HH:MM:SS), ne garder que HH:MM
-  if (timeString.includes(':') && timeString.split(':').length === 3) {
-    return timeString.substring(0, 5)
+  // Supprimer les secondes (HH:MM:SS ou HH:MM:SS.mmm -> HH:MM)
+  const timeStr = timeString.trim()
+  if (timeStr.includes(':')) {
+    const parts = timeStr.split(':')
+    if (parts.length >= 2) {
+      // Prendre seulement les heures et minutes
+      return `${parts[0].padStart(2, '0')}:${parts[1].padStart(2, '0')}`
+    }
   }
-  return timeString
+  return timeStr
 }
 
 const submitRegistration = async () => {
@@ -742,21 +736,56 @@ const shareOnTwitter = () => {
   window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank')
 }
 
-const checkRegistrationStatus = () => {
+const checkRegistrationStatus = async () => {
+  // Vérifier d'abord dans localStorage pour un chargement rapide
   const registeredEvents = JSON.parse(localStorage.getItem('registeredEvents') || '[]')
-  isRegistered.value = registeredEvents.includes(eventId)
+  const wasInLocalStorage = registeredEvents.includes(eventId)
   
-  // Charger les données d'inscription sauvegardées si l'utilisateur est inscrit
-  if (isRegistered.value) {
+  // Charger les données d'inscription sauvegardées si présentes dans localStorage
+  if (wasInLocalStorage) {
     const registrationDataKey = `registration_${eventId}`
     const savedData = localStorage.getItem(registrationDataKey)
     if (savedData) {
       try {
-        savedRegistrationData.value = JSON.parse(savedData)
+        const parsedData = JSON.parse(savedData)
+        savedRegistrationData.value = parsedData
+        
+        // Vérifier avec le backend si l'email est vraiment inscrit
+        if (parsedData.email && event.value?.id) {
+          try {
+            const isActuallyRegistered = await eventService.checkEmailRegistration(event.value.id, parsedData.email)
+            if (!isActuallyRegistered) {
+              // L'email n'est pas inscrit dans le backend, nettoyer localStorage
+              const updatedEvents = registeredEvents.filter((id: number | string) => id !== eventId)
+              localStorage.setItem('registeredEvents', JSON.stringify(updatedEvents))
+              localStorage.removeItem(registrationDataKey)
+              isRegistered.value = false
+              savedRegistrationData.value = {
+                firstName: '',
+                lastName: '',
+                email: '',
+                phone: '',
+                company: '',
+                position: ''
+              }
+              return
+            }
+          } catch (error) {
+            // Si la vérification échoue, on garde l'état localStorage mais on log l'erreur
+            console.warn('Could not verify registration with backend:', error)
+          }
+        }
+        
+        isRegistered.value = true
       } catch (e) {
         console.error('Error loading registration data:', e)
+        isRegistered.value = false
       }
+    } else {
+      isRegistered.value = false
     }
+  } else {
+    isRegistered.value = false
   }
 }
 
@@ -770,7 +799,7 @@ const scrollToRegistration = () => {
   }, 100)
 }
 
-// Générer et télécharger le badge en PDF (style Google)
+// Générer et télécharger le badge en PDF (reproduisant le design du modal)
 const downloadBadge = () => {
   if (!event.value) return
   
@@ -781,93 +810,119 @@ const downloadBadge = () => {
     format: [85.6, 53.98]
   })
   
-  // Couleurs style Google
-  const googleBlue = '#4285F4'
-  const googleGray = '#5F6368'
-  const lightGray = '#F8F9FA'
-  const borderGray = '#E8EAED'
+  // Couleurs du modal
+  const greenBorder = [34, 197, 94] // green-500
+  const greenLight = [220, 252, 231] // green-50
+  const blueLight = [239, 246, 255] // blue-50
+  const indigoLight = [238, 242, 255] // indigo-50
+  const blueDark = [30, 58, 138] // blue-900
+  const blueText = [30, 64, 175] // blue-800
+  const grayDark = [17, 24, 39] // gray-900
+  const grayText = [75, 85, 99] // gray-600
   
-  // Fond blanc
+  // Fond blanc avec bordure verte (reproduisant border-2 border-green-200)
   doc.setFillColor(255, 255, 255)
   doc.rect(0, 0, 85.6, 53.98, 'F')
   
-  // Barre colorée en haut (style Google)
-  doc.setFillColor(66, 133, 244) // Google Blue
-  doc.rect(0, 0, 85.6, 8, 'F')
-  
-  // Ligne de séparation subtile
-  doc.setDrawColor(232, 234, 237) // borderGray
+  // Bordure verte (2mm de chaque côté)
+  doc.setDrawColor(187, 247, 208) // green-200
   doc.setLineWidth(0.5)
-  doc.line(0, 8, 85.6, 8)
+  doc.rect(1, 1, 83.6, 51.98, 'S')
   
-  // Texte "BADGE" en haut à gauche (blanc, petit)
-  doc.setTextColor(255, 255, 255)
-  doc.setFontSize(8)
-  doc.setFont('helvetica', 'normal')
-  doc.text('BADGE D\'ACCÈS', 5, 5.5)
+  let yPos = 6
   
-  // Logo et nom du centre en haut à droite (dans la barre bleue)
-  // Le logo et le texte seront ajoutés après le chargement de l'image
-  
-  // Nom complet (grand, centré, style Google)
-  const fullName = `${savedRegistrationData.value.firstName} ${savedRegistrationData.value.lastName}`
-  doc.setTextColor(32, 33, 36) // Google Dark Gray
-  doc.setFontSize(16)
+  // Titre "Inscription confirmée !" (reproduisant text-2xl font-bold)
+  doc.setTextColor(grayDark[0], grayDark[1], grayDark[2])
+  doc.setFontSize(14)
   doc.setFont('helvetica', 'bold')
-  const nameWidth = doc.getTextWidth(fullName)
-  doc.text(fullName, (85.6 - nameWidth) / 2, 20)
+  const titleText = 'Inscription confirmée !'
+  const titleWidth = doc.getTextWidth(titleText)
+  doc.text(titleText, (85.6 - titleWidth) / 2, yPos)
+  yPos += 8
   
-  // Organisation (si disponible)
-  let yPos = 26
-  if (registrationForm.value.company) {
-    doc.setTextColor(95, 99, 104) // googleGray
-    doc.setFontSize(10)
-    doc.setFont('helvetica', 'normal')
-    const companyWidth = doc.getTextWidth(registrationForm.value.company)
-    doc.text(registrationForm.value.company, (85.6 - companyWidth) / 2, yPos)
-    yPos += 5
-  }
-  
-  // Poste (si disponible)
-  if (registrationForm.value.position) {
-    doc.setTextColor(95, 99, 104) // googleGray
-    doc.setFontSize(9)
-    doc.setFont('helvetica', 'normal')
-    const positionWidth = doc.getTextWidth(registrationForm.value.position)
-    doc.text(registrationForm.value.position, (85.6 - positionWidth) / 2, yPos)
-    yPos += 7
-  } else {
-    yPos += 7
-  }
-  
-  // Ligne de séparation
-  doc.setDrawColor(232, 234, 237)
-  doc.setLineWidth(0.3)
-  doc.line(10, yPos, 75.6, yPos)
-  yPos += 5
-  
-  // Titre de l'événement
-  doc.setTextColor(32, 33, 36)
-  doc.setFontSize(9)
-  doc.setFont('helvetica', 'bold')
-  const eventTitle = doc.splitTextToSize(event.value.title, 75)
-  const titleY = yPos
-  doc.text(eventTitle, 5, titleY)
-  yPos += eventTitle.length * 4 + 2
-  
-  // Date et heure
-  doc.setTextColor(95, 99, 104)
+  // Texte de félicitations
+  doc.setTextColor(grayText[0], grayText[1], grayText[2])
   doc.setFontSize(7)
   doc.setFont('helvetica', 'normal')
-  const dateTime = `${formatFullDate(event.value.startDate)}${event.value.startTime ? ' - ' + event.value.startTime : ''}`
-  doc.text(dateTime, 5, yPos)
+  const congratsText = `Félicitations ! Votre inscription à l'événement`
+  const congratsWidth = doc.getTextWidth(congratsText)
+  doc.text(congratsText, (85.6 - congratsWidth) / 2, yPos)
+  yPos += 4
+  
+  // Titre de l'événement en bleu (reproduisant text-blue-600)
+  doc.setTextColor(37, 99, 235) // blue-600
+  doc.setFontSize(7)
+  doc.setFont('helvetica', 'bold')
+  const eventTitle = doc.splitTextToSize(`"${event.value.title}"`, 75)
+  const eventTitleY = yPos
+  doc.text(eventTitle, (85.6 - 75) / 2, eventTitleY)
+  yPos += eventTitle.length * 3.5 + 3
+  
+  // Section avec les détails (reproduisant bg-gradient-to-br from-blue-50 to-indigo-50)
+  const detailsY = yPos
+  const detailsHeight = 20
+  
+  // Fond bleu/indigo avec bordure
+  doc.setFillColor(blueLight[0], blueLight[1], blueLight[2])
+  doc.roundedRect(3, detailsY, 79.6, detailsHeight, 2, 2, 'F')
+  doc.setDrawColor(191, 219, 254) // blue-200
+  doc.setLineWidth(0.3)
+  doc.roundedRect(3, detailsY, 79.6, detailsHeight, 2, 2, 'S')
+  
+  yPos += 3
+  
+  // Titre "Détails de votre inscription"
+  doc.setTextColor(blueDark[0], blueDark[1], blueDark[2])
+  doc.setFontSize(8)
+  doc.setFont('helvetica', 'bold')
+  doc.text('Détails de votre inscription', 5, yPos)
+  yPos += 4
+  
+  // Informations
+  doc.setFontSize(6)
+  doc.setFont('helvetica', 'normal')
+  const fullName = `${savedRegistrationData.value.firstName} ${savedRegistrationData.value.lastName}`
+  doc.setTextColor(blueDark[0], blueDark[1], blueDark[2])
+  doc.setFont('helvetica', 'bold')
+  doc.text('Nom :', 5, yPos)
+  doc.setTextColor(blueText[0], blueText[1], blueText[2])
+  doc.setFont('helvetica', 'normal')
+  doc.text(fullName, 15, yPos)
   yPos += 3.5
   
-  // Lieu (si disponible)
+  doc.setTextColor(blueDark[0], blueDark[1], blueDark[2])
+  doc.setFont('helvetica', 'bold')
+  doc.text('Email :', 5, yPos)
+  doc.setTextColor(blueText[0], blueText[1], blueText[2])
+  doc.setFont('helvetica', 'normal')
+  doc.text(savedRegistrationData.value.email, 15, yPos)
+  yPos += 3.5
+  
+  doc.setTextColor(blueDark[0], blueDark[1], blueDark[2])
+  doc.setFont('helvetica', 'bold')
+  doc.text('Événement :', 5, yPos)
+  doc.setTextColor(blueText[0], blueText[1], blueText[2])
+  doc.setFont('helvetica', 'normal')
+  const eventTitleLine = doc.splitTextToSize(event.value.title, 60)
+  doc.text(eventTitleLine, 20, yPos)
+  yPos += eventTitleLine.length * 3.5
+  
+  doc.setTextColor(blueDark[0], blueDark[1], blueDark[2])
+  doc.setFont('helvetica', 'bold')
+  doc.text('Date :', 5, yPos)
+  doc.setTextColor(blueText[0], blueText[1], blueText[2])
+  doc.setFont('helvetica', 'normal')
+  const dateTime = `${formatFullDate(event.value.startDate)} à ${formatTime(event.value.startTime)}`
+  doc.text(dateTime, 15, yPos)
+  yPos += 3.5
+  
   if (event.value.location) {
-    doc.setTextColor(95, 99, 104)
-    doc.setFontSize(7)
-    doc.text(event.value.location, 5, yPos)
+    doc.setTextColor(blueDark[0], blueDark[1], blueDark[2])
+    doc.setFont('helvetica', 'bold')
+    doc.text('Lieu :', 5, yPos)
+    doc.setTextColor(blueText[0], blueText[1], blueText[2])
+    doc.setFont('helvetica', 'normal')
+    doc.text(event.value.location, 15, yPos)
   }
   
   // Fonction pour charger et ajouter le logo
@@ -881,26 +936,18 @@ const downloadBadge = () => {
       
       reader.onloadend = () => {
         const base64data = reader.result as string
-        // Ajouter le logo en haut à droite (dans la barre bleue)
-        const logoWidth = 8
-        const logoHeight = 5
-        const logoX = 85.6 - logoWidth - 5 // Position X: largeur badge - largeur logo - marge
-        const logoY = 1.5 // Position Y: en haut de la barre bleue
+        // Ajouter le logo en bas à droite
+        const logoWidth = 6
+        const logoHeight = 4
+        const logoX = 85.6 - logoWidth - 2
+        const logoY = 53.98 - logoHeight - 2
         doc.addImage(base64data, 'PNG', logoX, logoY, logoWidth, logoHeight)
         
-        // Nom du centre à droite du logo (en blanc, dans la barre bleue)
-        doc.setTextColor(255, 255, 255) // Blanc pour la barre bleue
-        doc.setFontSize(6)
+        // Nom du centre à gauche du logo
+        doc.setTextColor(grayText[0], grayText[1], grayText[2])
+        doc.setFontSize(5)
         doc.setFont('helvetica', 'bold')
-        const centerNameX = logoX - 20 // À gauche du logo
-        doc.text('CReFF-PME', centerNameX, 4.5)
-        
-        // Icône de confirmation (cercle avec check) en bas à droite
-        doc.setFillColor(52, 168, 83) // Google Green
-        doc.circle(78, 48, 3, 'F')
-        doc.setTextColor(255, 255, 255)
-        doc.setFontSize(4)
-        doc.text('✓', 78, 49)
+        doc.text('CReFF-PME', logoX - 12, logoY + 2.5)
         
         // Télécharger le PDF
         if (event.value) {
@@ -917,17 +964,10 @@ const downloadBadge = () => {
     } catch (error) {
       console.error('Error loading logo:', error)
       // Fallback: juste le texte si l'image ne charge pas
-      doc.setTextColor(255, 255, 255) // Blanc pour la barre bleue
-      doc.setFontSize(6)
+      doc.setTextColor(grayText[0], grayText[1], grayText[2])
+      doc.setFontSize(5)
       doc.setFont('helvetica', 'bold')
-      doc.text('CReFF-PME', 85.6 - 20, 4.5) // Positionné à droite
-      
-      // Icône de confirmation (cercle avec check) en bas à droite
-      doc.setFillColor(52, 168, 83) // Google Green
-      doc.circle(78, 48, 3, 'F')
-      doc.setTextColor(255, 255, 255)
-      doc.setFontSize(4)
-      doc.text('✓', 78, 49)
+      doc.text('CReFF-PME', 85.6 - 15, 53.98 - 2)
       
       // Télécharger le PDF même sans logo
       if (event.value) {
@@ -941,7 +981,7 @@ const downloadBadge = () => {
   addLogoAndSave()
 }
 
-// Imprimer le badge (génère un PDF et l'ouvre pour impression)
+// Imprimer le badge (génère un PDF et l'ouvre pour impression - même design que downloadBadge)
 const printBadge = () => {
   if (!event.value) return
   
@@ -952,93 +992,119 @@ const printBadge = () => {
     format: [85.6, 53.98]
   })
   
-  // Couleurs style Google
-  const googleBlue = '#4285F4'
-  const googleGray = '#5F6368'
-  const lightGray = '#F8F9FA'
-  const borderGray = '#E8EAED'
+  // Couleurs du modal
+  const greenBorder = [34, 197, 94] // green-500
+  const greenLight = [220, 252, 231] // green-50
+  const blueLight = [239, 246, 255] // blue-50
+  const indigoLight = [238, 242, 255] // indigo-50
+  const blueDark = [30, 58, 138] // blue-900
+  const blueText = [30, 64, 175] // blue-800
+  const grayDark = [17, 24, 39] // gray-900
+  const grayText = [75, 85, 99] // gray-600
   
-  // Fond blanc
+  // Fond blanc avec bordure verte (reproduisant border-2 border-green-200)
   doc.setFillColor(255, 255, 255)
   doc.rect(0, 0, 85.6, 53.98, 'F')
   
-  // Barre colorée en haut (style Google)
-  doc.setFillColor(66, 133, 244) // Google Blue
-  doc.rect(0, 0, 85.6, 8, 'F')
-  
-  // Ligne de séparation subtile
-  doc.setDrawColor(232, 234, 237) // borderGray
+  // Bordure verte (2mm de chaque côté)
+  doc.setDrawColor(187, 247, 208) // green-200
   doc.setLineWidth(0.5)
-  doc.line(0, 8, 85.6, 8)
+  doc.rect(1, 1, 83.6, 51.98, 'S')
   
-  // Texte "BADGE" en haut à gauche (blanc, petit)
-  doc.setTextColor(255, 255, 255)
-  doc.setFontSize(8)
-  doc.setFont('helvetica', 'normal')
-  doc.text('BADGE D\'ACCÈS', 5, 5.5)
+  let yPos = 6
   
-  // Logo et nom du centre en haut à droite (dans la barre bleue)
-  // Le logo et le texte seront ajoutés après le chargement de l'image
-  
-  // Nom complet (grand, centré, style Google)
-  const fullName = `${savedRegistrationData.value.firstName} ${savedRegistrationData.value.lastName}`
-  doc.setTextColor(32, 33, 36) // Google Dark Gray
-  doc.setFontSize(16)
+  // Titre "Inscription confirmée !" (reproduisant text-2xl font-bold)
+  doc.setTextColor(grayDark[0], grayDark[1], grayDark[2])
+  doc.setFontSize(14)
   doc.setFont('helvetica', 'bold')
-  const nameWidth = doc.getTextWidth(fullName)
-  doc.text(fullName, (85.6 - nameWidth) / 2, 20)
+  const titleText = 'Inscription confirmée !'
+  const titleWidth = doc.getTextWidth(titleText)
+  doc.text(titleText, (85.6 - titleWidth) / 2, yPos)
+  yPos += 8
   
-  // Organisation (si disponible)
-  let yPos = 26
-  if (savedRegistrationData.value.company) {
-    doc.setTextColor(95, 99, 104) // googleGray
-    doc.setFontSize(10)
-    doc.setFont('helvetica', 'normal')
-    const companyWidth = doc.getTextWidth(savedRegistrationData.value.company)
-    doc.text(savedRegistrationData.value.company, (85.6 - companyWidth) / 2, yPos)
-    yPos += 5
-  }
-  
-  // Poste (si disponible)
-  if (savedRegistrationData.value.position) {
-    doc.setTextColor(95, 99, 104) // googleGray
-    doc.setFontSize(9)
-    doc.setFont('helvetica', 'normal')
-    const positionWidth = doc.getTextWidth(savedRegistrationData.value.position)
-    doc.text(savedRegistrationData.value.position, (85.6 - positionWidth) / 2, yPos)
-    yPos += 7
-  } else {
-    yPos += 7
-  }
-  
-  // Ligne de séparation
-  doc.setDrawColor(232, 234, 237)
-  doc.setLineWidth(0.3)
-  doc.line(10, yPos, 75.6, yPos)
-  yPos += 5
-  
-  // Titre de l'événement
-  doc.setTextColor(32, 33, 36)
-  doc.setFontSize(9)
-  doc.setFont('helvetica', 'bold')
-  const eventTitle = doc.splitTextToSize(event.value.title, 75)
-  const titleY = yPos
-  doc.text(eventTitle, 5, titleY)
-  yPos += eventTitle.length * 4 + 2
-  
-  // Date et heure
-  doc.setTextColor(95, 99, 104)
+  // Texte de félicitations
+  doc.setTextColor(grayText[0], grayText[1], grayText[2])
   doc.setFontSize(7)
   doc.setFont('helvetica', 'normal')
-  const dateTime = `${formatFullDate(event.value.startDate)}${event.value.startTime ? ' - ' + event.value.startTime : ''}`
-  doc.text(dateTime, 5, yPos)
+  const congratsText = `Félicitations ! Votre inscription à l'événement`
+  const congratsWidth = doc.getTextWidth(congratsText)
+  doc.text(congratsText, (85.6 - congratsWidth) / 2, yPos)
+  yPos += 4
+  
+  // Titre de l'événement en bleu (reproduisant text-blue-600)
+  doc.setTextColor(37, 99, 235) // blue-600
+  doc.setFontSize(7)
+  doc.setFont('helvetica', 'bold')
+  const eventTitle = doc.splitTextToSize(`"${event.value.title}"`, 75)
+  const eventTitleY = yPos
+  doc.text(eventTitle, (85.6 - 75) / 2, eventTitleY)
+  yPos += eventTitle.length * 3.5 + 3
+  
+  // Section avec les détails (reproduisant bg-gradient-to-br from-blue-50 to-indigo-50)
+  const detailsY = yPos
+  const detailsHeight = 20
+  
+  // Fond bleu/indigo avec bordure
+  doc.setFillColor(blueLight[0], blueLight[1], blueLight[2])
+  doc.roundedRect(3, detailsY, 79.6, detailsHeight, 2, 2, 'F')
+  doc.setDrawColor(191, 219, 254) // blue-200
+  doc.setLineWidth(0.3)
+  doc.roundedRect(3, detailsY, 79.6, detailsHeight, 2, 2, 'S')
+  
+  yPos += 3
+  
+  // Titre "Détails de votre inscription"
+  doc.setTextColor(blueDark[0], blueDark[1], blueDark[2])
+  doc.setFontSize(8)
+  doc.setFont('helvetica', 'bold')
+  doc.text('Détails de votre inscription', 5, yPos)
+  yPos += 4
+  
+  // Informations
+  doc.setFontSize(6)
+  doc.setFont('helvetica', 'normal')
+  const fullName = `${savedRegistrationData.value.firstName} ${savedRegistrationData.value.lastName}`
+  doc.setTextColor(blueDark[0], blueDark[1], blueDark[2])
+  doc.setFont('helvetica', 'bold')
+  doc.text('Nom :', 5, yPos)
+  doc.setTextColor(blueText[0], blueText[1], blueText[2])
+  doc.setFont('helvetica', 'normal')
+  doc.text(fullName, 15, yPos)
   yPos += 3.5
   
-  // Lieu (si disponible)
+  doc.setTextColor(blueDark[0], blueDark[1], blueDark[2])
+  doc.setFont('helvetica', 'bold')
+  doc.text('Email :', 5, yPos)
+  doc.setTextColor(blueText[0], blueText[1], blueText[2])
+  doc.setFont('helvetica', 'normal')
+  doc.text(savedRegistrationData.value.email, 15, yPos)
+  yPos += 3.5
+  
+  doc.setTextColor(blueDark[0], blueDark[1], blueDark[2])
+  doc.setFont('helvetica', 'bold')
+  doc.text('Événement :', 5, yPos)
+  doc.setTextColor(blueText[0], blueText[1], blueText[2])
+  doc.setFont('helvetica', 'normal')
+  const eventTitleLine = doc.splitTextToSize(event.value.title, 60)
+  doc.text(eventTitleLine, 20, yPos)
+  yPos += eventTitleLine.length * 3.5
+  
+  doc.setTextColor(blueDark[0], blueDark[1], blueDark[2])
+  doc.setFont('helvetica', 'bold')
+  doc.text('Date :', 5, yPos)
+  doc.setTextColor(blueText[0], blueText[1], blueText[2])
+  doc.setFont('helvetica', 'normal')
+  const dateTime = `${formatFullDate(event.value.startDate)} à ${formatTime(event.value.startTime)}`
+  doc.text(dateTime, 15, yPos)
+  yPos += 3.5
+  
   if (event.value.location) {
-    doc.setTextColor(95, 99, 104)
-    doc.setFontSize(7)
-    doc.text(event.value.location, 5, yPos)
+    doc.setTextColor(blueDark[0], blueDark[1], blueDark[2])
+    doc.setFont('helvetica', 'bold')
+    doc.text('Lieu :', 5, yPos)
+    doc.setTextColor(blueText[0], blueText[1], blueText[2])
+    doc.setFont('helvetica', 'normal')
+    doc.text(event.value.location, 15, yPos)
   }
   
   // Fonction pour charger et ajouter le logo
@@ -1052,26 +1118,18 @@ const printBadge = () => {
       
       reader.onloadend = () => {
         const base64data = reader.result as string
-        // Ajouter le logo en haut à droite (dans la barre bleue)
-        const logoWidth = 8
-        const logoHeight = 5
-        const logoX = 85.6 - logoWidth - 5 // Position X: largeur badge - largeur logo - marge
-        const logoY = 1.5 // Position Y: en haut de la barre bleue
+        // Ajouter le logo en bas à droite
+        const logoWidth = 6
+        const logoHeight = 4
+        const logoX = 85.6 - logoWidth - 2
+        const logoY = 53.98 - logoHeight - 2
         doc.addImage(base64data, 'PNG', logoX, logoY, logoWidth, logoHeight)
         
-        // Nom du centre à droite du logo (en blanc, dans la barre bleue)
-        doc.setTextColor(255, 255, 255) // Blanc pour la barre bleue
-        doc.setFontSize(6)
+        // Nom du centre à gauche du logo
+        doc.setTextColor(grayText[0], grayText[1], grayText[2])
+        doc.setFontSize(5)
         doc.setFont('helvetica', 'bold')
-        const centerNameX = logoX - 20 // À gauche du logo
-        doc.text('CReFF-PME', centerNameX, 4.5)
-        
-        // Icône de confirmation (cercle avec check) en bas à droite
-        doc.setFillColor(52, 168, 83) // Google Green
-        doc.circle(78, 48, 3, 'F')
-        doc.setTextColor(255, 255, 255)
-        doc.setFontSize(4)
-        doc.text('✓', 78, 49)
+        doc.text('CReFF-PME', logoX - 12, logoY + 2.5)
         
         // Ouvrir le PDF dans une nouvelle fenêtre pour impression
         const pdfBlob = doc.output('blob')
@@ -1101,17 +1159,10 @@ const printBadge = () => {
     } catch (error) {
       console.error('Error loading logo:', error)
       // Fallback: juste le texte si l'image ne charge pas
-      doc.setTextColor(255, 255, 255) // Blanc pour la barre bleue
-      doc.setFontSize(6)
+      doc.setTextColor(grayText[0], grayText[1], grayText[2])
+      doc.setFontSize(5)
       doc.setFont('helvetica', 'bold')
-      doc.text('CReFF-PME', 85.6 - 20, 4.5) // Positionné à droite
-      
-      // Icône de confirmation (cercle avec check) en bas à droite
-      doc.setFillColor(52, 168, 83) // Google Green
-      doc.circle(78, 48, 3, 'F')
-      doc.setTextColor(255, 255, 255)
-      doc.setFontSize(4)
-      doc.text('✓', 78, 49)
+      doc.text('CReFF-PME', 85.6 - 15, 53.98 - 2)
       
       // Ouvrir le PDF dans une nouvelle fenêtre pour impression
       const pdfBlob = doc.output('blob')
@@ -1125,12 +1176,12 @@ const printBadge = () => {
             URL.revokeObjectURL(pdfUrl)
           }, 500)
         }
-        } else {
-          // Fallback: télécharger le PDF si les popups sont bloquées
-          if (event.value) {
-            doc.save(`badge-${event.value.title.replace(/\s+/g, '-')}-${savedRegistrationData.value.lastName || 'badge'}.pdf`)
-          }
+      } else {
+        // Fallback: télécharger le PDF si les popups sont bloquées
+        if (event.value) {
+          doc.save(`badge-${event.value.title.replace(/\s+/g, '-')}-${savedRegistrationData.value.lastName || 'badge'}.pdf`)
         }
+      }
     }
   }
   
@@ -1261,5 +1312,26 @@ onUnmounted(() => {
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* Effet d'apparition après le loader */
+.detail-fade-in {
+  animation: detailFadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.detail-fade-in-delay {
+  animation: detailFadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
+  opacity: 0;
+}
+
+@keyframes detailFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 </style>
