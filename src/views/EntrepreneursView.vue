@@ -556,17 +556,19 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, computed } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
-import eventService from '@/services/event.service'
-import trainingRegistrationService from '@/services/training-registration.service'
 //@ts-ignore
 import NavBarComponent from '../components/navbar/NavBarComponent.vue'
+
+const { t } = useI18n()
 //@ts-ignore
 import ShimmerCard from '../components/ShimmerCard.vue'
 //@ts-ignore
 import FooterComponent from '../components/footer/FooterComponent.vue'
+import eventService from '@/services/event.service'
+import trainingRegistrationService from '@/services/training-registration.service'
 
 // Import des images
 import carousel1 from '../assets/carousel-1.jpg'
@@ -574,11 +576,10 @@ import carousel2 from '../assets/carousel-2.jpg'
 import carousel4 from '../assets/carousel-4.jpg'
 import profImage from '../assets/prof.jpeg'
 
-const { t } = useI18n()
 const router = useRouter()
 
 // Témoignages
-const testimonials = ref([
+const testimonials = computed(() => [
   {
     text: t('entrepreneurs.testimonials.testimonial1.text'),
     name: t('entrepreneurs.testimonials.testimonial1.name'),
@@ -712,7 +713,7 @@ const registerEvent = (eventId) => {
 }
 
 // FAQ
-const faqs = ref([
+const faqs = computed(() => [
   {
     question: t('entrepreneurs.faq.faq1.question'),
     answer: t('entrepreneurs.faq.faq1.answer')
