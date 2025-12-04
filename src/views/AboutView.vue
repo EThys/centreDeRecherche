@@ -192,29 +192,29 @@
               <!-- Contenu superposé -->
               <div class="relative h-full flex flex-col justify-end p-6 sm:p-8 text-white">
                 <div class="inline-block bg-blue-600/90 backdrop-blur-sm text-white px-4 py-1.5 rounded-full text-xs font-semibold mb-3 self-start">
-                  Président
+                  {{ $t('about.aboutView.team.roles.president') }}
                 </div>
                 <h3 class="text-2xl sm:text-3xl font-bold mb-2 group-hover:text-blue-300 transition-colors duration-300">
-                  Olivier Witmeur
+                  {{ $t('about.aboutView.team.board.president.name') }}
                 </h3>
-                <p class="text-blue-200 text-sm sm:text-base font-medium mb-4">Président du Conseil de Direction</p>
+                <p class="text-blue-200 text-sm sm:text-base font-medium mb-4">{{ $t('about.aboutView.team.board.president.title') }}</p>
                 
                 <div class="space-y-2 text-sm sm:text-base text-gray-200 border-t border-white/20 pt-4">
                   <p class="leading-relaxed flex items-start">
                     <i class="fas fa-check-circle mr-2 mt-1 text-blue-400 flex-shrink-0"></i>
-                    <span>Professeur d'entrepreneuriat à la Solvay Brussels School of Economics and Management (ULB)</span>
+                    <span>{{ $t('about.aboutView.team.board.president.item1') }}</span>
                   </p>
                   <p class="leading-relaxed flex items-start">
                     <i class="fas fa-check-circle mr-2 mt-1 text-blue-400 flex-shrink-0"></i>
-                    <span>Vice-Doyen de Solvay Brussels School Economics & Management (ULB)</span>
+                    <span>{{ $t('about.aboutView.team.board.president.item2') }}</span>
                   </p>
                   <p class="leading-relaxed flex items-start">
                     <i class="fas fa-check-circle mr-2 mt-1 text-blue-400 flex-shrink-0"></i>
-                    <span>Fondateur de StartLAB.Brussels</span>
+                    <span>{{ $t('about.aboutView.team.board.president.item3') }}</span>
                   </p>
                   <p class="text-xs text-gray-300 mt-4 pt-4 border-t border-white/10">
                     <i class="fas fa-graduation-cap mr-2"></i>
-                    Doctorat en Entrepreneuriat (2008)
+                    {{ $t('about.aboutView.team.board.president.education') }}
                   </p>
                 </div>
               </div>
@@ -236,29 +236,29 @@
               <!-- Contenu superposé -->
               <div class="relative h-full flex flex-col justify-end p-6 sm:p-8 text-white">
                 <div class="inline-block bg-blue-600/90 backdrop-blur-sm text-white px-4 py-1.5 rounded-full text-xs font-semibold mb-3 self-start">
-                  Vice-Président
+                  {{ $t('about.aboutView.team.roles.vicePresident') }}
                 </div>
                 <h3 class="text-2xl sm:text-3xl font-bold mb-2 group-hover:text-blue-300 transition-colors duration-300">
-                  Justin Kamavuako Diwavova
+                  {{ $t('about.aboutView.team.board.vicePresident.name') }}
                 </h3>
-                <p class="text-blue-200 text-sm sm:text-base font-medium mb-4">Vice-Président du Conseil de Direction</p>
+                <p class="text-blue-200 text-sm sm:text-base font-medium mb-4">{{ $t('about.aboutView.team.board.vicePresident.title') }}</p>
                 
                 <div class="space-y-2 text-sm sm:text-base text-gray-200 border-t border-white/20 pt-4">
                   <p class="leading-relaxed flex items-start">
                     <i class="fas fa-check-circle mr-2 mt-1 text-blue-400 flex-shrink-0"></i>
-                    <span>Professeur des Universités(RDC)</span>
+                    <span>{{ $t('about.aboutView.team.board.vicePresident.item1') }}</span>
                   </p>
                   <p class="leading-relaxed flex items-start">
                     <i class="fas fa-check-circle mr-2 mt-1 text-blue-400 flex-shrink-0"></i>
-                    <span>Expert en restructuration et croissance des PME en Afrique</span>
+                    <span>{{ $t('about.aboutView.team.board.vicePresident.item2') }}</span>
                   </p>
                   <p class="leading-relaxed flex items-start">
                     <i class="fas fa-check-circle mr-2 mt-1 text-blue-400 flex-shrink-0"></i>
-                    <span>Spécialiste en entrepreneuriat</span>
+                    <span>{{ $t('about.aboutView.team.board.vicePresident.item3') }}</span>
                   </p>
                   <p class="text-xs text-gray-300 mt-4 pt-4 border-t border-white/10">
                     <i class="fas fa-graduation-cap mr-2"></i>
-                    Doctorat en sciences de gestion (2009)
+                    {{ $t('about.aboutView.team.board.vicePresident.education') }}
                   </p>
                 </div>
               </div>
@@ -280,29 +280,29 @@
               <!-- Contenu superposé -->
               <div class="relative h-full flex flex-col justify-end p-6 sm:p-8 text-white">
                 <div class="inline-block bg-blue-600/90 backdrop-blur-sm text-white px-4 py-1.5 rounded-full text-xs font-semibold mb-3 self-start">
-                  Secrétaire
+                  {{ $t('about.aboutView.team.roles.secretary') }}
                 </div>
                 <h3 class="text-2xl sm:text-3xl font-bold mb-2 group-hover:text-blue-300 transition-colors duration-300">
-                  Jean Nsonsumuna
+                  {{ $t('about.aboutView.team.board.secretary.name') }}
                 </h3>
-                <p class="text-blue-200 text-sm sm:text-base font-medium mb-4">Secrétaire du Conseil de Direction, Directeur du Creff-PME</p>
+                <p class="text-blue-200 text-sm sm:text-base font-medium mb-4">{{ $t('about.aboutView.team.board.secretary.title') }}</p>
                 
                 <div class="space-y-2 text-sm sm:text-base text-gray-200 border-t border-white/20 pt-4">
                   <p class="leading-relaxed flex items-start">
                     <i class="fas fa-check-circle mr-2 mt-1 text-blue-400 flex-shrink-0"></i>
-                    <span>Professeur à l'Université Kongo</span>
+                    <span>{{ $t('about.aboutView.team.board.secretary.item1') }}</span>
                   </p>
                   <p class="leading-relaxed flex items-start">
                     <i class="fas fa-check-circle mr-2 mt-1 text-blue-400 flex-shrink-0"></i>
-                    <span>Co-fondateur du Centre de Recherche et de Formation sur le Financement des PME en Afrique centrale</span>
+                    <span>{{ $t('about.aboutView.team.board.secretary.item2') }}</span>
                   </p>
                   <p class="leading-relaxed flex items-start">
                     <i class="fas fa-check-circle mr-2 mt-1 text-blue-400 flex-shrink-0"></i>
-                    <span>Expert en finance entrepreneuriale</span>
+                    <span>{{ $t('about.aboutView.team.board.secretary.item3') }}</span>
                   </p>
                   <p class="text-xs text-gray-300 mt-4 pt-4 border-t border-white/10">
                     <i class="fas fa-graduation-cap mr-2"></i>
-                    Doctorat en sciences économiques et de gestion (ULB)
+                    {{ $t('about.aboutView.team.board.secretary.education') }}
                   </p>
                 </div>
               </div>
@@ -314,7 +314,7 @@
         <div class="fade-in-up " data-animate>
           <div class="text-center mb-12 sm:mb-16">
             <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 sm:mb-6 leading-tight">
-              Comité de gestion du <span class="text-blue-600">CReFF-PME</span>
+              {{ $t('about.aboutView.team.managementTitle') }} <span class="text-blue-600">{{ $t('about.aboutView.team.managementTitleHighlight') }}</span>
             </h2>
           </div>
 
@@ -335,18 +335,18 @@
               <!-- Contenu superposé -->
               <div class="relative h-full flex flex-col justify-end p-6 sm:p-8 text-white">
                 <div class="inline-block bg-blue-600/90 backdrop-blur-sm text-white px-4 py-1.5 rounded-full text-xs font-semibold mb-3 self-start">
-                  Directeur
+                  {{ $t('about.aboutView.team.roles.director') }}
                 </div>
                 <h3 class="text-2xl sm:text-3xl font-bold mb-2 group-hover:text-blue-300 transition-colors duration-300">
-                  Jean Nsonsumuna
+                  {{ $t('about.aboutView.team.management.director.name') }}
                 </h3>
-                <p class="text-blue-200 text-sm sm:text-base font-medium mb-4">Directeur du Creff-PME</p>
+                <p class="text-blue-200 text-sm sm:text-base font-medium mb-4">{{ $t('about.aboutView.team.management.director.title') }}</p>
                 
                 <div class="space-y-2 text-sm sm:text-base text-gray-200 border-t border-white/20 pt-4">
-                  <p class="leading-relaxed">Professeur à l'Université Kongo</p>
+                  <p class="leading-relaxed">{{ $t('about.aboutView.team.management.director.item1') }}</p>
                   <p class="text-xs text-gray-300 mt-4 pt-4 border-t border-white/10">
                     <i class="fas fa-graduation-cap mr-2"></i>
-                    Doctorat en sciences économiques et de gestion (ULB)
+                    {{ $t('about.aboutView.team.management.director.education') }}
                   </p>
                 </div>
               </div>
@@ -370,17 +370,17 @@
               <!-- Contenu superposé -->
               <div class="relative h-full flex flex-col justify-end p-6 sm:p-8 text-white">
                 <div class="inline-block bg-indigo-600/90 backdrop-blur-sm text-white px-4 py-1.5 rounded-full text-xs font-semibold mb-3 self-start">
-                  Secrétaire
+                  {{ $t('about.aboutView.team.roles.secretary') }}
                 </div>
                 <h3 class="text-2xl sm:text-3xl font-bold mb-2 group-hover:text-blue-300 transition-colors duration-300">
-                  Eunice KIKADILU AWAZI
+                  {{ $t('about.aboutView.team.management.secretary.name') }}
                 </h3>
-                <p class="text-indigo-200 text-sm sm:text-base font-medium mb-4">Secrétaire du Creff-PME</p>
+                <p class="text-indigo-200 text-sm sm:text-base font-medium mb-4">{{ $t('about.aboutView.team.management.secretary.title') }}</p>
                 
                 <div class="space-y-2 text-sm sm:text-base text-gray-200 border-t border-white/20 pt-4">
-                  <p class="leading-relaxed">Licencié (Bac+5) en droit (2023)</p>
-                  <p class="leading-relaxed">Expérience au Tribunal pour Enfants de Mbanza-Ngungu</p>
-                  <p class="leading-relaxed">Gestion de l'entreprise Kadilo SIK SARL</p>
+                  <p class="leading-relaxed">{{ $t('about.aboutView.team.management.secretary.item1') }}</p>
+                  <p class="leading-relaxed">{{ $t('about.aboutView.team.management.secretary.item2') }}</p>
+                  <p class="leading-relaxed">{{ $t('about.aboutView.team.management.secretary.item3') }}</p>
                 </div>
               </div>
             </div>
@@ -403,16 +403,16 @@
               <!-- Contenu superposé -->
               <div class="relative h-full flex flex-col justify-end p-6 sm:p-8 text-white">
                 <div class="inline-block bg-cyan-600/90 backdrop-blur-sm text-white px-4 py-1.5 rounded-full text-xs font-semibold mb-3 self-start">
-                  Logistique
+                  {{ $t('about.aboutView.team.roles.logistics') }}
                 </div>
                 <h3 class="text-2xl sm:text-3xl font-bold mb-2 group-hover:text-blue-300 transition-colors duration-300">
-                  Marcel BODI BODI
+                  {{ $t('about.aboutView.team.management.logistics.name') }}
                 </h3>
-                <p class="text-cyan-200 text-sm sm:text-base font-medium mb-4">Chargé du logistique</p>
+                <p class="text-cyan-200 text-sm sm:text-base font-medium mb-4">{{ $t('about.aboutView.team.management.logistics.title') }}</p>
                 
                 <div class="space-y-2 text-sm sm:text-base text-gray-200 border-t border-white/20 pt-4">
-                  <p class="leading-relaxed">Licencié (Bac+5) en Sciences de gestion (2024)</p>
-                  <p class="leading-relaxed">Assistant à temps partiel à l'Université Kongo</p>
+                  <p class="leading-relaxed">{{ $t('about.aboutView.team.management.logistics.item1') }}</p>
+                  <p class="leading-relaxed">{{ $t('about.aboutView.team.management.logistics.item2') }}</p>
                 </div>
               </div>
             </div>
@@ -431,19 +431,19 @@
       <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div class="text-center mb-12 sm:mb-16 fade-in-up" data-animate>
           <div class="mb-6">
-            <span class="text-blue-600 text-xs font-semibold tracking-[0.15em] uppercase">PARTENAIRES</span>
+            <span class="text-blue-600 text-xs font-semibold tracking-[0.15em] uppercase">{{ $t('about.aboutView.partners.header') }}</span>
           </div>
           <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 sm:mb-6 leading-tight">
-            Nos <span class="text-blue-600">partenaires</span>
+            {{ $t('about.aboutView.partners.title') }} <span class="text-blue-600">{{ $t('about.aboutView.partners.titleHighlight') }}</span>
           </h2>
         </div>
 
         <!-- Container de cartes des partenaires -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 lg:gap-10 fade-in-up" data-animate>
+        <div class="flex flex-wrap justify-center gap-6 sm:gap-8 lg:gap-10 fade-in-up" data-animate>
           <div 
             v-for="(partner, index) in partners"
             :key="index"
-            class="group relative bg-white rounded-3xl sm:rounded-[2rem] p-8 sm:p-10 lg:p-12 shadow-xl hover:shadow-2xl border border-gray-100/80 hover:border-blue-300/60 transition-all duration-700 fade-in-up stagger-item overflow-hidden"
+            class="group relative bg-white rounded-3xl sm:rounded-[2rem] p-8 sm:p-10 lg:p-12 shadow-xl hover:shadow-2xl border border-gray-100/80 hover:border-blue-300/60 transition-all duration-700 fade-in-up stagger-item overflow-hidden w-full sm:w-auto sm:max-w-md"
             :style="{ animationDelay: `${index * 150}ms` }"
             data-animate
           >
@@ -493,7 +493,7 @@
               <!-- Badge premium avec icône -->
               <div class="inline-flex items-center gap-2.5 bg-gradient-to-r from-blue-50 to-indigo-50 group-hover:from-blue-100 group-hover:to-indigo-100 px-5 py-2.5 rounded-full transition-all duration-500 shadow-md group-hover:shadow-lg border border-blue-200/50 group-hover:border-blue-300/80 transform group-hover:scale-105">
                 <i :class="partner.icon" class="text-blue-600 text-base group-hover:text-blue-700 transition-colors duration-300"></i>
-                <span class="text-xs sm:text-sm font-bold text-blue-700 group-hover:text-blue-800 tracking-wide">Partenaire</span>
+                <span class="text-xs sm:text-sm font-bold text-blue-700 group-hover:text-blue-800 tracking-wide">{{ $t('about.aboutView.partners.badge') }}</span>
               </div>
             </div>
             
@@ -515,7 +515,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 //@ts-ignore
 import NavBarComponent from '../components/navbar/NavBarComponent.vue'
@@ -531,28 +531,21 @@ import researchImage4 from '../assets/eunice.jpeg'
 import researchImage5 from '../assets/marcel.jpeg'
 import solvayLogo from '../assets/solvay.jpeg'
 import aresLogo from '../assets/ares.jpeg'
-import kongoLogo from '../assets/kongo.jpeg'
 
-const partners = [
+const partners = computed(() => [
   {
-    name: 'Solvay Brussels School',
-    description: 'Economics & Management (ULB)',
+    name: t('about.aboutView.partners.solvay.name'),
+    description: t('about.aboutView.partners.solvay.description'),
     icon: 'fas fa-university',
     logo: solvayLogo
   },
   {
-    name: 'ARES',
-    description: 'Académie de Recherche et d\'Enseignement Supérieur (Belgique)',
+    name: t('about.aboutView.partners.ares.name'),
+    description: t('about.aboutView.partners.ares.description'),
     icon: 'fas fa-graduation-cap',
     logo: aresLogo
-  },
-  {
-    name: 'Université Kongo',
-    description: 'Mbanza-Ngungu, Kongo-Central, RDC',
-    icon: 'fas fa-book',
-    logo: kongoLogo
   }
-]
+])
 
 
 let observer = null

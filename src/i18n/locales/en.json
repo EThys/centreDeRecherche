@@ -86,7 +86,75 @@
         "boardTitle": "Board of Directors of",
         "boardTitleHighlight": "CReFF-PME",
         "managementTitle": "Management Committee of",
-        "managementTitleHighlight": "Creff"
+        "managementTitleHighlight": "CReFF-PME",
+        "roles": {
+          "president": "President",
+          "vicePresident": "Vice-President",
+          "secretary": "Secretary",
+          "director": "Director",
+          "logistics": "Logistics"
+        },
+        "board": {
+          "president": {
+            "title": "President of the Board of Directors",
+            "name": "Olivier Witmeur",
+            "item1": "Professor of Entrepreneurship at Solvay Brussels School of Economics and Management (ULB)",
+            "item2": "Vice-Dean of Solvay Brussels School Economics & Management (ULB)",
+            "item3": "Founder of StartLAB.Brussels",
+            "education": "PhD in Entrepreneurship (2008)"
+          },
+          "vicePresident": {
+            "title": "Vice-President of the Board of Directors",
+            "name": "Justin Kamavuako Diwavova",
+            "item1": "University Professor (DRC)",
+            "item2": "Expert in restructuring and growth of SMEs in Africa",
+            "item3": "Entrepreneurship specialist",
+            "education": "PhD in Management Sciences (2009)"
+          },
+          "secretary": {
+            "title": "Secretary of the Board of Directors, Director of Creff-PME",
+            "name": "Jean Nsonsumuna",
+            "item1": "Professor at Kongo University",
+            "item2": "Co-founder of the Research and Training Center on SME Financing in Central Africa",
+            "item3": "Expert in entrepreneurial finance",
+            "education": "PhD in Economic and Management Sciences (ULB) (2024)"
+          }
+        },
+        "management": {
+          "director": {
+            "title": "Director of Creff-PME",
+            "name": "Jean Nsonsumuna",
+            "item1": "Professor at Kongo University",
+            "education": "PhD in Economic and Management Sciences (ULB) (2024)"
+          },
+          "secretary": {
+            "title": "Secretary of Creff-PME",
+            "name": "Eunice KIKADILU AWAZI",
+            "item1": "Bachelor's degree (Bac+5) in Law (2023)",
+            "item2": "Experience at the Children's Court of Mbanza-Ngungu",
+            "item3": "Management of Kadilo SIK SARL company"
+          },
+          "logistics": {
+            "title": "Logistics Officer",
+            "name": "Marcel BODI BODI",
+            "item1": "Bachelor's degree (Bac+5) in Management Sciences (2024)",
+            "item2": "Part-time Assistant at Kongo University"
+          }
+        }
+      },
+      "partners": {
+        "header": "PARTNERS",
+        "title": "Our",
+        "titleHighlight": "partners",
+        "badge": "Partner",
+        "solvay": {
+          "name": "Solvay Brussels School",
+          "description": "Economics & Management (ULB)"
+        },
+        "ares": {
+          "name": "ARES",
+          "description": "Academy for Research and Higher Education (Belgium)"
+        }
       }
     }
   },
@@ -309,6 +377,7 @@
       }
     },
     "registration": {
+      "header": "REGISTRATION",
       "title": "Register for our trainings",
       "description": "Join our community of entrepreneurs and develop your skills",
       "name": "Full name",
