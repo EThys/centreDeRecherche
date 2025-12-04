@@ -1,18 +1,18 @@
 <template>
   <header
-    class="fixed w-full z-50 transition-all duration-500 ease-out bg-white"
+    class="fixed w-full z-[100] transition-all duration-500 ease-out bg-white"
     :class="{
       'shadow-lg border-b border-gray-200/60': isScrolled,
       'border-b border-transparent': !isScrolled && !isMobileMenuOpen,
       'border-b border-gray-200': isMobileMenuOpen,
     }"
   >
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between items-center h-20 lg:h-24">
         <!-- Logo CReFF-PME avec texte -->
         <router-link 
           to="/" 
-          class="flex items-center gap-3 sm:gap-4 z-60 group relative"
+          class="flex items-center gap-2 sm:gap-3 z-60 group relative flex-shrink-0 min-w-0"
           @click="closeMobileMenu"
         >
           <!-- Logo -->
@@ -20,12 +20,12 @@
             <img 
               :src="logoImage" 
               alt="CReFF-PME Logo"
-              class="h-12 sm:h-14 lg:h-16 w-16 sm:w-20 lg:w-24 object-contain scale-150"
+              class="h-10 sm:h-12 md:h-14 lg:h-16 w-12 sm:w-16 md:w-20 lg:w-24 object-contain"
             />
           </div>
           <!-- Nom du centre -->
-          <div class="flex items-center">
-            <span class="font-bold text-xs sm:text-sm lg:text-base text-gray-900 group-hover:text-blue-600 transition-colors leading-tight whitespace-nowrap">
+          <div class="flex items-center min-w-0">
+            <span class="font-bold text-xs sm:text-sm md:text-base text-gray-900 group-hover:text-blue-600 transition-colors leading-tight whitespace-nowrap">
               CReFF-PME
             </span>
           </div>
@@ -36,7 +36,7 @@
           <!-- Accueil -->
           <router-link
             to="/"
-            class="relative px-4 xl:px-5 py-2.5 flex items-center font-medium text-gray-700 hover:text-blue-600 transition-all duration-300 rounded-lg group"
+            class="relative px-4 xl:px-5 py-2.5 flex items-center font-medium text-gray-700 hover:text-blue-600 transition-all duration-300 rounded-lg group whitespace-nowrap"
             :class="{ 
               'text-blue-600': route.path === '/',
             }"
@@ -85,13 +85,15 @@
 
           <!-- Recherche Dropdown -->
           <div
+            ref="rechercheDropdownRef"
             class="relative group"
-            @mouseenter="activeDropdown = 'recherche'"
-            @mouseleave="activeDropdown = null"
+            @mouseenter="handleDropdownEnter"
+            @mouseleave="handleDropdownLeave"
           >
             <button
+              ref="rechercheButtonRef"
               @click="toggleDropdown('recherche')"
-              class="relative px-4 xl:px-5 py-2.5 flex items-center font-medium text-gray-700 hover:text-blue-600 transition-all duration-300 rounded-lg"
+              class="relative px-4 xl:px-5 py-2.5 flex items-center font-medium text-gray-700 hover:text-blue-600 transition-all duration-300 rounded-lg whitespace-nowrap"
               :class="{ 
                 'text-blue-600': route.path.includes('/recherche') || route.path.includes('/actualites') || route.path.includes('/evenements') || route.path.includes('/publications') || activeDropdown === 'recherche',
               }"
@@ -128,11 +130,29 @@
               leave-from-class="opacity-100 translate-y-0 scale-100"
               leave-to-class="opacity-0 -translate-y-4 scale-95"
             >
-              <div
-                v-if="activeDropdown === 'recherche'"
-                class="absolute top-full left-0 w-80 bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-gray-200/60 mt-3 py-3 z-50 overflow-hidden"
-                @click.stop
-              >
+              <Teleport to="body">
+                <!-- Zone de transition invisible entre le bouton et le dropdown -->
+                <div
+                  v-if="activeDropdown === 'recherche'"
+                  class="fixed z-[9998]"
+                  :style="{
+                    top: dropdownStyle.top.replace('px', '') ? `${parseFloat(dropdownStyle.top) - 12}px` : '0px',
+                    left: dropdownStyle.left,
+                    width: '320px',
+                    height: '12px',
+                    pointerEvents: 'auto'
+                  }"
+                  @mouseenter="handleDropdownEnter"
+                  @mouseleave="handleDropdownLeave"
+                ></div>
+                <div
+                  v-if="activeDropdown === 'recherche'"
+                  class="fixed w-80 bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-gray-200/60 py-3 z-[9999] overflow-hidden"
+                  :style="dropdownStyle"
+                  @click.stop
+                  @mouseenter="handleDropdownEnter"
+                  @mouseleave="handleDropdownLeave"
+                >
                 <!-- Effet de brillance en haut -->
                 <div class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-200 to-transparent"></div>
                 
@@ -171,14 +191,15 @@
                     <span class="text-sm font-semibold relative z-10">{{ $t('nav.publications') }}</span>
                   </router-link>
                 </div>
-              </div>
+                </div>
+              </Teleport>
             </transition>
           </div>
 
           <!-- Contact -->
           <router-link
             to="/contact"
-            class="relative px-4 xl:px-5 py-2.5 flex items-center font-medium text-gray-700 hover:text-blue-600 transition-all duration-300 rounded-lg group"
+            class="relative px-4 xl:px-5 py-2.5 flex items-center font-medium text-gray-700 hover:text-blue-600 transition-all duration-300 rounded-lg group whitespace-nowrap"
             :class="{ 
               'text-blue-600': route.path.includes('/contact'),
             }"
@@ -192,14 +213,20 @@
           </router-link>
 
           <!-- Séparateur élégant -->
-          <div class="h-8 w-px bg-gradient-to-b from-transparent via-gray-300 to-transparent mx-2 xl:mx-3"></div>
+          <div class="h-8 w-px bg-gradient-to-b from-transparent via-gray-300 to-transparent mx-2 xl:mx-3 flex-shrink-0"></div>
 
           <!-- Bouton Espace Membre Premium -->
           <!-- Sélecteur de langue -->
-          <div class="relative group mr-4 language-selector">
+          <div
+            ref="languageDropdownRef"
+            class="relative group mr-4 language-selector flex-shrink-0"
+            @mouseenter="handleLanguageDropdownEnter"
+            @mouseleave="handleLanguageDropdownLeave"
+          >
             <button
+              ref="languageButtonRef"
               @click.stop="toggleLanguageMenu"
-              class="relative px-4 py-2.5 flex items-center font-medium text-gray-700 hover:text-blue-600 transition-all duration-300 rounded-lg group"
+              class="relative px-4 py-2.5 flex items-center font-medium text-gray-700 hover:text-blue-600 transition-all duration-300 rounded-lg group whitespace-nowrap"
             >
               <i class="fas fa-globe mr-2"></i>
               <span class="uppercase text-sm">{{ currentLocale }}</span>
@@ -208,53 +235,72 @@
             
             <!-- Menu déroulant des langues -->
             <transition
-              enter-active-class="transition duration-200 ease-out"
-              enter-from-class="opacity-0 scale-95 translate-y-2"
-              enter-to-class="opacity-100 scale-100 translate-y-0"
-              leave-active-class="transition duration-150 ease-in"
-              leave-from-class="opacity-100 scale-100 translate-y-0"
-              leave-to-class="opacity-0 scale-95 translate-y-2"
+              enter-active-class="transition duration-300 ease-out"
+              enter-from-class="opacity-0 -translate-y-4 scale-95"
+              enter-to-class="opacity-100 translate-y-0 scale-100"
+              leave-active-class="transition duration-200 ease-in"
+              leave-from-class="opacity-100 translate-y-0 scale-100"
+              leave-to-class="opacity-0 -translate-y-4 scale-95"
             >
-              <div
-                v-if="showLanguageMenu"
-                class="absolute right-0 mt-2 w-40 bg-white rounded-xl shadow-xl border border-gray-200 py-2 z-50"
-                @click.stop
-              >
-                <button
-                  @click="changeLanguage('fr')"
-                  class="w-full px-4 py-2.5 text-left hover:bg-blue-50 transition-colors flex items-center justify-between"
-                  :class="{ 'bg-blue-50 text-blue-600': currentLocale === 'fr' }"
+              <Teleport to="body">
+                <!-- Zone de transition invisible entre le bouton et le dropdown -->
+                <div
+                  v-if="showLanguageMenu"
+                  class="fixed z-[9998]"
+                  :style="{
+                    top: languageDropdownStyle.top.replace('px', '') ? `${parseFloat(languageDropdownStyle.top) - 12}px` : '0px',
+                    right: languageDropdownStyle.right,
+                    width: '160px',
+                    height: '12px',
+                    pointerEvents: 'auto'
+                  }"
+                  @mouseenter="handleLanguageDropdownEnter"
+                  @mouseleave="handleLanguageDropdownLeave"
+                ></div>
+                <div
+                  v-if="showLanguageMenu"
+                  class="fixed w-40 bg-white/95 backdrop-blur-xl rounded-xl shadow-2xl border border-gray-200/60 py-2 z-[9999] overflow-hidden"
+                  :style="languageDropdownStyle"
+                  @click.stop
+                  @mouseenter="handleLanguageDropdownEnter"
+                  @mouseleave="handleLanguageDropdownLeave"
                 >
-                  <span class="flex items-center">
-                    <span class="text-lg mr-2">🇫🇷</span>
-                    <span>Français</span>
-                  </span>
-                  <i v-if="currentLocale === 'fr'" class="fas fa-check text-blue-600"></i>
-                </button>
-                <button
-                  @click="changeLanguage('en')"
-                  class="w-full px-4 py-2.5 text-left hover:bg-blue-50 transition-colors flex items-center justify-between"
-                  :class="{ 'bg-blue-50 text-blue-600': currentLocale === 'en' }"
-                >
-                  <span class="flex items-center">
-                    <span class="text-lg mr-2">🇬🇧</span>
-                    <span>English</span>
-                  </span>
-                  <i v-if="currentLocale === 'en'" class="fas fa-check text-blue-600"></i>
-                </button>
-              </div>
+                  <button
+                    @click="changeLanguage('fr')"
+                    class="w-full px-4 py-2.5 text-left hover:bg-blue-50 transition-colors flex items-center justify-between"
+                    :class="{ 'bg-blue-50 text-blue-600': currentLocale === 'fr' }"
+                  >
+                    <span class="flex items-center">
+                      <span class="text-lg mr-2">🇫🇷</span>
+                      <span>Français</span>
+                    </span>
+                    <i v-if="currentLocale === 'fr'" class="fas fa-check text-blue-600"></i>
+                  </button>
+                  <button
+                    @click="changeLanguage('en')"
+                    class="w-full px-4 py-2.5 text-left hover:bg-blue-50 transition-colors flex items-center justify-between"
+                    :class="{ 'bg-blue-50 text-blue-600': currentLocale === 'en' }"
+                  >
+                    <span class="flex items-center">
+                      <span class="text-lg mr-2">🇬🇧</span>
+                      <span>English</span>
+                    </span>
+                    <i v-if="currentLocale === 'en'" class="fas fa-check text-blue-600"></i>
+                  </button>
+                </div>
+              </Teleport>
             </transition>
           </div>
 
           <router-link
             to="/authentification"
-            class="relative px-5 xl:px-6 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl hover:shadow-blue-500/30 transform hover:-translate-y-0.5 transition-all duration-300 flex items-center overflow-hidden group/btn"
+            class="relative px-4 xl:px-5 2xl:px-6 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white text-sm font-semibold rounded-xl shadow-lg hover:shadow-xl hover:shadow-blue-500/30 transform hover:-translate-y-0.5 transition-all duration-300 flex items-center overflow-hidden group/btn whitespace-nowrap flex-shrink-0"
           >
             <!-- Effet de brillance animé -->
             <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover/btn:translate-x-full transition-transform duration-1000"></div>
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              class="w-4 h-4 mr-2 relative z-10"
+              class="w-4 h-4 mr-2 relative z-10 flex-shrink-0"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -358,20 +404,32 @@
             </div>
             <div class="mt-3 space-y-1">
               <router-link
-                to="/evenements"
+                to="/actualites"
                 class="flex items-center px-8 py-3.5 text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-transparent hover:text-blue-600 transition-all duration-300 rounded-xl group relative"
+                :class="{ 'bg-blue-50 text-blue-600': route.path.includes('/actualites') }"
                 @click="closeMobileMenu"
               >
-                <div class="absolute left-0 top-0 bottom-0 w-1 bg-blue-600 rounded-r-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div class="absolute left-0 top-0 bottom-0 w-1 bg-blue-600 rounded-r-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" :class="{ 'opacity-100': route.path.includes('/actualites') }"></div>
+                <span class="text-sm font-semibold relative z-10 ml-2">{{ $t('nav.news') }}</span>
+              </router-link>
+              
+              <router-link
+                to="/evenements"
+                class="flex items-center px-8 py-3.5 text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-transparent hover:text-blue-600 transition-all duration-300 rounded-xl group relative"
+                :class="{ 'bg-blue-50 text-blue-600': route.path.includes('/evenements') }"
+                @click="closeMobileMenu"
+              >
+                <div class="absolute left-0 top-0 bottom-0 w-1 bg-blue-600 rounded-r-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" :class="{ 'opacity-100': route.path.includes('/evenements') }"></div>
                 <span class="text-sm font-semibold relative z-10 ml-2">{{ $t('nav.events') }}</span>
               </router-link>
               
               <router-link
                 to="/publications"
                 class="flex items-center px-8 py-3.5 text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-transparent hover:text-blue-600 transition-all duration-300 rounded-xl group relative"
+                :class="{ 'bg-blue-50 text-blue-600': route.path.includes('/publications') }"
                 @click="closeMobileMenu"
               >
-                <div class="absolute left-0 top-0 bottom-0 w-1 bg-blue-600 rounded-r-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div class="absolute left-0 top-0 bottom-0 w-1 bg-blue-600 rounded-r-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" :class="{ 'opacity-100': route.path.includes('/publications') }"></div>
                 <span class="text-sm font-semibold relative z-10 ml-2">{{ $t('nav.publications') }}</span>
               </router-link>
             </div>
@@ -418,9 +476,10 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import { Teleport } from 'vue'
 // Import du logo depuis assets
 import logoImage from '../../assets/logoCreff-PME.jpeg'
 
@@ -432,11 +491,29 @@ const windowWidth = ref(window.innerWidth)
 const isMobileMenuOpen = ref(false)
 const activeDropdown = ref<string | null>(null)
 const showLanguageMenu = ref(false)
+const rechercheButtonRef = ref<HTMLElement | null>(null)
+const rechercheDropdownRef = ref<HTMLElement | null>(null)
+const dropdownStyle = ref<{ top: string; left: string }>({ top: '0px', left: '0px' })
+const dropdownCloseTimer = ref<ReturnType<typeof setTimeout> | null>(null)
+
+const languageButtonRef = ref<HTMLElement | null>(null)
+const languageDropdownRef = ref<HTMLElement | null>(null)
+const languageDropdownStyle = ref<{ top: string; right: string }>({ top: '0px', right: '0px' })
+const languageDropdownCloseTimer = ref<ReturnType<typeof setTimeout> | null>(null)
 
 const currentLocale = computed(() => locale.value)
 
 const toggleLanguageMenu = () => {
-  showLanguageMenu.value = !showLanguageMenu.value
+  if (showLanguageMenu.value) {
+    showLanguageMenu.value = false
+    if (languageDropdownCloseTimer.value) {
+      clearTimeout(languageDropdownCloseTimer.value)
+      languageDropdownCloseTimer.value = null
+    }
+  } else {
+    showLanguageMenu.value = true
+    updateLanguageDropdownPosition()
+  }
 }
 
 const changeLanguage = (lang: 'fr' | 'en') => {
@@ -477,14 +554,22 @@ const closeDropdowns = (event?: Event) => {
   
   const target = event.target as HTMLElement
   
-  // Ne pas fermer si le clic est sur le sélecteur de langue
-  if (target.closest('.language-selector')) {
+  // Ne pas fermer si le clic est sur le bouton du dropdown de recherche
+  if (rechercheButtonRef.value && rechercheButtonRef.value.contains(target)) {
     return
   }
   
-  // Ne pas fermer si le clic est sur le bouton du dropdown ou dans le dropdown
-  if (target.closest('.relative.group') || target.closest('.absolute.top-full')) {
+  // Ne pas fermer si le clic est sur le bouton du dropdown de langue
+  if (languageButtonRef.value && languageButtonRef.value.contains(target)) {
     return
+  }
+  
+  // Ne pas fermer si le clic est dans un dropdown téléporté (recherche ou langue)
+  const dropdowns = document.querySelectorAll('[style*="z-[9999]"]')
+  for (const dropdown of Array.from(dropdowns)) {
+    if (dropdown.contains(target)) {
+      return
+    }
   }
   
   activeDropdown.value = null
@@ -496,9 +581,126 @@ const closeMobileMenu = () => {
   activeDropdown.value = null
 }
 
+// Gérer l'entrée dans la zone du dropdown (bouton ou dropdown)
+const handleDropdownEnter = () => {
+  // Annuler le timer de fermeture s'il existe
+  if (dropdownCloseTimer.value) {
+    clearTimeout(dropdownCloseTimer.value)
+    dropdownCloseTimer.value = null
+  }
+  // Ouvrir le dropdown
+  activeDropdown.value = 'recherche'
+  updateDropdownPosition()
+}
+
+// Gérer la sortie de la zone du dropdown avec délai
+const handleDropdownLeave = () => {
+  // Démarrer un timer pour fermer après un court délai
+  if (dropdownCloseTimer.value) {
+    clearTimeout(dropdownCloseTimer.value)
+  }
+  dropdownCloseTimer.value = setTimeout(() => {
+    activeDropdown.value = null
+    dropdownCloseTimer.value = null
+  }, 200) // 200ms de délai pour permettre de revenir
+}
+
+// Gérer l'entrée dans la zone du dropdown de langue
+const handleLanguageDropdownEnter = () => {
+  // Annuler le timer de fermeture s'il existe
+  if (languageDropdownCloseTimer.value) {
+    clearTimeout(languageDropdownCloseTimer.value)
+    languageDropdownCloseTimer.value = null
+  }
+  // Ouvrir le dropdown
+  showLanguageMenu.value = true
+  updateLanguageDropdownPosition()
+}
+
+// Gérer la sortie de la zone du dropdown de langue avec délai
+const handleLanguageDropdownLeave = () => {
+  // Démarrer un timer pour fermer après un court délai
+  if (languageDropdownCloseTimer.value) {
+    clearTimeout(languageDropdownCloseTimer.value)
+  }
+  languageDropdownCloseTimer.value = setTimeout(() => {
+    showLanguageMenu.value = false
+    languageDropdownCloseTimer.value = null
+  }, 200) // 200ms de délai pour permettre de revenir
+}
+
+// Calculer la position du dropdown de langue
+const updateLanguageDropdownPosition = async () => {
+  if (!languageButtonRef.value || !showLanguageMenu.value) return
+  
+  await nextTick()
+  const rect = languageButtonRef.value.getBoundingClientRect()
+  
+  languageDropdownStyle.value = {
+    top: `${rect.bottom + 12}px`, // mt-2 = 8px, mais on utilise 12px pour la zone de transition
+    right: `${window.innerWidth - rect.right}px` // Calculer depuis le bord droit
+  }
+}
+
+// Calculer la position du dropdown
+const updateDropdownPosition = async () => {
+  if (!rechercheButtonRef.value || activeDropdown.value !== 'recherche') return
+  
+  await nextTick()
+  const rect = rechercheButtonRef.value.getBoundingClientRect()
+  const headerHeight = windowWidth.value >= 1024 ? 96 : 80 // lg:h-24 = 96px, h-20 = 80px
+  
+  dropdownStyle.value = {
+    top: `${rect.bottom + 12}px`, // mt-3 = 12px
+    left: `${rect.left}px`
+  }
+}
+
+// Surveiller les changements du dropdown et du scroll
+watch([activeDropdown, isScrolled], () => {
+  if (activeDropdown.value === 'recherche') {
+    updateDropdownPosition()
+  }
+})
+
+watch(() => windowWidth.value, () => {
+  if (activeDropdown.value === 'recherche') {
+    updateDropdownPosition()
+  }
+})
+
+// Surveiller les changements du dropdown de langue
+watch([showLanguageMenu, isScrolled], () => {
+  if (showLanguageMenu.value) {
+    updateLanguageDropdownPosition()
+  }
+})
+
+watch(() => windowWidth.value, () => {
+  if (showLanguageMenu.value) {
+    updateLanguageDropdownPosition()
+  }
+})
+
 onMounted(() => {
-  window.addEventListener('scroll', handleScroll)
-  window.addEventListener('resize', handleResize)
+  window.addEventListener('scroll', () => {
+    handleScroll()
+    if (activeDropdown.value === 'recherche') {
+      updateDropdownPosition()
+    }
+    if (showLanguageMenu.value) {
+      updateLanguageDropdownPosition()
+    }
+  })
+  window.addEventListener('resize', () => {
+    handleResize()
+    if (activeDropdown.value === 'recherche') {
+      updateDropdownPosition()
+    }
+    if (showLanguageMenu.value) {
+      updateLanguageDropdownPosition()
+    }
+  })
   document.addEventListener('click', closeDropdowns)
 })
 
@@ -506,6 +708,15 @@ onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll)
   window.removeEventListener('resize', handleResize)
   document.removeEventListener('click', closeDropdowns)
+  // Nettoyer les timers de fermeture des dropdowns
+  if (dropdownCloseTimer.value) {
+    clearTimeout(dropdownCloseTimer.value)
+    dropdownCloseTimer.value = null
+  }
+  if (languageDropdownCloseTimer.value) {
+    clearTimeout(languageDropdownCloseTimer.value)
+    languageDropdownCloseTimer.value = null
+  }
 })
 </script>
 
@@ -575,19 +786,46 @@ html {
 /* Responsive breakpoints améliorés */
 @media (max-width: 640px) {
   header {
-    font-size: 0.9rem;
+    font-size: 0.875rem;
   }
 }
 
 @media (min-width: 1024px) {
   nav {
-    gap: 0.25rem;
+    gap: 0.125rem;
+    flex-wrap: nowrap;
   }
 }
 
 @media (min-width: 1280px) {
   nav {
+    gap: 0.25rem;
+  }
+}
+
+@media (min-width: 1536px) {
+  nav {
     gap: 0.5rem;
   }
+}
+
+/* Empêcher le débordement sur les écrans moyens */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  nav a,
+  nav button {
+    font-size: 0.875rem;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+}
+
+/* Assurer que le contenu ne déborde pas */
+header {
+  overflow-x: hidden;
+}
+
+.max-w-7xl {
+  width: 100%;
+  max-width: 100%;
 }
 </style>

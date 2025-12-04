@@ -70,6 +70,7 @@
                 v-model="searchQuery"
                 type="text"
                 placeholder="Rechercher des événements..."
+                @input="resetPagination"
                 class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
               >
               <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
@@ -81,7 +82,7 @@
             <button
               v-for="type in eventTypes"
               :key="type"
-              @click="toggleEventType(type)"
+              @click="toggleEventType(type); resetPagination()"
               :class="[
                 'px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300',
                 selectedEventTypes.includes(type)
@@ -96,6 +97,7 @@
           <!-- Status Filter -->
           <select
             v-model="statusFilter"
+            @change="resetPagination"
             class="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
           >
             <option value="all">Tous les événements</option>
@@ -105,24 +107,23 @@
         </div>
       </div>
 
-      <!-- Loading State -->
-      <div v-if="loading" class="text-center py-16">
-        <i class="fas fa-spinner fa-spin text-4xl text-blue-600 mb-4"></i>
-        <p class="text-gray-600">Chargement des événements...</p>
-      </div>
-
       <!-- Error State -->
-      <div v-else-if="error" class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl mb-8">
+      <div v-if="error" class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl mb-8">
         <div class="flex items-center gap-2">
           <i class="fas fa-exclamation-circle"></i>
           <span>{{ error }}</span>
         </div>
       </div>
 
+      <!-- Loading State with Shimmer -->
+      <div v-else-if="loading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+        <ShimmerCard v-for="n in 6" :key="n" />
+      </div>
+
       <!-- Events Grid -->
       <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
         <article
-          v-for="event in filteredEvents"
+          v-for="event in paginatedEvents"
           :key="event.id"
           class="group bg-white rounded-2xl border border-gray-200 hover:border-blue-200 shadow-sm hover:shadow-2xl transition-all duration-500 overflow-hidden cursor-pointer"
           @click="openEvent(event.id)"
@@ -228,19 +229,88 @@
         </article>
       </div>
 
-      <!-- Load More Button -->
-      <div v-if="showLoadMore" class="text-center mb-12">
-        <button
-          @click="loadMoreEvents"
-          class="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-8 py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
-        >
-          Charger plus d'événements
-        </button>
+      <!-- Pagination -->
+      <div v-if="!loading && filteredEvents.length > 0" class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-12">
+        <!-- Informations sur la pagination -->
+        <div class="text-sm text-gray-600">
+          Affichage de <span class="font-semibold">{{ startIndex + 1 }}</span> à 
+          <span class="font-semibold">{{ endIndex }}</span> sur 
+          <span class="font-semibold">{{ filteredEvents.length }}</span> événements
+        </div>
+
+        <!-- Contrôles de pagination -->
+        <div class="flex items-center space-x-2">
+          <!-- Bouton précédent -->
+          <button
+            @click="previousPage"
+            :disabled="currentPage === 1"
+            :class="[
+              'px-3 sm:px-4 py-2 rounded-lg border border-gray-300 text-xs sm:text-sm font-medium transition-all',
+              currentPage === 1
+                ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                : 'bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-400'
+            ]"
+          >
+            <i class="fas fa-chevron-left mr-1 sm:mr-2"></i>
+            <span class="hidden sm:inline">Précédent</span>
+          </button>
+
+          <!-- Numéros de page -->
+          <div class="flex items-center space-x-1">
+            <button
+              v-for="page in visiblePages"
+              :key="page"
+              @click="goToPage(page)"
+              :class="[
+                'w-8 h-8 sm:w-10 sm:h-10 rounded-lg text-xs sm:text-sm font-medium transition-all',
+                page === currentPage
+                  ? 'bg-blue-600 text-white shadow-md'
+                  : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-300'
+              ]"
+            >
+              {{ page }}
+            </button>
+            
+            <!-- Points de suspension pour les pages cachées -->
+            <span v-if="showLeftEllipsis" class="px-1 sm:px-2 text-gray-400 text-xs">...</span>
+            <span v-if="showRightEllipsis" class="px-1 sm:px-2 text-gray-400 text-xs">...</span>
+          </div>
+
+          <!-- Bouton suivant -->
+          <button
+            @click="nextPage"
+            :disabled="currentPage === totalPages"
+            :class="[
+              'px-3 sm:px-4 py-2 rounded-lg border border-gray-300 text-xs sm:text-sm font-medium transition-all',
+              currentPage === totalPages
+                ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                : 'bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-400'
+            ]"
+          >
+            <span class="hidden sm:inline">Suivant</span>
+            <i class="fas fa-chevron-right ml-1 sm:ml-2"></i>
+          </button>
+        </div>
+
+        <!-- Sélecteur d'éléments par page -->
+        <div class="flex items-center space-x-2">
+          <label class="text-xs sm:text-sm text-gray-600">Par page:</label>
+          <select
+            v-model="eventsPerPage"
+            @change="resetPagination"
+            class="px-2 sm:px-3 py-1 sm:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-xs sm:text-sm"
+          >
+            <option :value="6">6</option>
+            <option :value="9">9</option>
+            <option :value="12">12</option>
+            <option :value="18">18</option>
+          </select>
+        </div>
       </div>
 
       <!-- No Results -->
       <div
-        v-if="filteredEvents.length === 0"
+        v-if="!loading && filteredEvents.length === 0"
         class="text-center py-16 bg-white rounded-2xl shadow-sm border border-gray-200"
       >
         <i class="fas fa-calendar-times text-6xl text-gray-300 mb-4"></i>
@@ -273,7 +343,7 @@ const searchQuery = ref('')
 const selectedEventTypes = ref<string[]>([])
 const statusFilter = ref('all')
 const currentPage = ref(1)
-const eventsPerPage = 9
+const eventsPerPage = ref(9)
 const loading = ref(false)
 const error = ref<string | null>(null)
 
@@ -281,6 +351,8 @@ const error = ref<string | null>(null)
 import NavBarComponent from '../components/navbar/NavBarComponent.vue'
 //@ts-ignore
 import FooterComponent from '../components/footer/FooterComponent.vue'
+// @ts-ignore
+import ShimmerCard from '../components/ShimmerCard.vue'
 
 // Events data from backend
 const allEvents = ref<Event[]>([])
@@ -344,28 +416,67 @@ const filteredEvents = computed(() => {
   // Sort events by date (upcoming first)
   filtered.sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime())
 
-  // Pagination
-  const startIndex = (currentPage.value - 1) * eventsPerPage
-  return filtered.slice(0, startIndex + eventsPerPage)
+  return filtered
 })
 
-const showLoadMore = computed(() => {
-  const totalFiltered = allEvents.value.filter(event => {
-    const matchesSearch = !searchQuery.value || 
-      event.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-      event.description.toLowerCase().includes(searchQuery.value.toLowerCase())
-    
-    const matchesType = selectedEventTypes.value.length === 0 || 
-      selectedEventTypes.value.includes(event.type)
-    
-    const matchesStatus = statusFilter.value === 'all' || 
-      event.status === statusFilter.value
-    
-    return matchesSearch && matchesType && matchesStatus
-  }).length
+// Pagination
+const totalPages = computed(() => Math.ceil(filteredEvents.value.length / eventsPerPage.value))
 
-  return filteredEvents.value.length < totalFiltered
+const paginatedEvents = computed(() => {
+  const start = (currentPage.value - 1) * eventsPerPage.value
+  const end = start + eventsPerPage.value
+  return filteredEvents.value.slice(start, end)
 })
+
+const startIndex = computed(() => (currentPage.value - 1) * eventsPerPage.value)
+
+const endIndex = computed(() => {
+  const end = startIndex.value + eventsPerPage.value
+  return end > filteredEvents.value.length ? filteredEvents.value.length : end
+})
+
+// Pages visibles pour la pagination
+const visiblePages = computed(() => {
+  const pages = []
+  const total = totalPages.value
+  const current = currentPage.value
+  const delta = 2 // Nombre de pages à afficher de chaque côté de la page courante
+
+  for (let i = 1; i <= total; i++) {
+    if (i === 1 || i === total || (i >= current - delta && i <= current + delta)) {
+      pages.push(i)
+    }
+  }
+  return pages
+})
+
+const showLeftEllipsis = computed(() => {
+  return visiblePages.value.length > 0 && visiblePages.value[0] > 1
+})
+
+const showRightEllipsis = computed(() => {
+  return visiblePages.value.length > 0 && visiblePages.value[visiblePages.value.length - 1] < totalPages.value
+})
+
+const previousPage = () => {
+  if (currentPage.value > 1) {
+    currentPage.value--
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+}
+
+const nextPage = () => {
+  if (currentPage.value < totalPages.value) {
+    currentPage.value++
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+}
+
+const goToPage = (page: number) => {
+  currentPage.value = page
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+}
+
 
 // Methods
 const toggleEventType = (type: string) => {
@@ -378,14 +489,15 @@ const toggleEventType = (type: string) => {
   currentPage.value = 1
 }
 
-const loadMoreEvents = () => {
-  currentPage.value++
-}
 
 const clearFilters = () => {
   searchQuery.value = ''
   selectedEventTypes.value = []
   statusFilter.value = 'all'
+  currentPage.value = 1
+}
+
+const resetPagination = () => {
   currentPage.value = 1
 }
 
@@ -405,10 +517,24 @@ const formatEventDate = (dateString: string | undefined) => {
 
 const formatEventTime = (startTime: string | undefined, endTime: string | undefined) => {
   if (!startTime) return ''
-  if (endTime) {
-    return `${startTime} - ${endTime}`
+  // Fonction pour supprimer les secondes
+  const removeSeconds = (timeStr: string) => {
+    if (!timeStr) return ''
+    const time = timeStr.trim()
+    if (time.includes(':')) {
+      const parts = time.split(':')
+      if (parts.length >= 2) {
+        return `${parts[0].padStart(2, '0')}:${parts[1].padStart(2, '0')}`
+      }
+    }
+    return time
   }
-  return startTime
+  const formattedStart = removeSeconds(startTime)
+  if (endTime) {
+    const formattedEnd = removeSeconds(endTime)
+    return `${formattedStart} - ${formattedEnd}`
+  }
+  return formattedStart
 }
 
 const getEventImage = (image?: string | null): string => {
@@ -420,8 +546,12 @@ const getEventImage = (image?: string | null): string => {
 
 const getSpeakerPhoto = (photo?: string | null): string => {
   if (!photo) return ''
-  // Si c'est déjà une URL complète, la retourner telle quelle
-  if (photo.startsWith('http://') || photo.startsWith('https://')) {
+  // Si c'est déjà une URL complète, forcer HTTPS pour éviter Mixed Content
+  if (photo.startsWith('http://')) {
+    // Convertir HTTP en HTTPS
+    return photo.replace(/^http:\/\//i, 'https://')
+  }
+  if (photo.startsWith('https://')) {
     return photo
   }
   // Sinon, utiliser le service pour construire l'URL

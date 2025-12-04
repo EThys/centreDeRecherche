@@ -50,7 +50,7 @@
       </div>
 
       <!-- Grille de photos avec animations en cascade -->
-      <div v-else-if="!loading && filteredPhotos.length > 0" class="grid grid-cols-1 lg:px-20 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-8">
+      <div v-else-if="!loading && filteredPhotos.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-8">
         <div
           v-for="(photo, index) in filteredPhotos"
           :key="photo.id"
@@ -289,48 +289,15 @@ const loadCategories = async () => {
   try {
     const cats = await galleryService.getCategories()
     console.log('📂 Catégories reçues du backend:', cats)
+    categories.value = cats
     
-    // Catégories par défaut suggérées (plus de types)
-    const defaultCategories = [
-      { id: 'evenements', name: 'Événements' },
-      { id: 'equipe', name: 'Équipe' },
-      { id: 'installations', name: 'Installations' },
-      { id: 'collaborations', name: 'Collaborations' },
-      { id: 'formations', name: 'Formations' },
-      { id: 'conferences', name: 'Conférences' },
-      { id: 'ateliers', name: 'Ateliers' },
-      { id: 'reunions', name: 'Réunions' },
-      { id: 'ceremonies', name: 'Cérémonies' },
-      { id: 'activites', name: 'Activités' },
-      { id: 'projets', name: 'Projets' },
-      { id: 'partenariats', name: 'Partenariats' }
-    ]
-    
-    // Combiner les catégories du backend avec les catégories par défaut
-    const categoryMap = new Map<string, GalleryCategory>()
-    
-    // Ajouter les catégories par défaut
-    defaultCategories.forEach(cat => {
-      categoryMap.set(cat.name.toLowerCase(), cat)
-    })
-    
-    // Ajouter les catégories du backend (elles écraseront les catégories par défaut si même nom)
-    cats.forEach(cat => {
-      const catName = cat.name || cat.id
-      categoryMap.set(catName.toLowerCase(), { id: cat.id, name: catName })
-    })
-    
-    // Extraire les catégories uniques des photos si nécessaire
-    if (photos.value.length > 0) {
+    // Si aucune catégorie du backend, extraire les catégories uniques des photos
+    if (cats.length === 0 && photos.value.length > 0) {
       const uniqueCategories = [...new Set(photos.value.map(p => p.category).filter(Boolean))]
-      uniqueCategories.forEach(cat => {
-        if (cat && !categoryMap.has(cat.toLowerCase())) {
-          categoryMap.set(cat.toLowerCase(), { id: cat, name: cat })
-        }
-      })
+      console.log('📂 Catégories extraites des photos:', uniqueCategories)
+      categories.value = uniqueCategories.map(cat => ({ id: cat, name: cat }))
     }
     
-    categories.value = Array.from(categoryMap.values())
     console.log('📂 Catégories finales:', categories.value)
   } catch (err) {
     console.error('Erreur lors du chargement des catégories:', err)
@@ -342,18 +309,10 @@ const loadCategories = async () => {
     } else {
       // Utiliser des catégories par défaut en cas d'erreur
       categories.value = [
-        { id: 'evenements', name: 'Événements' },
-        { id: 'equipe', name: 'Équipe' },
-        { id: 'installations', name: 'Installations' },
-        { id: 'collaborations', name: 'Collaborations' },
-        { id: 'formations', name: 'Formations' },
-        { id: 'conferences', name: 'Conférences' },
-        { id: 'ateliers', name: 'Ateliers' },
-        { id: 'reunions', name: 'Réunions' },
-        { id: 'ceremonies', name: 'Cérémonies' },
-        { id: 'activites', name: 'Activités' },
-        { id: 'projets', name: 'Projets' },
-        { id: 'partenariats', name: 'Partenariats' }
+        { id: 'evenements', name: t('gallery.events') },
+        { id: 'equipe', name: t('gallery.team') },
+        { id: 'installations', name: t('gallery.installations') },
+        { id: 'collaborations', name: t('gallery.collaborations') }
       ]
     }
   }
