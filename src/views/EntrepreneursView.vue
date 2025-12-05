@@ -309,7 +309,7 @@
                     class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                     @error="handleImageError"
                   />
-                  <div class="absolute top-3 left-3 bg-blue-600 text-white text-xs font-semibold px-3 py-1 rounded-lg">
+                  <div v-if="event.type" class="absolute top-3 left-3 bg-blue-600 text-white text-xs font-semibold px-3 py-1 rounded-lg">
                     {{ event.type }}
                   </div>
                 </div>
@@ -325,15 +325,15 @@
                     {{ event.description }}
                   </p>
                   <div class="flex flex-wrap gap-4 text-sm text-gray-600 mb-4">
-                    <div class="flex items-center">
+                    <div v-if="event.startDate" class="flex items-center">
                       <i class="fas fa-calendar-alt mr-2 text-blue-600"></i>
                       {{ formatEventDate(event.startDate) }}
                     </div>
-                    <div class="flex items-center">
+                    <div v-if="event.startTime" class="flex items-center">
                       <i class="fas fa-clock mr-2 text-blue-600"></i>
                       {{ formatEventTime(event.startTime, event.endTime) }}
                     </div>
-                    <div class="flex items-center">
+                    <div v-if="event.location" class="flex items-center">
                       <i class="fas fa-map-marker-alt mr-2 text-blue-600"></i>
                       {{ event.location }}
                     </div>
@@ -342,9 +342,9 @@
                       {{ event.currentAttendees || 0 }}/{{ event.maxAttendees }} places
                     </div>
                   </div>
-                  <div v-if="event.price !== undefined && event.price !== null && event.price !== ''" class="mb-4">
+                  <div v-if="event.price !== undefined && event.price !== null" class="mb-4">
                     <span class="text-blue-600 font-semibold text-lg">
-                      {{ event.price === 0 || event.price === '0' ? 'Gratuit' : `${event.price} ${event.currency || 'USD'}` }}
+                      {{ event.price === 0 ? 'Gratuit' : `${event.price} ${event.currency || 'USD'}` }}
                     </span>
                   </div>
                 </div>
@@ -469,6 +469,7 @@
                     v-model="registrationForm.name"
                     type="text"
                     required
+                    @input="clearError"
                     class="w-full px-4 py-3.5 rounded-xl border-2 border-gray-200 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-300 text-sm bg-gray-50 focus:bg-white group-hover:border-gray-300"
                     :placeholder="$t('entrepreneurs.registration.namePlaceholder')"
                   />
@@ -482,6 +483,7 @@
                     v-model="registrationForm.email"
                     type="email"
                     required
+                    @input="clearError"
                     class="w-full px-4 py-3.5 rounded-xl border-2 border-gray-200 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-300 text-sm bg-gray-50 focus:bg-white group-hover:border-gray-300"
                     :placeholder="$t('entrepreneurs.registration.emailPlaceholder')"
                   />
@@ -497,6 +499,7 @@
                   <select
                     v-model="registrationForm.program"
                     required
+                    @change="clearError"
                     class="w-full px-4 py-3.5 rounded-xl border-2 border-gray-200 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-300 text-sm bg-gray-50 focus:bg-white group-hover:border-gray-300 appearance-none cursor-pointer pr-10"
                   >
                     <option value="">{{ $t('entrepreneurs.registration.selectProgram') }}</option>
@@ -555,7 +558,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
@@ -569,6 +572,8 @@ import ShimmerCard from '../components/ShimmerCard.vue'
 import FooterComponent from '../components/footer/FooterComponent.vue'
 import eventService from '@/services/event.service'
 import trainingRegistrationService from '@/services/training-registration.service'
+import type { Event as EventModel } from '@/models/event.model'
+import type { TrainingRegistration } from '@/models/training-registration.model'
 
 // Import des images
 import carousel1 from '../assets/carousel-1.jpg'
@@ -601,16 +606,23 @@ const testimonials = computed(() => [
 ])
 
 // Événements à venir (dynamiques depuis le backend)
-const upcomingEvents = ref([])
-const loadingEvents = ref(false)
+const upcomingEvents = ref<EventModel[]>([])
+const loadingEvents = ref<boolean>(false)
 
 // Charger les événements depuis le backend
 const loadUpcomingEvents = async () => {
   loadingEvents.value = true
   try {
     const result = await eventService.getEvents({
-      limit: 10, // Limiter à 10 événements
+      limit: 20, // Récupérer plus d'événements pour avoir plus de choix après filtrage
     })
+    
+    // Vérifier que result et result.data existent
+    if (!result || !result.data || !Array.isArray(result.data)) {
+      console.warn('Format de réponse inattendu pour les événements:', result)
+      upcomingEvents.value = []
+      return
+    }
     
     // Filtrer pour ne garder que les événements à venir (basé sur la date)
     const now = new Date()
@@ -618,7 +630,11 @@ const loadUpcomingEvents = async () => {
     
     upcomingEvents.value = result.data
       .filter(event => {
-        if (!event.startDate) return false
+        if (!event || !event.startDate) return false
+        
+        // Filtrer par statut si disponible
+        if (event.status === 'cancelled') return false
+        
         try {
           const eventDate = new Date(event.startDate)
           if (isNaN(eventDate.getTime())) return false
@@ -630,21 +646,28 @@ const loadUpcomingEvents = async () => {
       })
       .sort((a, b) => {
         // Trier par date croissante (les plus proches en premier)
-        const dateA = new Date(a.startDate || '').getTime()
-        const dateB = new Date(b.startDate || '').getTime()
-        return dateA - dateB
+        try {
+          const dateA = new Date(a.startDate || '').getTime()
+          const dateB = new Date(b.startDate || '').getTime()
+          if (isNaN(dateA) || isNaN(dateB)) return 0
+          return dateA - dateB
+        } catch {
+          return 0
+        }
       })
       .slice(0, 6) // Limiter à 6 événements pour l'affichage
-  } catch (err) {
+  } catch (err: any) {
     console.error('Erreur lors du chargement des événements:', err)
     upcomingEvents.value = []
+    // Ne pas afficher d'alerte à l'utilisateur pour les erreurs de chargement d'événements
+    // car cela n'empêche pas l'utilisation de la page
   } finally {
     loadingEvents.value = false
   }
 }
 
 // Formater la date de l'événement
-const formatEventDate = (dateString) => {
+const formatEventDate = (dateString: string | undefined | null): string => {
   if (!dateString) return ''
   try {
     const date = new Date(dateString)
@@ -659,19 +682,39 @@ const formatEventDate = (dateString) => {
   }
 }
 
-// Formater l'heure au format H:m (sans zéro devant pour les heures)
-const formatEventTime = (startTime, endTime) => {
-  const formatTime = (timeStr) => {
+// Formater l'heure au format HH:mm (avec zéro devant si nécessaire)
+const formatEventTime = (startTime: string | undefined | null, endTime?: string | undefined | null): string => {
+  const formatTime = (timeStr: string): string => {
     if (!timeStr) return ''
     const time = timeStr.trim()
+    
+    // Si c'est déjà au format HH:mm ou H:mm
     if (time.includes(':')) {
       const parts = time.split(':')
       if (parts.length >= 2) {
         const hours = parseInt(parts[0], 10)
-        const minutes = parts[1].padStart(2, '0')
-        return `${hours}:${minutes}`
+        const minutes = parseInt(parts[1], 10)
+        
+        // Formater avec zéro devant si nécessaire (HH:mm)
+        const formattedHours = hours.toString().padStart(2, '0')
+        const formattedMinutes = minutes.toString().padStart(2, '0')
+        return `${formattedHours}:${formattedMinutes}`
       }
     }
+    
+    // Si c'est un format différent, essayer de le parser
+    // Par exemple "14h30" ou "2:30 PM"
+    if (time.includes('h')) {
+      const parts = time.replace('h', ':').split(':')
+      if (parts.length >= 2) {
+        const hours = parseInt(parts[0], 10)
+        const minutes = parseInt(parts[1], 10)
+        const formattedHours = hours.toString().padStart(2, '0')
+        const formattedMinutes = minutes.toString().padStart(2, '0')
+        return `${formattedHours}:${formattedMinutes}`
+      }
+    }
+    
     return time
   }
   
@@ -685,7 +728,7 @@ const formatEventTime = (startTime, endTime) => {
 }
 
 // Obtenir l'URL de l'image de l'événement
-const getEventImage = (image) => {
+const getEventImage = (image: string | undefined | null): string => {
   if (!image) {
     return 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'
   }
@@ -693,20 +736,21 @@ const getEventImage = (image) => {
 }
 
 // Gérer l'erreur de chargement d'image
-const handleImageError = (e) => {
-  if (e && e.target) {
-    e.target.src = 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'
+const handleImageError = (e: Event) => {
+  const target = e.target as HTMLImageElement
+  if (target) {
+    target.src = 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'
   }
 }
 
 // Ouvrir la page de détail de l'événement
-const openEvent = (eventId) => {
+const openEvent = (eventId: number | string | undefined) => {
   if (!eventId) return
   router.push(`/events/${eventId}`)
 }
 
 // S'inscrire à un événement
-const registerEvent = (eventId) => {
+const registerEvent = (eventId: number | string | undefined) => {
   if (!eventId) return
   // Navigation vers la page de détail pour l'inscription
   router.push(`/events/${eventId}`)
@@ -732,9 +776,9 @@ const faqs = computed(() => [
   }
 ])
 
-const openFaqs = ref([])
+const openFaqs = ref<number[]>([])
 
-const toggleFaq = (index) => {
+const toggleFaq = (index: number) => {
   const idx = openFaqs.value.indexOf(index)
   if (idx > -1) {
     openFaqs.value.splice(idx, 1)
@@ -744,19 +788,34 @@ const toggleFaq = (index) => {
 }
 
 // Formulaire d'inscription
-const registrationForm = ref({
+const registrationForm = ref<Omit<TrainingRegistration, 'id' | 'status' | 'registrationDate' | 'createdAt' | 'updatedAt' | 'confirmedAt' | 'cancelledAt'>>({
   name: '',
   email: '',
   program: '',
   message: ''
 })
 
-const isSubmitting = ref(false)
+const isSubmitting = ref<boolean>(false)
 const registrationError = ref<string | null>(null)
 
+// Effacer l'erreur quand l'utilisateur modifie le formulaire
+const clearError = () => {
+  if (registrationError.value) {
+    registrationError.value = null
+  }
+}
+
 const submitRegistration = async () => {
+  // Validation des champs obligatoires
   if (!registrationForm.value.name || !registrationForm.value.email || !registrationForm.value.program) {
     registrationError.value = 'Veuillez remplir tous les champs obligatoires'
+    return
+  }
+  
+  // Validation de l'email
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  if (!emailRegex.test(registrationForm.value.email)) {
+    registrationError.value = 'Veuillez entrer une adresse email valide'
     return
   }
   
@@ -765,7 +824,7 @@ const submitRegistration = async () => {
   
   try {
     // Mapper le nom du programme depuis la valeur du select
-    const programNames = {
+    const programNames: Record<string, string> = {
       'training1': t('entrepreneurs.activities.training1.title'),
       'training2': t('entrepreneurs.activities.training2.title'),
       'training3': t('entrepreneurs.activities.training3.title'),
@@ -784,16 +843,40 @@ const submitRegistration = async () => {
     
     // Réinitialiser le formulaire
     registrationForm.value = { name: '', email: '', program: '', message: '' }
-  } catch (err) {
+    registrationError.value = null
+  } catch (err: any) {
     console.error('Erreur lors de l\'inscription:', err)
-    registrationError.value = err?.message || 'Une erreur est survenue lors de l\'envoi de votre inscription. Veuillez réessayer.'
-    alert(registrationError.value)
+    
+    // Extraire le message d'erreur de manière robuste
+    let errorMessage = 'Une erreur est survenue lors de l\'envoi de votre inscription. Veuillez réessayer.'
+    
+    if (err) {
+      if (typeof err === 'string') {
+        errorMessage = err
+      } else if (err.message) {
+        errorMessage = err.message
+      } else if (err.response?.data?.message) {
+        errorMessage = err.response.data.message
+      } else if (err.response?.data?.error) {
+        errorMessage = err.response.data.error
+      } else if (err.errors && typeof err.errors === 'object') {
+        // Si c'est un objet d'erreurs Laravel, extraire le premier message
+        const firstError = Object.values(err.errors)[0]
+        if (Array.isArray(firstError) && firstError.length > 0) {
+          errorMessage = firstError[0] as string
+        } else if (typeof firstError === 'string') {
+          errorMessage = firstError
+        }
+      }
+    }
+    
+    registrationError.value = errorMessage
   } finally {
     isSubmitting.value = false
   }
 }
 
-let observer = null
+let observer: IntersectionObserver | null = null
 
 const initScrollAnimations = () => {
   const observerOptions = {
@@ -805,7 +888,9 @@ const initScrollAnimations = () => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
         entry.target.classList.add('animate-in')
-        observer.unobserve(entry.target)
+        if (observer) {
+          observer.unobserve(entry.target)
+        }
       }
     })
   }, observerOptions)
