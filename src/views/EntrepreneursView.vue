@@ -286,10 +286,9 @@
           </h2>
         </div>
 
-        <!-- Loading State -->
-        <div v-if="loadingEvents" class="text-center py-12">
-          <i class="fas fa-spinner fa-spin text-3xl text-blue-600 mb-4"></i>
-          <p class="text-gray-600 text-sm">Chargement des programmes...</p>
+        <!-- Loading State with Shimmer -->
+        <div v-if="loadingEvents" class="space-y-6">
+          <ShimmerCard v-for="n in 3" :key="n" />
         </div>
 
         <!-- Events Grid -->
@@ -297,9 +296,7 @@
           <div 
             v-for="(event, index) in upcomingEvents" 
             :key="event.id"
-            class="group bg-white rounded-xl p-6 sm:p-8 shadow-md hover:shadow-xl border border-gray-100 transition-all duration-300 fade-in-up stagger-item overflow-hidden cursor-pointer"
-            :style="{ animationDelay: `${index * 150}ms` }"
-            data-animate
+            class="group bg-white rounded-xl p-6 sm:p-8 shadow-md hover:shadow-xl border border-gray-100 transition-all duration-300 overflow-hidden cursor-pointer"
             @click="openEvent(event.id)"
           >
             <div class="flex flex-col md:flex-row gap-6">
@@ -310,7 +307,7 @@
                     :src="getEventImage(event.image)"
                     :alt="event.title"
                     class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                    @error="(e) => { e.target.src = 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80' }"
+                    @error="(e) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80' }"
                   />
                   <div class="absolute top-3 left-3 bg-blue-600 text-white text-xs font-semibold px-3 py-1 rounded-lg">
                     {{ event.type }}
@@ -328,12 +325,12 @@
                     {{ event.description }}
                   </p>
                   <div class="flex flex-wrap gap-4 text-sm text-gray-600 mb-4">
-                  <div class="flex items-center">
-                    <i class="fas fa-calendar-alt mr-2 text-blue-600"></i>
+                    <div class="flex items-center">
+                      <i class="fas fa-calendar-alt mr-2 text-blue-600"></i>
                       {{ formatEventDate(event.startDate) }}
-                  </div>
-                  <div class="flex items-center">
-                    <i class="fas fa-clock mr-2 text-blue-600"></i>
+                    </div>
+                    <div class="flex items-center">
+                      <i class="fas fa-clock mr-2 text-blue-600"></i>
                       {{ formatEventTime(event.startTime, event.endTime) }}
                     </div>
                     <div class="flex items-center">
@@ -356,8 +353,8 @@
                     @click.stop="registerEvent(event.id)"
                     class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-all duration-300 transform hover:scale-105"
                   >
-                  {{ $t('entrepreneurs.upcoming.register') }}
-                </button>
+                    {{ $t('entrepreneurs.upcoming.register') }}
+                  </button>
                   <button 
                     @click.stop="openEvent(event.id)"
                     class="text-blue-600 hover:text-blue-700 font-medium text-sm flex items-center gap-2 transition-colors"
@@ -558,14 +555,17 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
-import { useToast } from 'vue-toast-notification'
+import type { TrainingRegistration, Event } from '@/models'
+import eventService from '@/services/event.service'
+import trainingRegistrationService from '@/services/training-registration.service'
 //@ts-ignore
 import NavBarComponent from '../components/navbar/NavBarComponent.vue'
-const { t } = useI18n()
+//@ts-ignore
+import ShimmerCard from '../components/ShimmerCard.vue'
 //@ts-ignore
 import FooterComponent from '../components/footer/FooterComponent.vue'
 
@@ -575,14 +575,11 @@ import carousel2 from '../assets/carousel-2.jpg'
 import carousel4 from '../assets/carousel-4.jpg'
 import profImage from '../assets/prof.jpeg'
 
-import eventService from '@/services/event.service'
-import trainingRegistrationService from '@/services/training-registration.service'
-
+const { t } = useI18n()
 const router = useRouter()
-const toast = useToast()
 
 // Témoignages
-const testimonials = computed(() => [
+const testimonials = ref([
   {
     text: t('entrepreneurs.testimonials.testimonial1.text'),
     name: t('entrepreneurs.testimonials.testimonial1.name'),
@@ -604,7 +601,7 @@ const testimonials = computed(() => [
 ])
 
 // Événements à venir (dynamiques depuis le backend)
-const upcomingEvents = ref([])
+const upcomingEvents = ref<Event[]>([])
 const loadingEvents = ref(false)
 
 // Charger les événements depuis le backend
@@ -638,7 +635,7 @@ const loadUpcomingEvents = async () => {
         return dateA - dateB
       })
       .slice(0, 6) // Limiter à 6 événements pour l'affichage
-  } catch (err) {
+  } catch (err: any) {
     console.error('Erreur lors du chargement des événements:', err)
     upcomingEvents.value = []
   } finally {
@@ -647,7 +644,7 @@ const loadUpcomingEvents = async () => {
 }
 
 // Formater la date de l'événement
-const formatEventDate = (dateString) => {
+const formatEventDate = (dateString: string | undefined) => {
   if (!dateString) return ''
   try {
     const date = new Date(dateString)
@@ -662,17 +659,33 @@ const formatEventDate = (dateString) => {
   }
 }
 
-// Formater l'heure de l'événement
-const formatEventTime = (startTime, endTime) => {
-  if (!startTime) return ''
-  if (endTime) {
-    return `${startTime} - ${endTime}`
+// Formater l'heure au format H:m (sans zéro devant pour les heures)
+const formatEventTime = (startTime: string | undefined, endTime: string | undefined) => {
+  const formatTime = (timeStr: string | undefined) => {
+    if (!timeStr) return ''
+    const time = timeStr.trim()
+    if (time.includes(':')) {
+      const parts = time.split(':')
+      if (parts.length >= 2) {
+        const hours = parseInt(parts[0], 10)
+        const minutes = parts[1].padStart(2, '0')
+        return `${hours}:${minutes}`
+      }
+    }
+    return time
   }
-  return startTime
+  
+  if (!startTime) return ''
+  const formattedStart = formatTime(startTime)
+  if (endTime) {
+    const formattedEnd = formatTime(endTime)
+    return `${formattedStart} - ${formattedEnd}`
+  }
+  return formattedStart
 }
 
 // Obtenir l'URL de l'image de l'événement
-const getEventImage = (image) => {
+const getEventImage = (image?: string | null): string => {
   if (!image) {
     return 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'
   }
@@ -680,20 +693,20 @@ const getEventImage = (image) => {
 }
 
 // Ouvrir la page de détail de l'événement
-const openEvent = (eventId) => {
+const openEvent = (eventId: string | number | undefined) => {
   if (!eventId) return
   router.push(`/events/${eventId}`)
 }
 
 // S'inscrire à un événement
-const registerEvent = (eventId) => {
+const registerEvent = (eventId: string | number | undefined) => {
   if (!eventId) return
   // Navigation vers la page de détail pour l'inscription
   router.push(`/events/${eventId}`)
 }
 
 // FAQ
-const faqs = computed(() => [
+const faqs = ref([
   {
     question: t('entrepreneurs.faq.faq1.question'),
     answer: t('entrepreneurs.faq.faq1.answer')
@@ -712,9 +725,9 @@ const faqs = computed(() => [
   }
 ])
 
-const openFaqs = ref([])
+const openFaqs = ref<number[]>([])
 
-const toggleFaq = (index) => {
+const toggleFaq = (index: number) => {
   const idx = openFaqs.value.indexOf(index)
   if (idx > -1) {
     openFaqs.value.splice(idx, 1)
@@ -724,7 +737,7 @@ const toggleFaq = (index) => {
 }
 
 // Formulaire d'inscription
-const registrationForm = ref({
+const registrationForm = ref<Omit<TrainingRegistration, 'id' | 'status' | 'registrationDate' | 'createdAt' | 'updatedAt' | 'confirmedAt' | 'cancelledAt'>>({
   name: '',
   email: '',
   program: '',
@@ -732,17 +745,11 @@ const registrationForm = ref({
 })
 
 const isSubmitting = ref(false)
-const registrationError = ref(null)
+const registrationError = ref<string | null>(null)
 
 const submitRegistration = async () => {
   if (!registrationForm.value.name || !registrationForm.value.email || !registrationForm.value.program) {
     registrationError.value = 'Veuillez remplir tous les champs obligatoires'
-    toast.open({
-      message: '⚠️ Veuillez remplir tous les champs obligatoires',
-      type: 'warning',
-      position: 'top-right',
-      duration: 4000,
-    })
     return
   }
   
@@ -751,7 +758,7 @@ const submitRegistration = async () => {
   
   try {
     // Mapper le nom du programme depuis la valeur du select
-    const programNames = {
+    const programNames: Record<string, string> = {
       'training1': t('entrepreneurs.activities.training1.title'),
       'training2': t('entrepreneurs.activities.training2.title'),
       'training3': t('entrepreneurs.activities.training3.title'),
@@ -764,42 +771,22 @@ const submitRegistration = async () => {
     }
     
     await trainingRegistrationService.submitRegistration(registrationData)
-  
-  // Afficher le message de succès
-    toast.open({
-      message: `✅ ${t('entrepreneurs.registration.success') || 'Votre inscription a été enregistrée avec succès ! Nous vous contacterons bientôt.'}`,
-      type: 'success',
-      position: 'top-right',
-      duration: 6000,
-    })
-  
-  // Réinitialiser le formulaire
-  registrationForm.value = { name: '', email: '', program: '', message: '' }
-  } catch (err) {
+    
+    // Afficher le message de succès
+    alert(t('entrepreneurs.registration.success') || 'Votre inscription a été enregistrée avec succès ! Nous vous contacterons bientôt.')
+    
+    // Réinitialiser le formulaire
+    registrationForm.value = { name: '', email: '', program: '', message: '' }
+  } catch (err: any) {
     console.error('Erreur lors de l\'inscription:', err)
-    let errorMessage = 'Une erreur est survenue lors de l\'envoi de votre inscription. Veuillez réessayer.'
-    
-    if (err.status === 422) {
-      const errors = err.errors || {};
-      const firstError = Object.values(errors)[0];
-      errorMessage = firstError?.[0] || 'Veuillez vérifier les informations saisies.';
-    } else if (err.message) {
-      errorMessage = err.message;
-    }
-    
-    registrationError.value = errorMessage
-    toast.open({
-      message: `❌ ${errorMessage}`,
-      type: 'error',
-      position: 'top-right',
-      duration: 6000,
-    })
+    registrationError.value = err.message || 'Une erreur est survenue lors de l\'envoi de votre inscription. Veuillez réessayer.'
+    alert(registrationError.value)
   } finally {
     isSubmitting.value = false
   }
 }
 
-let observer = null
+let observer: IntersectionObserver | null = null
 
 const initScrollAnimations = () => {
   const observerOptions = {
@@ -809,7 +796,7 @@ const initScrollAnimations = () => {
 
   observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
-      if (entry.isIntersecting) {
+      if (entry.isIntersecting && observer) {
         entry.target.classList.add('animate-in')
         observer.unobserve(entry.target)
       }
@@ -818,7 +805,9 @@ const initScrollAnimations = () => {
 
   // Observer tous les éléments avec data-animate
   document.querySelectorAll('[data-animate]').forEach(el => {
-    observer.observe(el)
+    if (observer) {
+      observer.observe(el)
+    }
   })
 }
 
@@ -841,8 +830,8 @@ onUnmounted(() => {
 <style scoped>
 /* Animations d'apparition */
 .fade-in-up {
-  opacity: 0;
-  transform: translateY(30px);
+  opacity: 1;
+  transform: translateY(0);
   transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -852,8 +841,8 @@ onUnmounted(() => {
 }
 
 .fade-in-right {
-  opacity: 0;
-  transform: translateX(30px);
+  opacity: 1;
+  transform: translateX(0);
   transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -863,8 +852,8 @@ onUnmounted(() => {
 }
 
 .stagger-item {
-  opacity: 0;
-  transform: translateY(30px);
+  opacity: 1;
+  transform: translateY(0);
   transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
