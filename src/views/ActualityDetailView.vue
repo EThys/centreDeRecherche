@@ -15,7 +15,7 @@
         :src="getArticleImage(article.image)"
         :alt="article.title"
         class="w-full h-full object-cover"
-        @error="(e) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80' }"
+        @error="handleImageError"
       />
       <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-black/40"></div>
     </div>
@@ -99,7 +99,7 @@
   </div>
 
   <!-- Contenu principal -->
-  <main v-if="article && !loading && !error" class="min-h-screen bg-white">
+  <main v-if="article && !loading" class="min-h-screen bg-white">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16 detail-fade-in-delay">
       <div class="grid grid-cols-1 lg:grid-cols-4 gap-8 lg:gap-12">
         <!-- Sidebar -->
@@ -158,7 +158,7 @@
                       :src="getArticleImage(related.image)"
                       :alt="related.title"
                       class="w-16 h-16 rounded-lg object-cover flex-shrink-0 group-hover:scale-105 transition-transform duration-300"
-                      @error="(e) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80' }"
+                      @error="handleImageErrorSmall"
                     />
                     <div class="flex-1 min-w-0">
                       <h4 class="text-xs font-semibold text-gray-900 line-clamp-2 group-hover:text-blue-600 transition-colors leading-tight">
@@ -288,7 +288,7 @@
                 :src="getArticleImage(related.image)"
                 :alt="related.title"
                 class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                @error="(e) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80' }"
+                @error="handleImageErrorMedium"
               />
               <div class="absolute top-3 left-3 bg-blue-500 text-white text-xs font-semibold px-2 py-1 rounded-lg">
                 {{ formatDate(related.publishDate) }}
@@ -339,10 +339,9 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import type { Actuality } from '@/models'
 import actualityService from '@/services/actuality.service'
 
 //@ts-ignore
@@ -352,14 +351,14 @@ import DetailLoader from '../components/DetailLoader.vue'
 
 const route = useRoute()
 const router = useRouter()
-const articleId = route.params.id as string
+const articleId = route.params.id
 
-const article = ref<Actuality | null>(null)
-const relatedArticles = ref<Actuality[]>([])
+const article = ref(null)
+const relatedArticles = ref([])
 const loading = ref(true)
-const error = ref<string | null>(null)
+const error = ref(null)
 const isBookmarked = ref(false)
-let observer: IntersectionObserver | null = null
+let observer = null
 
 // Charger l'actualité depuis le backend
 const loadArticle = async () => {
@@ -376,16 +375,28 @@ const loadArticle = async () => {
     
     // Charger les articles similaires
     await loadRelatedArticles(loadedArticle)
-  } catch (err: any) {
+  } catch (err) {
     console.error('Erreur lors du chargement de l\'actualité:', err)
-    error.value = err.message || 'Erreur lors du chargement de l\'article'
+    error.value = err?.message || err?.response?.data?.message || 'Erreur lors du chargement de l\'article'
   } finally {
     loading.value = false
+    // Initialiser les animations après le chargement des données
+    setTimeout(() => {
+      initScrollAnimations()
+      // Fallback : forcer l'affichage des éléments après 1 seconde si l'animation n'a pas fonctionné
+      setTimeout(() => {
+        document.querySelectorAll('[data-animate]').forEach(el => {
+          if (!el.classList.contains('animate-in')) {
+            el.classList.add('animate-in')
+          }
+        })
+      }, 1000)
+    }, 200)
   }
 }
 
 // Charger les articles similaires
-const loadRelatedArticles = async (currentArticle: Actuality) => {
+const loadRelatedArticles = async (currentArticle) => {
   try {
     const result = await actualityService.getActualities({
       category: currentArticle.category,
@@ -404,7 +415,7 @@ const loadRelatedArticles = async (currentArticle: Actuality) => {
 }
 
 // Obtenir l'URL de l'image de l'article
-const getArticleImage = (image?: string | null): string => {
+const getArticleImage = (image) => {
   if (!image) {
     return 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80'
   }
@@ -412,14 +423,14 @@ const getArticleImage = (image?: string | null): string => {
 }
 
 // Obtenir l'avatar de l'auteur
-const getAuthorAvatar = (authorPhoto?: string | null): string => {
+const getAuthorAvatar = (authorPhoto) => {
   if (!authorPhoto) {
     return 'https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80'
   }
   return actualityService.getImageUrl(authorPhoto) || 'https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80'
 }
 
-const formatDate = (dateString: string | undefined) => {
+const formatDate = (dateString) => {
   if (!dateString) return ''
   try {
     const date = new Date(dateString)
@@ -434,7 +445,7 @@ const formatDate = (dateString: string | undefined) => {
   }
 }
 
-const formatContent = (content: string | undefined) => {
+const formatContent = (content) => {
   if (!content) return ''
   // Convertir les retours à la ligne en paragraphes HTML
   return content
@@ -490,8 +501,27 @@ const shareOnTwitter = () => {
   window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank')
 }
 
-const openArticle = (articleId: number | string) => {
+const openArticle = (articleId) => {
   router.push(`/actualites/${articleId}`)
+}
+
+// Gérer l'erreur de chargement d'image
+const handleImageError = (e) => {
+  if (e && e.target) {
+    e.target.src = 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80'
+  }
+}
+
+const handleImageErrorSmall = (e) => {
+  if (e && e.target) {
+    e.target.src = 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80'
+  }
+}
+
+const handleImageErrorMedium = (e) => {
+  if (e && e.target) {
+    e.target.src = 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'
+  }
 }
 
 const initScrollAnimations = () => {
@@ -504,18 +534,14 @@ const initScrollAnimations = () => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
         entry.target.classList.add('animate-in')
-        if (observer) {
-          observer.unobserve(entry.target)
-        }
+        observer.unobserve(entry.target)
       }
     })
   }, observerOptions)
 
   // Observer tous les éléments avec data-animate
   document.querySelectorAll('[data-animate]').forEach(el => {
-    if (observer) {
-      observer.observe(el)
-    }
+    observer.observe(el)
   })
 }
 
@@ -526,11 +552,6 @@ onMounted(() => {
   // Vérifier le statut de bookmark
   const bookmarks = JSON.parse(localStorage.getItem('bookmarkedArticles') || '[]')
   isBookmarked.value = bookmarks.includes(articleId)
-  
-  // Initialiser les animations au scroll
-  setTimeout(() => {
-    initScrollAnimations()
-  }, 100)
 })
 
 onUnmounted(() => {
@@ -574,8 +595,8 @@ onUnmounted(() => {
 
 /* Animations d'apparition */
 .fade-in-up {
-  opacity: 1;
-  transform: translateY(0);
+  opacity: 0;
+  transform: translateY(30px);
   transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -585,8 +606,8 @@ onUnmounted(() => {
 }
 
 .fade-in-right {
-  opacity: 1;
-  transform: translateX(0);
+  opacity: 0;
+  transform: translateX(30px);
   transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -596,8 +617,8 @@ onUnmounted(() => {
 }
 
 .stagger-item {
-  opacity: 1;
-  transform: translateY(0);
+  opacity: 0;
+  transform: translateY(30px);
   transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 

@@ -12,12 +12,8 @@ export const getApiBaseUrl = (): string => {
     return import.meta.env.VITE_API_BASE_URL
   }
   
-  // Détection automatique de l'environnement
-  // En mode développement (npm run dev) ou si on est sur localhost
-  
-  
-  // En production, utiliser l'URL du serveur
-  return 'https://backend.creffpme.org/api'
+  // Utiliser directement l'URL de production
+  return 'http://localhost:8000/api'
 }
 
 /**

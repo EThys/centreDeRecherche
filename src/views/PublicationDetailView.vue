@@ -15,7 +15,7 @@
         :src="publication.image || 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80'"
         :alt="publication.title"
         class="w-full h-full object-cover"
-        @error="(e: any) => e.target.src = 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80'"
+        @error="handleImageError"
       />
       <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-black/40"></div>
     </div>
@@ -50,7 +50,7 @@
   <main v-if="publication && !loading" class="min-h-screen bg-white">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16 detail-fade-in-delay">
       <!-- Section: Informations générales -->
-      <section class="mb-12 pb-12 border-b border-gray-200">
+      <section class="mb-12 pb-12 border-b border-gray-200 fade-in-up" data-animate>
         <h2 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 flex items-center">
           <i class="fas fa-info-circle mr-3 text-blue-500"></i>
           Informations générales
@@ -69,34 +69,34 @@
                   {{ author.name }}
                 </span>
               </div>
-            <p v-if="(publication as any).coAuthors" class="mt-3 text-sm text-gray-600">
-              <strong>Co-auteurs:</strong> {{ (publication as any).coAuthors }}
+            <p v-if="hasCoAuthors" class="mt-3 text-sm text-gray-600">
+              <strong>Co-auteurs:</strong> {{ coAuthors }}
             </p>
             </div>
 
           <!-- Informations de l'auteur principal -->
-          <div v-if="(publication as any).name || (publication as any).email">
+          <div v-if="authorName || authorEmail">
             <h3 class="text-lg font-semibold text-gray-700 mb-3">Auteur principal</h3>
             <div class="space-y-2">
-              <p v-if="(publication as any).name" class="text-gray-700">
+              <p v-if="authorName" class="text-gray-700">
                 <i class="fas fa-user mr-2 text-blue-500"></i>
-                <strong>Nom:</strong> {{ (publication as any).name }}
+                <strong>Nom:</strong> {{ authorName }}
               </p>
-              <p v-if="(publication as any).email" class="text-gray-700">
+              <p v-if="authorEmail" class="text-gray-700">
                 <i class="fas fa-envelope mr-2 text-blue-500"></i>
-                <strong>Email:</strong> {{ (publication as any).email }}
+                <strong>Email:</strong> {{ authorEmail }}
               </p>
-              <p v-if="(publication as any).phone" class="text-gray-700">
+              <p v-if="authorPhone" class="text-gray-700">
                 <i class="fas fa-phone mr-2 text-blue-500"></i>
-                <strong>Téléphone:</strong> {{ (publication as any).phone }}
+                <strong>Téléphone:</strong> {{ authorPhone }}
               </p>
-              <p v-if="(publication as any).institution" class="text-gray-700">
+              <p v-if="authorInstitution" class="text-gray-700">
                 <i class="fas fa-university mr-2 text-blue-500"></i>
-                <strong>Institution:</strong> {{ (publication as any).institution }}
+                <strong>Institution:</strong> {{ authorInstitution }}
               </p>
-              <p v-if="(publication as any).position" class="text-gray-700">
+              <p v-if="authorPosition" class="text-gray-700">
                 <i class="fas fa-briefcase mr-2 text-blue-500"></i>
-                <strong>Poste:</strong> {{ (publication as any).position }}
+                <strong>Poste:</strong> {{ authorPosition }}
               </p>
             </div>
           </div>
@@ -124,21 +124,21 @@
               </span>
             </div>
           </div>
-          <div v-if="(publication as any).keywords">
+          <div v-if="keywords">
             <h3 class="text-lg font-semibold text-gray-700 mb-3">Mots-clés</h3>
-            <p class="text-gray-700">{{ (publication as any).keywords }}</p>
+            <p class="text-gray-700">{{ keywords }}</p>
           </div>
         </div>
 
         <!-- Message complémentaire -->
-        <div v-if="(publication as any).message" class="mt-6">
+        <div v-if="message" class="mt-6">
           <h3 class="text-lg font-semibold text-gray-700 mb-3">Message complémentaire</h3>
-          <p class="text-gray-700 whitespace-pre-wrap">{{ (publication as any).message }}</p>
+          <p class="text-gray-700 whitespace-pre-wrap">{{ message }}</p>
         </div>
       </section>
 
       <!-- Section: Fichiers -->
-      <section class="mb-12 pb-12 border-b border-gray-200">
+      <section class="mb-12 pb-12 border-b border-gray-200 fade-in-up" data-animate>
         <h2 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 flex items-center">
           <i class="fas fa-download mr-3 text-green-500"></i>
           Fichiers du document
@@ -148,8 +148,8 @@
           <div>
             <h3 class="text-lg font-semibold text-gray-700 mb-3">Document (PDF/Word)</h3>
             <a
-              v-if="publication.pdfUrl || (publication as any).documentFile || (publication as any).document_file_url"
-              :href="publication.pdfUrl || (publication as any).documentFile || (publication as any).document_file_url"
+              v-if="publication.pdfUrl || documentFile"
+              :href="publication.pdfUrl || documentFile"
               target="_blank"
               class="inline-flex items-center space-x-2 px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-all duration-300 shadow-lg"
             >
@@ -161,17 +161,17 @@
           </div>
           
           <!-- Image du document -->
-          <div v-if="(publication as any).documentImage || (publication as any).document_image_url">
+          <div v-if="documentImage">
             <h3 class="text-lg font-semibold text-gray-700 mb-3">Image du document</h3>
             <div class="space-y-3">
               <img
-                :src="(publication as any).documentImage || (publication as any).document_image_url"
+                :src="documentImage"
                 :alt="publication.title"
                 class="max-w-full h-auto rounded-lg shadow-lg border border-gray-200"
-                @error="(e: any) => e.target.style.display = 'none'"
+                @error="handleDocumentImageError"
               />
               <a
-                :href="(publication as any).documentImage || (publication as any).document_image_url"
+                :href="documentImage"
                 target="_blank"
                 class="inline-flex items-center space-x-2 px-4 py-2 bg-gray-600 text-white rounded-lg font-medium hover:bg-gray-700 transition-all duration-300"
               >
@@ -184,7 +184,7 @@
       </section>
 
       <!-- Section: Related works & more -->
-      <section class="mb-12 pb-12 border-b border-gray-200">
+      <section class="mb-12 pb-12 border-b border-gray-200 fade-in-up" data-animate>
         <h2 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 flex items-center">
           <i class="fas fa-book mr-3 text-purple-500"></i>
           Related works & more
@@ -200,7 +200,7 @@
       </section>
 
       <!-- Section: Corrections -->
-      <section class="mb-12">
+      <section class="mb-12 fade-in-up" data-animate>
         <h2 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 flex items-center">
           <i class="fas fa-edit mr-3 text-orange-500"></i>
           Corrections
@@ -229,11 +229,10 @@
   <FooterComponent />
 </template>
 
-<script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import type { Publication } from '@/models'
-import publicationService from '@/services/publication.service'
+<script setup>
+  import { ref, computed, onMounted, onUnmounted } from 'vue'
+  import { useRoute, useRouter } from 'vue-router'
+  import publicationService from '@/services/publication.service'
 
 //@ts-ignore
 import NavBarComponent from '../components/navbar/NavBarComponent.vue'
@@ -244,21 +243,70 @@ import DetailLoader from '../components/DetailLoader.vue'
 
 const route = useRoute()
 const router = useRouter()
-const publication = ref<Publication | null>(null)
+const publication = ref(null)
 const loading = ref(true)
-const error = ref<string | null>(null)
-let observer: IntersectionObserver | null = null
+const error = ref(null)
+let observer = null
+
+// Computed properties pour accéder aux propriétés dynamiques
+const pubData = computed(() => {
+  return publication.value || {}
+})
+
+const hasCoAuthors = computed(() => {
+  return pubData.value.coAuthors || pubData.value.co_authors
+})
+
+const coAuthors = computed(() => {
+  return pubData.value.coAuthors || pubData.value.co_authors || ''
+})
+
+const authorName = computed(() => {
+  return pubData.value.name || ''
+})
+
+const authorEmail = computed(() => {
+  return pubData.value.email || ''
+})
+
+const authorPhone = computed(() => {
+  return pubData.value.phone || ''
+})
+
+const authorInstitution = computed(() => {
+  return pubData.value.institution || ''
+})
+
+const authorPosition = computed(() => {
+  return pubData.value.position || ''
+})
+
+const keywords = computed(() => {
+  return pubData.value.keywords || ''
+})
+
+const message = computed(() => {
+  return pubData.value.message || ''
+})
+
+const documentFile = computed(() => {
+  return pubData.value.documentFile || pubData.value.document_file_url || ''
+})
+
+const documentImage = computed(() => {
+  return pubData.value.documentImage || pubData.value.document_image_url || ''
+})
 
 // Charger la publication depuis l'API
 const loadPublication = async () => {
   loading.value = true
   error.value = null
   try {
-    const publicationId = route.params.id as string
+    const publicationId = route.params.id
     const pub = await publicationService.getPublicationById(publicationId)
     
     // Transformer les données pour correspondre au format attendu
-    const pubAny = pub as any
+    const pubAny = pub
     publication.value = {
       ...pub,
       publicationDate: pubAny.publication_date || pub.publicationDate || pubAny.created_at,
@@ -282,12 +330,24 @@ const loadPublication = async () => {
       coAuthors: pubAny.co_authors || pubAny.coAuthors || null,
       keywords: pubAny.keywords || null,
       message: pubAny.message || null,
-    } as Publication & any
-  } catch (err: any) {
+      }
+    } catch (err) {
     console.error('Erreur lors du chargement de la publication:', err)
-    error.value = err.message || 'Erreur lors du chargement de la publication'
+    error.value = err?.message || err?.response?.data?.message || 'Erreur lors du chargement de la publication'
   } finally {
     loading.value = false
+    // Initialiser les animations après le chargement des données
+    setTimeout(() => {
+      initScrollAnimations()
+      // Fallback : forcer l'affichage des éléments après 1 seconde si l'animation n'a pas fonctionné
+      setTimeout(() => {
+        document.querySelectorAll('[data-animate]').forEach(el => {
+          if (!el.classList.contains('animate-in')) {
+            el.classList.add('animate-in')
+          }
+        })
+      }, 1000)
+    }, 200)
   }
 }
 
@@ -304,6 +364,20 @@ const sharePublication = () => {
   }
 }
 
+// Gérer l'erreur de chargement d'image
+const handleImageError = (e) => {
+  if (e && e.target) {
+    e.target.src = 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80'
+  }
+}
+
+// Gérer l'erreur de chargement d'image de document
+const handleDocumentImageError = (e) => {
+  if (e && e.target) {
+    e.target.style.display = 'none'
+  }
+}
+
 const initScrollAnimations = () => {
   const observerOptions = {
     threshold: 0.1,
@@ -314,28 +388,19 @@ const initScrollAnimations = () => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
         entry.target.classList.add('animate-in')
-        if (observer) {
-          observer.unobserve(entry.target)
-        }
+        observer.unobserve(entry.target)
       }
     })
   }, observerOptions)
 
   // Observer tous les éléments avec data-animate
   document.querySelectorAll('[data-animate]').forEach(el => {
-    if (observer) {
-      observer.observe(el)
-    }
+    observer.observe(el)
   })
 }
 
 onMounted(() => {
   loadPublication()
-  
-  // Initialiser les animations au scroll
-  setTimeout(() => {
-    initScrollAnimations()
-  }, 100)
 })
 
 onUnmounted(() => {
