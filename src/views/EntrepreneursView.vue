@@ -453,9 +453,7 @@
 import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useToast } from 'vue-toast-notification'
-//@ts-ignore
 import NavBarComponent from '../components/navbar/NavBarComponent.vue'
-//@ts-ignore
 import FooterComponent from '../components/footer/FooterComponent.vue'
 
 // Import des images
@@ -600,7 +598,7 @@ const submitRegistration = async () => {
   }
 }
 
-let observer = null
+const observer = ref(null)
 
 const initScrollAnimations = () => {
   const observerOptions = {
@@ -608,18 +606,22 @@ const initScrollAnimations = () => {
     rootMargin: '0px 0px -50px 0px'
   }
 
-  observer = new IntersectionObserver((entries) => {
+  observer.value = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
         entry.target.classList.add('animate-in')
-        observer.unobserve(entry.target)
+        if (observer.value) {
+          observer.value.unobserve(entry.target)
+        }
       }
     })
   }, observerOptions)
 
   // Observer tous les éléments avec data-animate
   document.querySelectorAll('[data-animate]').forEach(el => {
-    observer.observe(el)
+    if (observer.value) {
+      observer.value.observe(el)
+    }
   })
 }
 
@@ -630,8 +632,9 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
-  if (observer) {
-    observer.disconnect()
+  if (observer.value) {
+    observer.value.disconnect()
+    observer.value = null
   }
 })
 </script>
