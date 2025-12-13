@@ -269,114 +269,6 @@
       </div>
     </section>
 
-    <!-- Section Programmes à venir -->
-    <section class="py-10 sm:py-14 lg:py-20 bg-gradient-to-br from-blue-50/50 via-white to-indigo-50/30 relative overflow-hidden">
-      <div class="absolute top-0 left-0 w-full h-full">
-        <div class="absolute top-20 right-20 w-32 h-32 bg-blue-200/10 rounded-full blur-2xl"></div>
-        <div class="absolute bottom-20 left-20 w-40 h-40 bg-indigo-200/10 rounded-full blur-2xl"></div>
-      </div>
-      
-      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div class="text-center mb-12 sm:mb-16 fade-in-up" data-animate>
-          <div class="mb-6">
-            <span class="text-blue-600 text-xs font-semibold tracking-[0.15em] uppercase">{{ $t('entrepreneurs.upcoming.header') }}</span>
-          </div>
-          <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 sm:mb-6">
-            {{ $t('entrepreneurs.upcoming.title') }}
-          </h2>
-        </div>
-
-        <!-- Loading State with Shimmer -->
-        <div v-if="loadingEvents" class="space-y-6">
-          <ShimmerCard v-for="n in 3" :key="n" />
-        </div>
-
-        <!-- Events Grid -->
-        <div v-else-if="upcomingEvents.length > 0" class="space-y-6">
-          <div 
-            v-for="(event, index) in upcomingEvents" 
-            :key="event.id"
-            class="group bg-white rounded-xl p-6 sm:p-8 shadow-md hover:shadow-xl border border-gray-100 transition-all duration-300 overflow-hidden cursor-pointer"
-            @click="openEvent(event.id)"
-          >
-            <div class="flex flex-col md:flex-row gap-6">
-              <!-- Event Image -->
-              <div class="md:w-48 lg:w-56 flex-shrink-0">
-                <div class="relative h-40 md:h-full rounded-lg overflow-hidden">
-                  <img
-                    :src="getEventImage(event.image)"
-                    :alt="event.title"
-                    class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                    @error="handleImageError"
-                  />
-                  <div class="absolute top-3 left-3 bg-blue-600 text-white text-xs font-semibold px-3 py-1 rounded-lg">
-                    {{ event.type }}
-                  </div>
-                </div>
-              </div>
-
-              <!-- Event Content -->
-              <div class="flex-1 flex flex-col justify-between">
-                <div>
-                  <h3 class="text-xl sm:text-2xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
-                    {{ event.title }}
-                  </h3>
-                  <p class="text-gray-600 text-sm sm:text-base mb-4 line-clamp-2">
-                    {{ event.description }}
-                  </p>
-                  <div class="flex flex-wrap gap-4 text-sm text-gray-600 mb-4">
-                    <div class="flex items-center">
-                      <i class="fas fa-calendar-alt mr-2 text-blue-600"></i>
-                      {{ formatEventDate(event.startDate) }}
-                    </div>
-                    <div class="flex items-center">
-                      <i class="fas fa-clock mr-2 text-blue-600"></i>
-                      {{ formatEventTime(event.startTime, event.endTime) }}
-                    </div>
-                    <div class="flex items-center">
-                      <i class="fas fa-map-marker-alt mr-2 text-blue-600"></i>
-                      {{ event.location }}
-                    </div>
-                    <div v-if="event.maxAttendees" class="flex items-center">
-                      <i class="fas fa-users mr-2 text-blue-600"></i>
-                      {{ event.currentAttendees || 0 }}/{{ event.maxAttendees }} places
-                    </div>
-                  </div>
-                  <div v-if="event.price !== undefined && event.price !== null" class="mb-4">
-                    <span class="text-blue-600 font-semibold text-lg">
-                      {{ event.price === 0 ? 'Gratuit' : `${event.price} ${event.currency || 'USD'}` }}
-                    </span>
-                  </div>
-                </div>
-                <div class="flex items-center justify-between pt-4 border-t border-gray-100">
-                  <button 
-                    @click.stop="registerEvent(event.id)"
-                    class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-all duration-300 transform hover:scale-105"
-                  >
-                    {{ $t('entrepreneurs.upcoming.register') }}
-                  </button>
-                  <button 
-                    @click.stop="openEvent(event.id)"
-                    class="text-blue-600 hover:text-blue-700 font-medium text-sm flex items-center gap-2 transition-colors"
-                  >
-                    Voir détails
-                    <i class="fas fa-arrow-right"></i>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Empty State -->
-        <div v-else class="text-center py-12 bg-white rounded-xl shadow-sm border border-gray-200">
-          <i class="fas fa-calendar-times text-4xl text-gray-300 mb-4"></i>
-          <h3 class="text-xl font-bold text-gray-900 mb-2">Aucun programme à venir</h3>
-          <p class="text-gray-600 text-sm">De nouveaux programmes seront bientôt disponibles.</p>
-        </div>
-      </div>
-    </section>
-
     <!-- Section FAQ -->
     <section class="py-10 sm:py-14 lg:py-20 bg-white relative">
       <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -556,15 +448,11 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, computed } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useRouter } from 'vue-router'
-import eventService from '@/services/event.service'
 import trainingRegistrationService from '@/services/training-registration.service'
 //@ts-ignore
 import NavBarComponent from '../components/navbar/NavBarComponent.vue'
-//@ts-ignore
-import ShimmerCard from '../components/ShimmerCard.vue'
 //@ts-ignore
 import FooterComponent from '../components/footer/FooterComponent.vue'
 
@@ -575,7 +463,6 @@ import carousel4 from '../assets/carousel-4.jpg'
 import profImage from '../assets/prof.jpeg'
 
 const { t } = useI18n()
-const router = useRouter()
 
 // Témoignages
 const testimonials = ref([
@@ -598,138 +485,6 @@ const testimonials = ref([
     initials: 'PL'
   }
 ])
-
-// Événements à venir (dynamiques depuis le backend)
-const upcomingEvents = ref([])
-const loadingEvents = ref(false)
-
-// Charger les événements depuis le backend
-const loadUpcomingEvents = async () => {
-  loadingEvents.value = true
-  try {
-    const result = await eventService.getEvents({
-      limit: 10, // Limiter à 10 événements
-    })
-    
-    // Filtrer pour ne garder que les événements à venir (basé sur la date)
-    const now = new Date()
-    const nowDateOnly = new Date(now.getFullYear(), now.getMonth(), now.getDate())
-    
-    upcomingEvents.value = result.data
-      .filter(event => {
-        if (!event.startDate) return false
-        try {
-          const eventDate = new Date(event.startDate)
-          if (isNaN(eventDate.getTime())) return false
-          const eventDateOnly = new Date(eventDate.getFullYear(), eventDate.getMonth(), eventDate.getDate())
-          return eventDateOnly >= nowDateOnly
-        } catch {
-          return false
-        }
-      })
-      .sort((a, b) => {
-        // Trier par date croissante (les plus proches en premier)
-        const dateA = new Date(a.startDate || '').getTime()
-        const dateB = new Date(b.startDate || '').getTime()
-        return dateA - dateB
-      })
-      .slice(0, 6) // Limiter à 6 événements pour l'affichage
-  } catch (err) {
-    console.error('Erreur lors du chargement des événements:', err)
-    upcomingEvents.value = []
-  } finally {
-    loadingEvents.value = false
-  }
-}
-
-// Formater la date de l'événement
-const formatEventDate = (dateString) => {
-  if (!dateString) return ''
-  try {
-    const date = new Date(dateString)
-    if (isNaN(date.getTime())) return dateString
-    return date.toLocaleDateString('fr-FR', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric'
-    })
-  } catch {
-    return dateString
-  }
-}
-
-// Formater l'heure au format HH:mm (avec zéro devant si nécessaire)
-const formatEventTime = (startTime, endTime) => {
-  const formatTime = (timeStr) => {
-    if (!timeStr) return ''
-    const time = timeStr.trim()
-    
-    // Si c'est déjà au format HH:mm ou H:mm
-    if (time.includes(':')) {
-      const parts = time.split(':')
-      if (parts.length >= 2) {
-        const hours = parseInt(parts[0], 10)
-        const minutes = parseInt(parts[1], 10)
-        
-        // Formater avec zéro devant si nécessaire (HH:mm)
-        const formattedHours = hours.toString().padStart(2, '0')
-        const formattedMinutes = minutes.toString().padStart(2, '0')
-        return `${formattedHours}:${formattedMinutes}`
-      }
-    }
-    
-    // Si c'est un format différent, essayer de le parser
-    // Par exemple "14h30" ou "2:30 PM"
-    if (time.includes('h')) {
-      const parts = time.replace('h', ':').split(':')
-      if (parts.length >= 2) {
-        const hours = parseInt(parts[0], 10)
-        const minutes = parseInt(parts[1], 10)
-        const formattedHours = hours.toString().padStart(2, '0')
-        const formattedMinutes = minutes.toString().padStart(2, '0')
-        return `${formattedHours}:${formattedMinutes}`
-      }
-    }
-    
-    return time
-  }
-  
-  if (!startTime) return ''
-  const formattedStart = formatTime(startTime)
-  if (endTime) {
-    const formattedEnd = formatTime(endTime)
-    return `${formattedStart} - ${formattedEnd}`
-  }
-  return formattedStart
-}
-
-// Obtenir l'URL de l'image de l'événement
-const getEventImage = (image) => {
-  if (!image) {
-    return 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'
-  }
-  return eventService.getImageUrl(image) || 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'
-}
-
-// Ouvrir la page de détail de l'événement
-const openEvent = (eventId) => {
-  if (!eventId) return
-  router.push(`/events/${eventId}`)
-}
-
-// S'inscrire à un événement
-const registerEvent = (eventId) => {
-  if (!eventId) return
-  // Navigation vers la page de détail pour l'inscription
-  router.push(`/events/${eventId}`)
-}
-
-// Gérer l'erreur de chargement d'image
-const handleImageError = (e) => {
-  if (e && e.target) {
-    e.target.src = 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'
-  }
-}
 
 // FAQ
 const faqs = ref([
@@ -836,9 +591,6 @@ const initScrollAnimations = () => {
 }
 
 onMounted(() => {
-  // Charger les événements à venir
-  loadUpcomingEvents()
-  
   setTimeout(() => {
     initScrollAnimations()
   }, 100)
