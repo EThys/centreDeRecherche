@@ -468,7 +468,7 @@ import trainingRegistrationService from '@/services/training-registration.servic
 const { t } = useI18n()
 const toast = useToast()
 
-// Témoignages
+// Témoignages - computed pour réactivité avec les traductions
 const testimonials = computed(() => [
   {
     text: t('entrepreneurs.testimonials.testimonial1.text'),
@@ -490,8 +490,7 @@ const testimonials = computed(() => [
   }
 ])
 
-
-// FAQ
+// FAQ - computed pour réactivité avec les traductions
 const faqs = computed(() => [
   {
     question: t('entrepreneurs.faq.faq1.question'),
