@@ -99,8 +99,8 @@
   </div>
 
   <!-- Contenu principal -->
-  <main v-if="article && !loading" class="min-h-screen bg-white">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16 detail-fade-in-delay">
+  <main class="min-h-screen bg-white relative" v-if="article && !loading">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
       <div class="grid grid-cols-1 lg:grid-cols-4 gap-8 lg:gap-12">
         <!-- Sidebar -->
         <div class="lg:col-span-1">
@@ -348,6 +348,8 @@ import actualityService from '@/services/actuality.service'
 import NavBarComponent from '../components/navbar/NavBarComponent.vue'
 //@ts-ignore
 import DetailLoader from '../components/DetailLoader.vue'
+//@ts-ignore
+import defaultActualityImage from '../assets/carousel-2.jpg'
 
 const route = useRoute()
 const router = useRouter()
@@ -417,9 +419,9 @@ const loadRelatedArticles = async (currentArticle) => {
 // Obtenir l'URL de l'image de l'article
 const getArticleImage = (image) => {
   if (!image) {
-    return 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80'
+    return defaultActualityImage
   }
-  return actualityService.getImageUrl(image) || 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80'
+  return actualityService.getImageUrl(image) || defaultActualityImage
 }
 
 // Obtenir l'avatar de l'auteur
@@ -508,7 +510,7 @@ const openArticle = (articleId) => {
 // Gérer l'erreur de chargement d'image
 const handleImageError = (e) => {
   if (e && e.target) {
-    e.target.src = 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80'
+    e.target.src = defaultActualityImage
   }
 }
 
