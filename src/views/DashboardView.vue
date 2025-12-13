@@ -84,12 +84,14 @@
             
             <button
               @click="handleLogout"
-              class="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl text-slate-700 hover:bg-red-50 hover:text-red-600 transition-all duration-300 group border border-transparent hover:border-red-200 relative z-10"
+              :disabled="isLoggingOut"
+              class="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl text-slate-700 hover:bg-red-50 hover:text-red-600 transition-all duration-300 group border border-transparent hover:border-red-200 relative z-10 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <div class="w-5 h-5 flex items-center justify-center">
-                <i class="fas fa-sign-out-alt text-base group-hover:translate-x-0.5 transition-transform"></i>
+                <i v-if="!isLoggingOut" class="fas fa-sign-out-alt text-base group-hover:translate-x-0.5 transition-transform"></i>
+                <i v-else class="fas fa-spinner fa-spin text-base"></i>
               </div>
-              <span class="font-semibold text-sm">Déconnexion</span>
+              <span class="font-semibold text-sm">{{ isLoggingOut ? 'Déconnexion...' : 'Déconnexion' }}</span>
             </button>
           </div>
         </div>
@@ -274,6 +276,7 @@ const router = useRouter()
 const dashboardStore = useDashboardStore()
 const sidebarOpen = ref(false)
 const activeSection = ref('overview')
+const isLoggingOut = ref(false)
 
 // Utiliser les computed du store
 const menuItems = computed(() => dashboardStore.menuItems)
@@ -298,6 +301,8 @@ const handleLogout = async () => {
     return
   }
   
+  isLoggingOut.value = true
+  
   try {
     // Appeler le service de déconnexion pour supprimer le token côté serveur
     await authService.logout()
@@ -308,9 +313,12 @@ const handleLogout = async () => {
     localStorage.removeItem('auth_token')
     localStorage.removeItem('user')
     
-    // Forcer la redirection vers la page d'accueil
-    // Utiliser window.location pour forcer un rechargement complet et déclencher le guard
-    window.location.href = '/'
+    // Petit délai pour laisser le loader s'afficher
+    setTimeout(() => {
+      // Forcer la redirection vers la page d'accueil
+      // Utiliser window.location pour forcer un rechargement complet et déclencher le guard
+      window.location.href = '/'
+    }, 500)
   }
 }
 
