@@ -269,7 +269,7 @@
       </div>
     </section>
 
-  
+
 
     <!-- Section FAQ -->
     <section class="py-10 sm:py-14 lg:py-20 bg-white relative">
@@ -452,11 +452,9 @@
 <script setup>
 import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useRouter } from 'vue-router'
 import { useToast } from 'vue-toast-notification'
 //@ts-ignore
 import NavBarComponent from '../components/navbar/NavBarComponent.vue'
-const { t } = useI18n()
 //@ts-ignore
 import FooterComponent from '../components/footer/FooterComponent.vue'
 
@@ -466,10 +464,10 @@ import carousel2 from '../assets/carousel-2.jpg'
 import carousel4 from '../assets/carousel-4.jpg'
 import profImage from '../assets/prof.jpeg'
 
-import eventService from '@/services/event.service'
 import trainingRegistrationService from '@/services/training-registration.service'
 
-const router = useRouter()
+// Initialiser tous les composables après tous les imports
+const { t } = useI18n()
 const toast = useToast()
 
 // Témoignages
@@ -494,94 +492,6 @@ const testimonials = computed(() => [
   }
 ])
 
-// Événements à venir (dynamiques depuis le backend)
-const upcomingEvents = ref([])
-const loadingEvents = ref(false)
-
-// Charger les événements depuis le backend
-const loadUpcomingEvents = async () => {
-  loadingEvents.value = true
-  try {
-    const result = await eventService.getEvents({
-      limit: 10, // Limiter à 10 événements
-    })
-    
-    // Filtrer pour ne garder que les événements à venir (basé sur la date)
-    const now = new Date()
-    const nowDateOnly = new Date(now.getFullYear(), now.getMonth(), now.getDate())
-    
-    upcomingEvents.value = result.data
-      .filter(event => {
-        if (!event.startDate) return false
-        try {
-          const eventDate = new Date(event.startDate)
-          if (isNaN(eventDate.getTime())) return false
-          const eventDateOnly = new Date(eventDate.getFullYear(), eventDate.getMonth(), eventDate.getDate())
-          return eventDateOnly >= nowDateOnly
-        } catch {
-          return false
-        }
-      })
-      .sort((a, b) => {
-        // Trier par date croissante (les plus proches en premier)
-        const dateA = new Date(a.startDate || '').getTime()
-        const dateB = new Date(b.startDate || '').getTime()
-        return dateA - dateB
-      })
-      .slice(0, 6) // Limiter à 6 événements pour l'affichage
-  } catch (err) {
-    console.error('Erreur lors du chargement des événements:', err)
-    upcomingEvents.value = []
-  } finally {
-    loadingEvents.value = false
-  }
-}
-
-// Formater la date de l'événement
-const formatEventDate = (dateString) => {
-  if (!dateString) return ''
-  try {
-    const date = new Date(dateString)
-    if (isNaN(date.getTime())) return dateString
-    return date.toLocaleDateString('fr-FR', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric'
-    })
-  } catch {
-    return dateString
-  }
-}
-
-// Formater l'heure de l'événement
-const formatEventTime = (startTime, endTime) => {
-  if (!startTime) return ''
-  if (endTime) {
-    return `${startTime} - ${endTime}`
-  }
-  return startTime
-}
-
-// Obtenir l'URL de l'image de l'événement
-const getEventImage = (image) => {
-  if (!image) {
-    return 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'
-  }
-  return eventService.getImageUrl(image) || 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'
-}
-
-// Ouvrir la page de détail de l'événement
-const openEvent = (eventId) => {
-  if (!eventId) return
-  router.push(`/events/${eventId}`)
-}
-
-// S'inscrire à un événement
-const registerEvent = (eventId) => {
-  if (!eventId) return
-  // Navigation vers la page de détail pour l'inscription
-  router.push(`/events/${eventId}`)
-}
 
 // FAQ
 const faqs = computed(() => [
@@ -714,9 +624,6 @@ const initScrollAnimations = () => {
 }
 
 onMounted(() => {
-  // Charger les événements à venir
-  loadUpcomingEvents()
-  
   setTimeout(() => {
     initScrollAnimations()
   }, 100)
@@ -796,6 +703,7 @@ onUnmounted(() => {
 .line-clamp-2 {
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
