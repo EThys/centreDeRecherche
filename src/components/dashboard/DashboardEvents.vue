@@ -543,7 +543,17 @@ const saveEvent = async () => {
 
     if (editingEvent.value) {
       // Mettre à jour
-      await eventService.updateEvent(editingEvent.value.id!, eventData, imageFile.value || undefined)
+      const updatedEvent = await eventService.updateEvent(editingEvent.value.id!, eventData, imageFile.value || undefined)
+      
+      // Mettre à jour directement l'événement dans la liste avec les données du serveur
+      const index = events.value.findIndex(e => e.id === editingEvent.value?.id)
+      if (index !== -1) {
+        events.value[index] = updatedEvent
+      } else {
+        // Si pas trouvé, recharger la liste
+        await loadEvents()
+      }
+      
       toast.open({
         message: '✅ Événement modifié avec succès !',
         type: 'success',
@@ -552,7 +562,10 @@ const saveEvent = async () => {
       })
     } else {
       // Créer
-      await eventService.createEvent(eventData, imageFile.value || undefined)
+      const newEvent = await eventService.createEvent(eventData, imageFile.value || undefined)
+      // Ajouter le nouvel événement au début de la liste
+      events.value.unshift(newEvent)
+      
       toast.open({
         message: '✅ Événement créé et publié avec succès !',
         type: 'success',
@@ -561,7 +574,6 @@ const saveEvent = async () => {
       })
     }
     
-    await loadEvents()
     cancelForm()
     
     // Émettre un événement pour mettre à jour les stats

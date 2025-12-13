@@ -4,16 +4,11 @@
 
 /**
  * Fonction utilitaire pour obtenir l'URL de base de l'API
- * Détecte automatiquement l'environnement (local ou production)
+ * Utilise toujours l'URL de production, peu importe l'environnement
  */
 export const getApiBaseUrl = (): string => {
-  // Si une URL est explicitement définie dans les variables d'environnement, l'utiliser
-  if (import.meta.env.VITE_API_BASE_URL) {
-    return import.meta.env.VITE_API_BASE_URL
-  }
-  
-  // Utiliser directement l'URL de production
-  return 'http://localhost:8000/api'
+  // Toujours utiliser l'URL de production
+  return 'https://backend.creffpme.org/api'
 }
 
 /**
@@ -56,7 +51,11 @@ class ApiClient {
     this.baseURL = API_BASE_URL
     this.defaultHeaders = {
       'Content-Type': 'application/json',
+      'Accept': 'application/json',
     }
+    
+    // Log de l'URL de base utilisée
+    console.log('🔧 API Client initialisé avec URL:', this.baseURL)
   }
 
   /**
@@ -182,12 +181,77 @@ class ApiClient {
       })
     }
 
-    const response = await fetch(url.toString(), {
-      method: 'GET',
-      headers: this.getHeaders(customHeaders),
+    const fullUrl = url.toString()
+    const headers = this.getHeaders(customHeaders)
+    
+    // Log pour débogage
+    console.log('🌐 Requête GET:', {
+      url: fullUrl,
+      headers: headers,
+      baseURL: this.baseURL
     })
 
-    return this.handleResponse<T>(response)
+    try {
+      const response = await fetch(fullUrl, {
+        method: 'GET',
+        headers: headers,
+      })
+
+      console.log('📡 Réponse reçue:', {
+        status: response.status,
+        statusText: response.statusText,
+        ok: response.ok,
+        headers: Object.fromEntries(response.headers.entries())
+      })
+
+      return this.handleResponse<T>(response)
+    } catch (error: any) {
+      console.error('❌ Erreur fetch:', {
+        message: error.message,
+        name: error.name,
+        stack: error.stack,
+        url: fullUrl,
+        baseURL: this.baseURL
+      })
+      
+      // Si c'est une erreur réseau/CORS
+      if (error.message?.includes('fetch') || 
+          error.message?.includes('Failed to fetch') || 
+          error.message?.includes('NetworkError') ||
+          error.name === 'TypeError' ||
+          error.name === 'NetworkError') {
+        
+        const corsMessage = `
+⚠️ ERREUR CORS/NETWORK
+
+Le backend ne peut pas être atteint depuis votre navigateur. Causes possibles :
+
+1. 🔒 Problème CORS : Le backend doit autoriser les requêtes depuis ${window.location.origin}
+   → Vérifiez la configuration CORS dans config/cors.php du backend Laravel
+   → Ajoutez '${window.location.origin}' dans allowed_origins
+
+2. 🌐 Problème réseau : Vérifiez que ${fullUrl} est accessible
+   → Testez dans Postman ou avec curl : curl ${fullUrl}
+
+3. 🔐 Problème SSL/Certificat : Vérifiez que le certificat SSL est valide
+
+URL tentée: ${fullUrl}
+Origine: ${window.location.origin}
+        `
+        
+        console.error(corsMessage)
+        
+        throw {
+          message: `Erreur de connexion au serveur (CORS ou réseau). Vérifiez la console pour plus de détails.`,
+          status: 0,
+          isNetworkError: true,
+          originalError: error,
+          url: fullUrl
+        } as ApiError
+      }
+      
+      throw error
+    }
   }
 
   /**

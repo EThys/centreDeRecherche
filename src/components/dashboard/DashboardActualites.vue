@@ -354,6 +354,16 @@ const saveActuality = async () => {
   error.value = null
   
     try {
+      // Log des valeurs du formulaire AVANT traitement
+      console.log('📝 📝 📝 DONNÉES DU FORMULAIRE (AVANT TRAITEMENT):', {
+        formulaire: { ...actualityForm.value },
+        learningPointsText: learningPointsText.value,
+        keyPointsText: keyPointsText.value,
+        tagsText: tagsText.value,
+        imageFile: imageFile.value?.name,
+        authorPhotoFile: authorPhotoFile.value?.name
+      })
+      
       // Convertir les textes en tableaux
       const learningPoints = learningPointsText.value
         .split('\n')
@@ -386,25 +396,72 @@ const saveActuality = async () => {
         tags: tags // Toujours envoyer un tableau, même vide
       }
 
+      // Log des données préparées AVANT envoi
+      console.log('🚀 🚀 🚀 DONNÉES PRÉPARÉES POUR ENVOI:', {
+        actualityData: actualityData,
+        learningPoints: learningPoints,
+        keyPoints: keyPoints,
+        tags: tags,
+        isEdit: !!editingActuality.value,
+        editingId: editingActuality.value?.id,
+        ancienneValeur: editingActuality.value ? {
+          title: editingActuality.value.title,
+          summary: editingActuality.value.summary?.substring(0, 50) + '...',
+          category: editingActuality.value.category
+        } : null
+      })
+
     if (editingActuality.value) {
       // Mise à jour
-      await actualityService.updateActuality(
+      console.log('🔄 COMPARAISON AVANT/APRÈS:', {
+        avant: {
+          title: editingActuality.value.title,
+          summary: editingActuality.value.summary?.substring(0, 50),
+          category: editingActuality.value.category,
+          author: editingActuality.value.author
+        },
+        après: {
+          title: actualityData.title,
+          summary: actualityData.summary.substring(0, 50),
+          category: actualityData.category,
+          author: actualityData.author
+        },
+        sontIdentiques: {
+          title: editingActuality.value.title === actualityData.title,
+          summary: editingActuality.value.summary === actualityData.summary,
+          category: editingActuality.value.category === actualityData.category,
+          author: editingActuality.value.author === actualityData.author
+        }
+      })
+      
+      const updatedActuality = await actualityService.updateActuality(
         editingActuality.value.id!,
         actualityData,
         imageFile.value || undefined,
         authorPhotoFile.value || undefined
       )
+      
+      console.log('📥 📥 📥 RÉSULTAT DE LA MISE À JOUR REÇU:', updatedActuality)
+      
+      // Mettre à jour directement l'actualité dans la liste avec les données du serveur
+      const index = actualities.value.findIndex(a => a.id === editingActuality.value?.id)
+      if (index !== -1) {
+        actualities.value[index] = updatedActuality
+      } else {
+        // Si pas trouvée, recharger la liste
+        await loadActualities()
+      }
     } else {
       // Création
-      await actualityService.createActuality(
+      const newActuality = await actualityService.createActuality(
         actualityData, 
         imageFile.value || undefined,
         authorPhotoFile.value || undefined
       )
+      // Ajouter la nouvelle actualité au début de la liste
+      actualities.value.unshift(newActuality)
     }
     
-    // Recharger la liste
-    await loadActualities()
     cancelForm()
   } catch (err: any) {
     console.error('Erreur lors de la sauvegarde:', err)

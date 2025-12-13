@@ -251,59 +251,123 @@ export const actualityService = {
     imageFile?: File,
     authorPhotoFile?: File
   ): Promise<Actuality> {
+    console.log('🔧 🔧 🔧 SERVICE updateActuality - Données reçues:', {
+      id,
+      actuality,
+      hasImageFile: !!imageFile,
+      hasAuthorPhotoFile: !!authorPhotoFile
+    })
+    
     const formData = new FormData()
+    const formDataEntries: Record<string, any> = {}
     
     // Convertir camelCase en snake_case pour le backend
-    if (actuality.title !== undefined) formData.append('title', actuality.title.trim())
-    if (actuality.summary !== undefined) formData.append('summary', actuality.summary.trim())
-    if (actuality.content !== undefined) formData.append('content', actuality.content.trim())
-    if (actuality.category !== undefined) formData.append('category', actuality.category.trim())
-    if (actuality.author !== undefined) formData.append('author', actuality.author.trim())
-    if (actuality.publishDate !== undefined) formData.append('publish_date', actuality.publishDate)
-    if (actuality.readTime !== undefined && actuality.readTime !== null) {
-      formData.append('read_time', actuality.readTime.toString())
+    if (actuality.title !== undefined) {
+      const titleValue = actuality.title.trim()
+      formData.append('title', titleValue)
+      formDataEntries.title = titleValue
     }
-    if (actuality.status !== undefined) formData.append('status', actuality.status)
+    if (actuality.summary !== undefined) {
+      const summaryValue = actuality.summary.trim()
+      formData.append('summary', summaryValue)
+      formDataEntries.summary = summaryValue.substring(0, 100) + '...'
+    }
+    if (actuality.content !== undefined) {
+      const contentValue = actuality.content.trim()
+      formData.append('content', contentValue)
+      formDataEntries.content = contentValue.substring(0, 100) + '...'
+    }
+    if (actuality.category !== undefined) {
+      const categoryValue = actuality.category.trim()
+      formData.append('category', categoryValue)
+      formDataEntries.category = categoryValue
+    }
+    if (actuality.author !== undefined) {
+      const authorValue = actuality.author.trim()
+      formData.append('author', authorValue)
+      formDataEntries.author = authorValue
+    }
+    if (actuality.publishDate !== undefined) {
+      formData.append('publish_date', actuality.publishDate)
+      formDataEntries.publish_date = actuality.publishDate
+    }
+    if (actuality.readTime !== undefined && actuality.readTime !== null) {
+      const readTimeValue = actuality.readTime.toString()
+      formData.append('read_time', readTimeValue)
+      formDataEntries.read_time = readTimeValue
+    }
+    if (actuality.status !== undefined) {
+      formData.append('status', actuality.status)
+      formDataEntries.status = actuality.status
+    }
     if (actuality.featured !== undefined && actuality.featured !== null) {
-      formData.append('featured', actuality.featured ? '1' : '0')
+      const featuredValue = actuality.featured ? '1' : '0'
+      formData.append('featured', featuredValue)
+      formDataEntries.featured = featuredValue
     }
      // Toujours envoyer les tableaux, même s'ils sont vides
      if (actuality.tags !== undefined) {
-       formData.append('tags', JSON.stringify(Array.isArray(actuality.tags) ? actuality.tags : []))
+       const tagsValue = JSON.stringify(Array.isArray(actuality.tags) ? actuality.tags : [])
+       formData.append('tags', tagsValue)
+       formDataEntries.tags = actuality.tags
      } else {
        formData.append('tags', JSON.stringify([]))
+       formDataEntries.tags = []
      }
      if (actuality.learningPoints !== undefined) {
-       formData.append('learning_points', JSON.stringify(Array.isArray(actuality.learningPoints) ? actuality.learningPoints : []))
+       const learningPointsValue = JSON.stringify(Array.isArray(actuality.learningPoints) ? actuality.learningPoints : [])
+       formData.append('learning_points', learningPointsValue)
+       formDataEntries.learning_points = actuality.learningPoints
      } else {
        formData.append('learning_points', JSON.stringify([]))
+       formDataEntries.learning_points = []
      }
      if (actuality.keyPoints !== undefined) {
-       formData.append('key_points', JSON.stringify(Array.isArray(actuality.keyPoints) ? actuality.keyPoints : []))
+       const keyPointsValue = JSON.stringify(Array.isArray(actuality.keyPoints) ? actuality.keyPoints : [])
+       formData.append('key_points', keyPointsValue)
+       formDataEntries.key_points = actuality.keyPoints
      } else {
        formData.append('key_points', JSON.stringify([]))
+       formDataEntries.key_points = []
      }
      if (actuality.relatedArticles !== undefined) {
-       formData.append('related_articles', JSON.stringify(Array.isArray(actuality.relatedArticles) ? actuality.relatedArticles : []))
+       const relatedArticlesValue = JSON.stringify(Array.isArray(actuality.relatedArticles) ? actuality.relatedArticles : [])
+       formData.append('related_articles', relatedArticlesValue)
+       formDataEntries.related_articles = actuality.relatedArticles
      } else {
        formData.append('related_articles', JSON.stringify([]))
+       formDataEntries.related_articles = []
      }
 
     // Ajouter l'image si fournie
     if (imageFile) {
       formData.append('image', imageFile)
+      formDataEntries.image = `[FILE: ${imageFile.name}]`
     }
 
     // Ajouter la photo de l'auteur si fournie
     if (authorPhotoFile) {
       formData.append('author_photo', authorPhotoFile)
+      formDataEntries.author_photo = `[FILE: ${authorPhotoFile.name}]`
     }
+
+    // Log de TOUT ce qui sera envoyé
+    console.log('📤 📤 📤 FORM DATA À ENVOYER AU SERVEUR:', formDataEntries)
+    console.log('🔗 URL:', `${ENDPOINT}/${id}`)
 
     // Utiliser la méthode uploadPut du client API
     const response = await apiClient.uploadPut<Actuality>(`${ENDPOINT}/${id}`, formData)
     
+    console.log('✅ ✅ ✅ RÉPONSE DU SERVEUR:', {
+      success: response.success,
+      data: response.data,
+      message: response.message
+    })
+    
     // Convertir la réponse en camelCase
     const camelData = toCamelCase(response.data as any)
+    console.log('🔄 Données converties en camelCase:', camelData)
+    
     return camelData as Actuality
   },
 
