@@ -6,7 +6,7 @@
       <div class="absolute inset-0 z-0">
         <img
           src="../assets/carousel-3.jpg"
-          alt="Comité scientifique"
+          :alt="$t('scientificCommittee.hero.alt')"
           class="w-full h-full object-cover"
         />
         <div class="absolute inset-0 bg-gradient-to-b from-gray-900/80 via-gray-900/70 to-gray-900/80"></div>
@@ -16,10 +16,10 @@
       <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
         <div class="text-center fade-in-up" data-animate>
           <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4 leading-tight">
-            Comité scientifique
+            {{ $t('scientificCommittee.hero.title') }}
           </h1>
           <p class="text-sm sm:text-base md:text-lg text-gray-200 max-w-3xl mx-auto leading-relaxed font-light">
-            Présentation du comité scientifique du CReFF-PME, garant de la qualité des travaux de recherche et des orientations académiques.
+            {{ $t('scientificCommittee.hero.description') }}
           </p>
         </div>
       </div>
@@ -29,13 +29,13 @@
       <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-10 sm:mb-14 fade-in-up" data-animate>
           <span class="text-blue-600 text-xs font-semibold tracking-[0.15em] uppercase">
-            Comité scientifique
+            {{ $t('scientificCommittee.section.header') }}
           </span>
           <h2 class="mt-4 text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 leading-tight">
-            Membres du comité scientifique
+            {{ $t('scientificCommittee.section.title') }}
           </h2>
           <p class="mt-4 text-gray-600 text-sm sm:text-base max-w-3xl mx-auto">
-            Cette page sera prochainement enrichie avec la liste complète des membres, leurs affiliations et leurs domaines d’expertise.
+            {{ $t('scientificCommittee.section.subtitle') }}
           </p>
         </div>
       </div>
