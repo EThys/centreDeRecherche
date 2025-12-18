@@ -9,7 +9,9 @@
     "gallery": "Gallery",
     "contact": "Contact",
     "forum": "Forum",
-    "entrepreneurs": "Entrepreneurs"
+    "entrepreneurs": "Entrepreneurs",
+    "login": "Login",
+    "scientificCommittee": "Scientific Committee"
   },
   "hero": {
     "welcome": "Welcome to",
@@ -209,10 +211,16 @@
     "newsletterTitle": "Stay informed",
     "newsletterDescription": "Subscribe to our newsletter to receive the latest news and events.",
     "subscribe": "Subscribe",
+    "subscribing": "Subscribing...",
     "emailPlaceholder": "Your email address",
     "copyright": "© 2025 CReFF-PME. All rights reserved.",
     "rights": "All rights reserved",
-    "backToTop": "Back to top"
+    "backToTop": "Back to top",
+    "legal": {
+      "privacyPolicy": "Privacy policy",
+      "legalNotice": "Legal notice",
+      "termsOfService": "Terms of service"
+    }
   },
   "contact": {
     "title": "Let's get in touch",
@@ -232,7 +240,15 @@
     "services": "Services",
     "servicesValue": "Financing, Support, Consulting",
     "specialty": "Specialty",
-    "specialtyValue": "Support for Congolese SMEs"
+    "specialtyValue": "Support for Congolese SMEs",
+    "infoTitle": "Our contact details",
+    "infoSubtitle": "Several ways to reach us",
+    "centerTitle": "CReFF-PME",
+    "centerDescription": "Financing and Support Center for Small and Medium Enterprises",
+    "openingHours": "Opening hours",
+    "openingHoursValue": "Mon - Fri: 8:00am - 5:00pm",
+    "servicesLabel": "Services",
+    "specialtyLabel": "Specialty"
   },
   "common": {
     "readMore": "Read more",
@@ -392,10 +408,34 @@
       "success": "Your registration request has been sent successfully! We will contact you within 24 hours."
     }
   },
+  "mission": {
+  "header": "Our Purpose",
+  "title": "Our",
+  "titleHighlight": "Mission",
+  "description": "Transform research on SME financing into concrete levers of economic development for Africa.",
+  "appliedResearch": {
+    "title": "Applied Research",
+    "description": "Produce rigorous scientific knowledge on SME financing mechanisms adapted to African contexts."
+  },
+  "excellenceTraining": {
+    "title": "Excellence in Training",
+    "description": "Train the new generation of researchers and professionals specialized in corporate finance in Africa."
+  },
+  "strategicSupport": {
+    "title": "Strategic Support",
+    "description": "Provide concrete support to entrepreneurs and institutions through tools and solutions based on our research."
+  },
+  "stats": {
+    "researchProjects": "Research projects",
+    "publications": "Publications",
+    "partnerCountries": "Partner countries",
+    "trainedProfessionals": "Trained professionals"
+  }
+},
   "publications": {
-    "request": {
-      "title": "Submit a research work",
-      "subtitle": "Publication request",
+  "request": {
+  "formTitle": "Submit a research work",
+  "subtitle": "Publication request",
       "description": "Have you conducted research on SME financing? Submit your work for possible publication in our center.",
       "name": "Full name",
       "namePlaceholder": "Your full name",
@@ -430,6 +470,55 @@
       "consent": "By submitting this form, you agree that your work will be reviewed by our scientific committee.",
       "privacyPolicy": "Privacy policy",
       "success": "Your publication request has been submitted successfully! We will contact you after reviewing your work."
+    }
+  },
+  "scientificCommittee": {
+    "hero": {
+      "alt": "Scientific committee",
+      "title": "Scientific committee",
+      "description": "Presentation of the CReFF-PME scientific committee, guarantor of the quality of research work and academic orientations."
+    },
+    "section": {
+      "header": "Scientific committee",
+      "title": "Members of the scientific committee",
+      "subtitle": "This page will soon be enriched with the full list of members, their affiliations and fields of expertise."
+    }
+  },
+  "allActualityPage": {
+    "hero": {
+      "title": "News & Research",
+      "subtitle": "SME Financing in DRC",
+      "description": "Discover the latest research, trainings and developments on financing small and medium-sized enterprises in the Democratic Republic of Congo."
+    },
+    "stats": {
+      "articles": "Research Articles",
+      "domains": "Fields of Expertise",
+      "latestPublications": "Latest Publications"
+    }
+  },
+  "eventsPage": {
+    "hero": {
+      "title": "Events & Conferences",
+      "subtitle": "SME Financing in DRC",
+      "description": "Join our exclusive events, conferences and workshops on financing small and medium-sized enterprises in the Democratic Republic of Congo."
+    },
+    "stats": {
+      "upcoming": "Upcoming Events",
+      "past": "Past Events",
+      "experts": "Guest Experts",
+      "total": "Total Events"
+    }
+  },
+  "publicationsPage": {
+    "hero": {
+      "title": "Research Publications",
+      "subtitle": "SME Financing in DRC",
+      "description": "Discover our latest research and publications on financing small and medium-sized enterprises in the Democratic Republic of Congo."
+    },
+    "stats": {
+      "publications": "Publications",
+      "researchers": "Researchers",
+      "currentYear": "Current Year"
     }
   }
 }
