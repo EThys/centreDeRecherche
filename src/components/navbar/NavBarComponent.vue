@@ -69,15 +69,15 @@
 
           <!-- Entrepreneurs -->
           <router-link
-            to="/entrepreneurs"
+            to="/programme-entrepreneurs"
             class="relative px-4 xl:px-5 py-2.5 flex items-center font-medium text-gray-700 hover:text-blue-600 transition-all duration-300 rounded-lg group whitespace-nowrap"
             :class="{ 
-              'text-blue-600': route.path.includes('/entrepreneurs'),
+              'text-blue-600': route.path.includes('/programme-entrepreneurs'),
             }"
           >
             <span class="relative z-10">{{ $t('nav.entrepreneurs') }}</span>
             <span 
-              v-if="route.path.includes('/entrepreneurs')"
+              v-if="route.path.includes('/programme-entrepreneurs')"
               class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full animate-slide-in"
             ></span>
             <span class="absolute inset-0 bg-blue-50/50 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-0"></span>
@@ -189,6 +189,16 @@
                     <div class="absolute left-0 top-0 bottom-0 w-1 bg-blue-600 rounded-r-full opacity-0 group-hover/item:opacity-100 transition-opacity duration-300"></div>
                     <div class="w-2 h-2 bg-blue-600 rounded-full mr-4 opacity-0 group-hover/item:opacity-100 transition-all duration-300 transform scale-0 group-hover/item:scale-100"></div>
                     <span class="text-sm font-semibold relative z-10">{{ $t('nav.publications') }}</span>
+                  </router-link>
+
+                  <router-link
+                    to="/comite-scientifique"
+                    class="flex items-center px-5 py-3 text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-transparent hover:text-blue-600 transition-all duration-300 group/item relative"
+                    @click="closeDropdowns"
+                  >
+                    <div class="absolute left-0 top-0 bottom-0 w-1 bg-blue-600 rounded-r-full opacity-0 group-hover/item:opacity-100 transition-opacity duration-300"></div>
+                    <div class="w-2 h-2 bg-blue-600 rounded-full mr-4 opacity-0 group-hover/item:opacity-100 transition-all duration-300 transform scale-0 group-hover/item:scale-100"></div>
+                    <span class="text-sm font-semibold relative z-10">Comité scientifique</span>
                   </router-link>
                 </div>
                 </div>
@@ -388,12 +398,12 @@
 
           <!-- Entrepreneurs Mobile -->
           <router-link
-            to="/entrepreneurs"
+            to="/programme-entrepreneurs"
             class="flex items-center px-5 py-4 text-gray-700 rounded-xl hover:bg-gradient-to-r hover:from-blue-50 hover:to-transparent hover:text-blue-600 transition-all duration-300 font-semibold group relative"
-            :class="{ 'bg-blue-50 text-blue-600': route.path.includes('/entrepreneurs') }"
+            :class="{ 'bg-blue-50 text-blue-600': route.path.includes('/programme-entrepreneurs') }"
             @click="closeMobileMenu"
           >
-            <div class="absolute left-0 top-0 bottom-0 w-1 bg-blue-600 rounded-r-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" :class="{ 'opacity-100': route.path.includes('/entrepreneurs') }"></div>
+            <div class="absolute left-0 top-0 bottom-0 w-1 bg-blue-600 rounded-r-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" :class="{ 'opacity-100': route.path.includes('/programme-entrepreneurs') }"></div>
             <span class="relative z-10 ml-2">{{ $t('nav.entrepreneurs') }}</span>
           </router-link>
 
@@ -431,6 +441,16 @@
               >
                 <div class="absolute left-0 top-0 bottom-0 w-1 bg-blue-600 rounded-r-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" :class="{ 'opacity-100': route.path.includes('/publications') }"></div>
                 <span class="text-sm font-semibold relative z-10 ml-2">{{ $t('nav.publications') }}</span>
+              </router-link>
+
+              <router-link
+                to="/comite-scientifique"
+                class="flex items-center px-8 py-3.5 text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-transparent hover:text-blue-600 transition-all duration-300 rounded-xl group relative"
+                :class="{ 'bg-blue-50 text-blue-600': route.path.includes('/comite-scientifique') }"
+                @click="closeMobileMenu"
+              >
+                <div class="absolute left-0 top-0 bottom-0 w-1 bg-blue-600 rounded-r-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" :class="{ 'opacity-100': route.path.includes('/comite-scientifique') }"></div>
+                <span class="text-sm font-semibold relative z-10 ml-2">Comité scientifique</span>
               </router-link>
             </div>
           </div>
