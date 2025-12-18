@@ -411,8 +411,8 @@ onUnmounted(() => {
 
           <!-- Informations de contact -->
           <div class="py-10 px-6 sm:px-10 lg:px-12 bg-blue-50">
-            <h2 class="text-2xl font-bold text-gray-900 mb-2">Nos coordonnées</h2>
-            <p class="text-gray-600 mb-8">Plusieurs façons de nous contacter</p>
+            <h2 class="text-2xl font-bold text-gray-900 mb-2">{{ $t('contact.infoTitle') }}</h2>
+            <p class="text-gray-600 mb-8">{{ $t('contact.infoSubtitle') }}</p>
             
             <div class="space-y-6">
               <div v-for="(info, index) in contactInfo" :key="index" class="flex items-start">
@@ -436,19 +436,19 @@ onUnmounted(() => {
 
             <!-- Informations CFFR PME -->
             <div class="mt-8 p-6 bg-white rounded-lg border border-blue-200 shadow-sm">
-              <h3 class="text-lg font-semibold text-gray-900 mb-3">CFFR PME</h3>
+              <h3 class="text-lg font-semibold text-gray-900 mb-3">{{ $t('contact.centerTitle') }}</h3>
               <p class="text-gray-600 text-sm mb-4">
-                Centre de Financement et d'Accompagnement des Petites et Moyennes Entreprises
+                {{ $t('contact.centerDescription') }}
               </p>
               <div class="space-y-2 text-sm text-gray-600">
                 <div class="flex items-center">
-                  <span><strong>Heures d'ouverture :</strong> Lun - Ven: 8h00 - 17h00</span>
+                  <span><strong>{{ $t('contact.openingHours') }} :</strong> {{ $t('contact.openingHoursValue') }}</span>
                 </div>
                 <div class="flex items-center">
-                  <span><strong>Services :</strong> Financement, Accompagnement, Conseil</span>
+                  <span><strong>{{ $t('contact.servicesLabel') }} :</strong> {{ $t('contact.servicesValue') }}</span>
                 </div>
                 <div class="flex items-center">
-                  <span><strong>Spécialité :</strong> Soutien aux PME congolaises</span>
+                  <span><strong>{{ $t('contact.specialtyLabel') }} :</strong> {{ $t('contact.specialtyValue') }}</span>
                 </div>
               </div>
             </div>
