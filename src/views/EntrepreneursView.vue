@@ -499,10 +499,10 @@ import NavBarComponent from '../components/navbar/NavBarComponent.vue'
 import FooterComponent from '../components/footer/FooterComponent.vue'
 
 // Import des images
-import carousel1 from '../assets/carousel-1.jpg'
-import carousel2 from '../assets/carousel-2.jpg'
-import carousel4 from '../assets/carousel-4.jpg'
-import profImage from '../assets/prof.jpeg'
+const carousel1 = new URL('../assets/carousel-1.jpg', import.meta.url).href
+const carousel2 = new URL('../assets/carousel-2.jpg', import.meta.url).href
+const carousel4 = new URL('../assets/carousel-4.jpg', import.meta.url).href
+const profImage = new URL('../assets/prof.jpeg', import.meta.url).href
 
 import trainingRegistrationService from '@/services/training-registration.service'
 
@@ -667,6 +667,11 @@ const initScrollAnimations = () => {
 }
 
 onMounted(() => {
+  console.log('Image URLs:')
+  console.log('carousel1:', carousel1)
+  console.log('carousel2:', carousel2)
+  console.log('carousel4:', carousel4)
+  console.log('profImage:', profImage)
   setTimeout(() => {
     initScrollAnimations()
   }, 100)
