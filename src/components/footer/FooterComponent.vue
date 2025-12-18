@@ -54,7 +54,7 @@
         <div class="fade-in-up" data-delay="400">
           <h3 class="text-lg font-semibold text-white mb-6 flex items-center slide-in-up" data-delay="500">
             <div class="w-2 h-2 bg-cyan-400 rounded-full mr-3 animate-pulse"></div>
-            Liens Rapides
+            {{ $t('footer.quickLinks') }}
           </h3>
           <ul class="space-y-3">
             <li 
@@ -68,7 +68,7 @@
                 class="text-blue-100 hover:text-white transition-all duration-300 flex items-center group"
               >
                 <div class="w-1.5 h-1.5 bg-blue-400 rounded-full mr-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                <span class="group-hover:translate-x-2 transition-transform duration-300">{{ link.name }}</span>
+                <span class="group-hover:translate-x-2 transition-transform duration-300">{{ $t(link.labelKey) }}</span>
               </router-link>
             </li>
           </ul>
@@ -102,10 +102,10 @@
         <div class="fade-in-up" data-delay="1200">
           <h3 class="text-lg font-semibold text-white mb-6 flex items-center slide-in-up" data-delay="1300">
             <div class="w-2 h-2 bg-cyan-400 rounded-full mr-3 animate-pulse"></div>
-            Newsletter
+            {{ $t('footer.newsletter') }}
           </h3>
           <p class="text-blue-100 text-sm mb-4 fade-in-up" data-delay="1400">
-            Restez informé de nos dernières recherches et événements.
+            {{ $t('footer.newsletterDescription') }}
           </p>
           <form @submit.prevent="subscribeNewsletter" class="space-y-3 fade-in-up" data-delay="1500">
             <input 
@@ -121,7 +121,7 @@
               class="w-full bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-medium py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center"
             >
               <span v-if="!isSubmitting" class="mr-2">{{ $t('footer.subscribe') }}</span>
-              <span v-else class="mr-2">Inscription en cours...</span>
+              <span v-else class="mr-2">{{ $t('footer.subscribing') }}</span>
               <i v-if="!isSubmitting" class="fas fa-paper-plane text-sm"></i>
               <i v-else class="fas fa-spinner fa-spin text-sm"></i>
             </button>
@@ -163,11 +163,11 @@
           <div class="flex flex-wrap justify-center gap-4">
             <router-link 
               v-for="(link, index) in legalLinks"
-              :key="link.name"
+              :key="link.labelKey"
               :to="link.url"
               class="text-blue-200 hover:text-white text-xs transition-colors duration-300"
             >
-              {{ link.name }}
+              {{ $t(link.labelKey) }}
             </router-link>
           </div>
         </div>
@@ -198,12 +198,12 @@
           <div class="flex flex-wrap justify-center gap-6 slide-in-right" data-delay="2000">
             <router-link 
               v-for="(link, index) in legalLinks"
-              :key="link.name"
+              :key="link.labelKey"
               :to="link.url"
               class="text-blue-200 hover:text-white text-sm transition-colors duration-300 transform hover:scale-105"
               :style="`transition-delay: ${index * 100}ms`"
             >
-              {{ link.name }}
+              {{ $t(link.labelKey) }}
             </router-link>
           </div>
         </div>
@@ -247,11 +247,11 @@ const socialLinks = [
 ]
 
 const quickLinks = [
-  { name: 'Accueil', path: '/' },
-  { name: 'À Propos', path: '/about' },
-  { name: 'Publications', path: '/publications' },
-  { name: 'Événements', path: '/evenements' },
-  { name: 'Contact', path: '/contact' }
+  { labelKey: 'nav.home', path: '/' },
+  { labelKey: 'nav.about', path: '/about' },
+  { labelKey: 'nav.publications', path: '/publications' },
+  { labelKey: 'nav.events', path: '/evenements' },
+  { labelKey: 'nav.contact', path: '/contact' }
 ]
 
 const contactInfo = [
@@ -282,9 +282,9 @@ const contactInfo = [
 ]
 
 const legalLinks = [
-  { name: 'Politique de confidentialité', url: '/politique-confidentialite' },
-  { name: 'Mentions légales', url: '/mentions-legales' },
-  { name: 'Conditions d\'utilisation', url: '/conditions-utilisation' }
+  { labelKey: 'footer.legal.privacyPolicy', url: '/politique-confidentialite' },
+  { labelKey: 'footer.legal.legalNotice', url: '/mentions-legales' },
+  { labelKey: 'footer.legal.termsOfService', url: '/conditions-utilisation' }
 ]
 
 // Méthodes
