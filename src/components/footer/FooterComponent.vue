@@ -59,7 +59,7 @@
           <ul class="space-y-3">
             <li 
               v-for="(link, index) in quickLinks"
-              :key="link.name"
+              :key="link.path"
               class="slide-in-left"
               :data-delay="600 + index * 100"
             >
