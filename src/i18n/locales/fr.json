@@ -12,7 +12,9 @@
     "researchDomains": "Domaines de Recherche",
     "researchActivities": "Activités de Recherche",
     "memberSpace": "Espace Membre",
-    "entrepreneurs": "Entrepreneurs"
+    "entrepreneurs": "Entrepreneurs",
+    "login": "Connexion",
+    "scientificCommittee": "Comité scientifique"
   },
   "hero": {
     "welcome": "Bienvenue au",
@@ -262,10 +264,16 @@
     "newsletterTitle": "Restez informé",
     "newsletterDescription": "Abonnez-vous à notre newsletter pour recevoir les dernières actualités et événements.",
     "subscribe": "S'abonner",
+    "subscribing": "Inscription en cours...",
     "emailPlaceholder": "Votre adresse email",
     "copyright": "© 2025 CReFF-PME. Tous droits réservés.",
     "rights": "Tous droits réservés",
-    "backToTop": "Retour en haut"
+    "backToTop": "Retour en haut",
+    "legal": {
+      "privacyPolicy": "Politique de confidentialité",
+      "legalNotice": "Mentions légales",
+      "termsOfService": "Conditions d'utilisation"
+    }
   },
   "contact": {
     "title": "Prenons contact",
@@ -285,7 +293,15 @@
     "services": "Services",
     "servicesValue": "Financement, Accompagnement, Conseil",
     "specialty": "Spécialité",
-    "specialtyValue": "Soutien aux PME congolaises"
+    "specialtyValue": "Soutien aux PME congolaises",
+    "infoTitle": "Nos coordonnées",
+    "infoSubtitle": "Plusieurs façons de nous contacter",
+    "centerTitle": "CReFF-PME",
+    "centerDescription": "Centre de Financement et d'Accompagnement des Petites et Moyennes Entreprises",
+    "openingHours": "Heures d'ouverture",
+    "openingHoursValue": "Lun - Ven: 8h00 - 17h00",
+    "servicesLabel": "Services",
+    "specialtyLabel": "Spécialité"
   },
   "common": {
     "readMore": "Lire la suite",
@@ -446,9 +462,9 @@
     }
   },
   "publications": {
-    "request": {
-      "title": "Soumettre un travail de recherche",
-      "subtitle": "Demande de publication",
+  "request": {
+  "formTitle": "Soumettre un travail de recherche",
+  "subtitle": "Demande de publication",
       "description": "Vous avez effectué une recherche sur le financement des PME ? Soumettez votre travail pour une éventuelle publication dans notre centre.",
       "name": "Nom complet",
       "namePlaceholder": "Votre nom complet",
@@ -483,6 +499,55 @@
       "consent": "En soumettant ce formulaire, vous acceptez que votre travail soit examiné par notre comité scientifique.",
       "privacyPolicy": "Politique de confidentialité",
       "success": "Votre demande de publication a été soumise avec succès ! Nous vous contacterons après l'examen de votre travail."
+    }
+  },
+  "scientificCommittee": {
+    "hero": {
+      "alt": "Comité scientifique",
+      "title": "Comité scientifique",
+      "description": "Présentation du comité scientifique du CReFF-PME, garant de la qualité des travaux de recherche et des orientations académiques."
+    },
+    "section": {
+      "header": "Comité scientifique",
+      "title": "Membres du comité scientifique",
+      "subtitle": "Cette page sera prochainement enrichie avec la liste complète des membres, leurs affiliations et leurs domaines d’expertise."
+    }
+  },
+  "allActualityPage": {
+    "hero": {
+      "title": "Actualités & Recherches",
+      "subtitle": "Financement des PME en RDC",
+      "description": "Découvrez les dernières recherches, formations et développements en matière de financement des petites et moyennes entreprises en République Démocratique du Congo."
+    },
+    "stats": {
+      "articles": "Articles de Recherche",
+      "domains": "Domaines d'Expertise",
+      "latestPublications": "Dernières Publications"
+    }
+  },
+  "eventsPage": {
+    "hero": {
+      "title": "Événements & Conférences",
+      "subtitle": "Financement des PME en RDC",
+      "description": "Participez à nos événements exclusifs, conférences et ateliers sur le financement des petites et moyennes entreprises en République Démocratique du Congo."
+    },
+    "stats": {
+      "upcoming": "Événements à Venir",
+      "past": "Événements Passés",
+      "experts": "Experts Invités",
+      "total": "Total Événements"
+    }
+  },
+  "publicationsPage": {
+    "hero": {
+      "title": "Publications de Recherche",
+      "subtitle": "Financement des PME en RDC",
+      "description": "Découvrez nos dernières recherches et publications sur le financement des petites et moyennes entreprises en République Démocratique du Congo."
+    },
+    "stats": {
+      "publications": "Publications",
+      "researchers": "Chercheurs",
+      "currentYear": "Année en Cours"
     }
   }
 }
