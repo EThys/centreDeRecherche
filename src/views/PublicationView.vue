@@ -487,32 +487,30 @@ const submitPublicationRequest = async () => {
 
       <!-- Titre principal avec effet de dégradé animé -->
       <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-white to-blue-100 animate-gradient-text fade-in-up">
-        <span class="block">Publications de Recherche</span>
+        <span class="block">{{ $t('publicationsPage.hero.title') }}</span>
         <span class="block text-transparent bg-clip-text bg-gradient-to-r from-blue-300 via-cyan-400 to-blue-400 mt-2">
-          Financement des PME en RDC
+          {{ $t('publicationsPage.hero.subtitle') }}
         </span>
       </h1>
 
       <!-- Sous-titre avec animation -->
       <p class="text-lg sm:text-xl text-blue-50 max-w-3xl mx-auto mb-10 animate-fade-in fade-in-up delay-200">
-        Découvrez nos <strong class="text-white">dernières recherches</strong> et publications 
-        sur le financement des petites et moyennes entreprises 
-        en République Démocratique du Congo.
+        {{ $t('publicationsPage.hero.description') }}
       </p>
 
       <!-- Statistiques -->
       <div class="flex flex-wrap justify-center gap-6 sm:gap-8 mb-8 fade-in-up delay-400">
         <div class="text-center">
           <div class="text-2xl sm:text-3xl font-bold text-white">{{ totalPublications }}</div>
-          <div class="text-blue-200 text-sm">Publications</div>
+          <div class="text-blue-200 text-sm">{{ $t('publicationsPage.stats.publications') }}</div>
         </div>
         <div class="text-center">
           <div class="text-2xl sm:text-3xl font-bold text-white">{{ researchers.length }}</div>
-          <div class="text-blue-200 text-sm">Chercheurs</div>
+          <div class="text-blue-200 text-sm">{{ $t('publicationsPage.stats.researchers') }}</div>
         </div>
         <div class="text-center">
           <div class="text-2xl sm:text-3xl font-bold text-white">{{ currentYear }}</div>
-          <div class="text-blue-200 text-sm">Année en Cours</div>
+          <div class="text-blue-200 text-sm">{{ $t('publicationsPage.stats.currentYear') }}</div>
         </div>
       </div>
     </div>
@@ -999,7 +997,7 @@ const submitPublicationRequest = async () => {
               <div class="w-8 h-0.5 bg-blue-600"></div>
             </div>
             <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 sm:mb-5 leading-tight">
-              {{ $t('publications.request.title') }}
+              {{ $t('publications.request.formTitle') }}
             </h2>
             <p class="text-gray-600 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
               {{ $t('publications.request.description') }}
