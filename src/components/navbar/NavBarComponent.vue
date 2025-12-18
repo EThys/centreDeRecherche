@@ -16,19 +16,20 @@
           @click="closeMobileMenu"
         >
           <!-- Logo -->
-          <div class="flex-shrink-0">
-            <img 
-              :src="logoImage" 
-              alt="CReFF-PME Logo"
-              class="h-10 sm:h-12 md:h-14 lg:h-16 w-12 sm:w-16 md:w-20 lg:w-24 object-contain"
-            />
-          </div>
-          <!-- Nom du centre -->
-          <div class="flex items-center min-w-0">
-            <span class="font-bold text-xs sm:text-sm md:text-base text-gray-900 group-hover:text-blue-600 transition-colors leading-tight whitespace-nowrap">
-              CReFF-PME
-            </span>
-          </div>
+         <!-- Logo -->
+<div class="flex-shrink-0">
+  <img 
+    :src="logoImage" 
+    alt="CReFF-PME Logo"
+    class="h-12 sm:h-16 md:h-20 lg:h-24 w-auto object-contain"
+  />
+</div>
+<!-- Nom du centre -->
+<div class="flex items-center min-w-0 ml-2 sm:ml-3">
+  <span class="font-bold text-sm sm:text-base md:text-lg text-gray-900 group-hover:text-blue-600 transition-colors leading-tight whitespace-nowrap">
+    CReFF-PME
+  </span>
+</div>
         </router-link>
 
         <!-- Desktop Navigation -->
@@ -98,7 +99,7 @@
                 'text-blue-600': route.path.includes('/recherche') || route.path.includes('/actualites') || route.path.includes('/evenements') || route.path.includes('/publications') || activeDropdown === 'recherche',
               }"
             >
-              <span class="relative z-10">Recherche</span>
+              <span class="relative z-10">{{ $t('nav.research') }}</span>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 class="w-4 h-4 ml-1.5 transition-transform duration-300"
@@ -157,7 +158,7 @@
                 <div class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-200 to-transparent"></div>
                 
                 <div class="px-5 py-3 border-b border-gray-100/80">
-                  <span class="text-xs font-bold text-gray-500 uppercase tracking-widest">Domaines de Recherche</span>
+                  <span class="text-xs font-bold text-gray-500 uppercase tracking-widest">{{ $t('nav.researchDomains') }}</span>
                 </div>
                 
                 <div class="py-2">
@@ -198,7 +199,7 @@
                   >
                     <div class="absolute left-0 top-0 bottom-0 w-1 bg-blue-600 rounded-r-full opacity-0 group-hover/item:opacity-100 transition-opacity duration-300"></div>
                     <div class="w-2 h-2 bg-blue-600 rounded-full mr-4 opacity-0 group-hover/item:opacity-100 transition-all duration-300 transform scale-0 group-hover/item:scale-100"></div>
-                    <span class="text-sm font-semibold relative z-10">Comité scientifique</span>
+                    <span class="text-sm font-semibold relative z-10">{{ $t('nav.scientificCommittee') }}</span>
                   </router-link>
                 </div>
                 </div>
@@ -322,7 +323,7 @@
                 d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
               />
             </svg>
-            <span class="relative z-10">Connexion</span>
+            <span class="relative z-10">{{ $t('nav.login') }}</span>
           </router-link>
         </nav>
 
@@ -450,7 +451,7 @@
                 @click="closeMobileMenu"
               >
                 <div class="absolute left-0 top-0 bottom-0 w-1 bg-blue-600 rounded-r-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" :class="{ 'opacity-100': route.path.includes('/comite-scientifique') }"></div>
-                <span class="text-sm font-semibold relative z-10 ml-2">Comité scientifique</span>
+                <span class="text-sm font-semibold relative z-10 ml-2">{{ $t('nav.scientificCommittee') }}</span>
               </router-link>
             </div>
           </div>
