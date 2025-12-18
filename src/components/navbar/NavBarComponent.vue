@@ -68,22 +68,6 @@
             <span class="absolute inset-0 bg-blue-50/50 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-0"></span>
           </router-link>
 
-          <!-- Entrepreneurs -->
-          <router-link
-            to="/programme-entrepreneurs"
-            class="relative px-4 xl:px-5 py-2.5 flex items-center font-medium text-gray-700 hover:text-blue-600 transition-all duration-300 rounded-lg group whitespace-nowrap"
-            :class="{ 
-              'text-blue-600': route.path.includes('/programme-entrepreneurs'),
-            }"
-          >
-            <span class="relative z-10">{{ $t('nav.entrepreneurs') }}</span>
-            <span 
-              v-if="route.path.includes('/programme-entrepreneurs')"
-              class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full animate-slide-in"
-            ></span>
-            <span class="absolute inset-0 bg-blue-50/50 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-0"></span>
-          </router-link>
-
           <!-- Recherche Dropdown -->
           <div
             ref="rechercheDropdownRef"
@@ -206,6 +190,22 @@
               </Teleport>
             </transition>
           </div>
+
+          <!-- Entrepreneurs -->
+          <router-link
+            to="/programme-entrepreneurs"
+            class="relative px-4 xl:px-5 py-2.5 flex items-center font-medium text-gray-700 hover:text-blue-600 transition-all duration-300 rounded-lg group whitespace-nowrap"
+            :class="{ 
+              'text-blue-600': route.path.includes('/programme-entrepreneurs'),
+            }"
+          >
+            <span class="relative z-10">{{ $t('nav.entrepreneurs') }}</span>
+            <span 
+              v-if="route.path.includes('/programme-entrepreneurs')"
+              class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full animate-slide-in"
+            ></span>
+            <span class="absolute inset-0 bg-blue-50/50 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-0"></span>
+          </router-link>
 
           <!-- Contact -->
           <router-link
@@ -397,17 +397,6 @@
             <span class="relative z-10 ml-2">{{ $t('nav.about') }}</span>
           </router-link>
 
-          <!-- Entrepreneurs Mobile -->
-          <router-link
-            to="/programme-entrepreneurs"
-            class="flex items-center px-5 py-4 text-gray-700 rounded-xl hover:bg-gradient-to-r hover:from-blue-50 hover:to-transparent hover:text-blue-600 transition-all duration-300 font-semibold group relative"
-            :class="{ 'bg-blue-50 text-blue-600': route.path.includes('/programme-entrepreneurs') }"
-            @click="closeMobileMenu"
-          >
-            <div class="absolute left-0 top-0 bottom-0 w-1 bg-blue-600 rounded-r-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" :class="{ 'opacity-100': route.path.includes('/programme-entrepreneurs') }"></div>
-            <span class="relative z-10 ml-2">{{ $t('nav.entrepreneurs') }}</span>
-          </router-link>
-
           <!-- Section Recherche Mobile -->
           <div class="pt-3 pb-2">
             <div class="px-5 py-3 text-xs font-bold text-gray-500 uppercase tracking-widest border-b border-gray-200">
@@ -456,6 +445,17 @@
             </div>
           </div>
 
+          <!-- Entrepreneurs Mobile -->
+          <router-link
+            to="/programme-entrepreneurs"
+            class="flex items-center px-5 py-4 text-gray-700 rounded-xl hover:bg-gradient-to-r hover:from-blue-50 hover:to-transparent hover:text-blue-600 transition-all duration-300 font-semibold group relative"
+            :class="{ 'bg-blue-50 text-blue-600': route.path.includes('/programme-entrepreneurs') }"
+            @click="closeMobileMenu"
+          >
+            <div class="absolute left-0 top-0 bottom-0 w-1 bg-blue-600 rounded-r-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" :class="{ 'opacity-100': route.path.includes('/programme-entrepreneurs') }"></div>
+            <span class="relative z-10 ml-2">{{ $t('nav.entrepreneurs') }}</span>
+          </router-link>
+
           <!-- Contact Mobile -->
           <router-link
             to="/contact"
@@ -466,6 +466,29 @@
             <div class="absolute left-0 top-0 bottom-0 w-1 bg-blue-600 rounded-r-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" :class="{ 'opacity-100': route.path.includes('/contact') }"></div>
             <span class="relative z-10 ml-2">{{ $t('nav.contact') }}</span>
           </router-link>
+
+          <!-- Sélecteur de langue Mobile -->
+          <div class="px-5 pt-2 flex items-center justify-between">
+            <span class="text-xs font-medium text-gray-500 uppercase tracking-widest">
+              {{ $t('common.language') || 'Langue' }}
+            </span>
+            <div class="flex items-center space-x-2">
+              <button
+                @click="changeLanguage('fr')"
+                class="px-3 py-1.5 rounded-full text-xs font-semibold border transition-all duration-300"
+                :class="currentLocale === 'fr' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-300'"
+              >
+                FR
+              </button>
+              <button
+                @click="changeLanguage('en')"
+                class="px-3 py-1.5 rounded-full text-xs font-semibold border transition-all duration-300"
+                :class="currentLocale === 'en' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-300'"
+              >
+                EN
+              </button>
+            </div>
+          </div>
 
           <!-- Bouton Espace Membre Mobile Premium -->
           <router-link
