@@ -21,12 +21,15 @@
       <!-- Contenu -->
       <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
         <div class="text-center fade-in-up" data-animate>
+          <!-- Texte fixe temporaire pour debug (sans i18n) -->
           <h1 class="text-lg sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-white mb-3 sm:mb-4 lg:mb-6 leading-tight">
-            {{ $t('entrepreneurs.hero.title') }}<br class="hidden sm:block" />
-            <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 via-blue-200 to-blue-400">{{ $t('entrepreneurs.hero.subtitle') }}</span>
+            CReFF-Entrepreneurs<br class="hidden sm:block" />
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 via-blue-200 to-blue-400">
+              Formation et Accompagnement des Entrepreneurs
+            </span>
           </h1>
           <p class="text-[10px] sm:text-base md:text-lg lg:text-xl xl:text-2xl text-gray-200 max-w-4xl mx-auto leading-relaxed font-light px-2 sm:px-0">
-            {{ $t('entrepreneurs.hero.description') }}
+            Découvrez nos programmes de formation et d’accompagnement dédiés aux entrepreneurs pour renforcer leurs compétences et développer leurs entreprises.
           </p>
         </div>
       </div>
@@ -636,7 +639,7 @@ const submitRegistration = async () => {
     })
   } finally {
     isSubmitting.value = false
-  }
+  } 
 }
 
 const observer = ref(null)
