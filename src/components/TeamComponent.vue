@@ -104,7 +104,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { TeamMember } from '@/models'
 
@@ -113,77 +113,78 @@ import researchImage2 from '../assets/president.jpeg'
 import researchImage3 from '../assets/prof.jpeg'
 import researchImage4 from '../assets/eunice.jpeg'
 import researchImage5 from '../assets/marcel.jpeg'
+
 const { t } = useI18n()
 
-const teamMembers = ref<TeamMember[]>([
+const teamMembers = computed<TeamMember[]>(() => [
   {
     id: 1,
-    name: "Olivier Witmeur",
-    position: "Président du Conseil de Direction",
-    role: "Président",
+    name: t('about.aboutView.team.board.president.name'),
+    position: t('about.aboutView.team.board.president.title'),
+    role: t('about.aboutView.team.roles.president'),
     photo: researchImage2,
     highlights: [
-      "Professeur d'entrepreneuriat à la Solvay Brussels School of Economics and Management (ULB)",
-      "Vice-Doyen de Solvay Brussels School Economics & Management (ULB)",
-      "Fondateur de StartLAB.Brussels"
+      t('about.aboutView.team.board.president.item1'),
+      t('about.aboutView.team.board.president.item2'),
+      t('about.aboutView.team.board.president.item3')
     ],
-    education: "Doctorat en Entrepreneuriat (2008)",
-    email: "olivier.witmeur@ulb.be"
+    education: t('about.aboutView.team.board.president.education'),
+    email: 'olivier.witmeur@ulb.be'
   },
   {
     id: 2,
-    name: "Justin Kamavuako",
-    position: "Vice-Président du Conseil de Direction", 
-    role: "Vice-Président",
+    name: t('about.aboutView.team.board.vicePresident.name'),
+    position: t('about.aboutView.team.board.vicePresident.title'),
+    role: t('about.aboutView.team.roles.vicePresident'),
     photo: researchImage3,
     highlights: [
-      "Professeur des Universités (RDC)",
-      "Expert en restructuration et croissance des PME en Afrique",
-      "Spécialiste en entrepreneuriat"
+      t('about.aboutView.team.board.vicePresident.item1'),
+      t('about.aboutView.team.board.vicePresident.item2'),
+      t('about.aboutView.team.board.vicePresident.item3')
     ],
-    education: "Doctorat en sciences de gestion (2009)",
-    email: "justin.kamavuako@university.edu"
+    education: t('about.aboutView.team.board.vicePresident.education'),
+    email: 'justin.kamavuako@university.edu'
   },
   {
     id: 3,
-    name: "Jean Nsonsumuna",
-    position: "Secrétaire du Conseil de Direction, Directeur du Creff-PME",
-    role: "Secrétaire",
+    name: t('about.aboutView.team.board.secretary.name'),
+    position: t('about.aboutView.team.board.secretary.title'),
+    role: t('about.aboutView.team.roles.secretary'),
     photo: researchImage1,
     highlights: [
-      "Professeur à l'Université Kongo",
-      "Co-fondateur du Centre CReFF-PME",
-      "Expert en finance entrepreneuriale"
+      t('about.aboutView.team.board.secretary.item1'),
+      t('about.aboutView.team.board.secretary.item2'),
+      t('about.aboutView.team.board.secretary.item3')
     ],
-    education: "Doctorat en sciences économiques et de gestion (ULB) (2024)",
-    email: "jean.nsonsumuna@creff-pme.org"
+    education: t('about.aboutView.team.board.secretary.education'),
+    email: 'jean.nsonsumuna@creff-pme.org'
   },
   {
     id: 4,
-    name: "Eunice KIKADILU AWAZI",
-    position: "Secrétaire du Creff-PME",
-    role: "Secrétaire",
+    name: t('about.aboutView.team.management.secretary.name'),
+    position: t('about.aboutView.team.management.secretary.title'),
+    role: t('about.aboutView.team.roles.secretary'),
     photo: researchImage4,
     highlights: [
-      "Licencié (Bac+5) en droit (2023)",
-      "Expérience au Tribunal pour Enfants de Mbanza-Ngungu",
-      "Gestion de l'entreprise Kadilo SIK SARL"
+      t('about.aboutView.team.management.secretary.item1'),
+      t('about.aboutView.team.management.secretary.item2'),
+      t('about.aboutView.team.management.secretary.item3')
     ],
-    education: "Licence (Bac+5) en droit (2023)",
-    email: "eunice.kikadilu@creff-pme.org"
+    education: t('about.aboutView.team.management.secretary.title'),
+    email: 'eunice.kikadilu@creff-pme.org'
   },
   {
     id: 5,
-    name: "Marcel BODI BODI",
-    position: "Chargé du logistique",
-    role: "Logistique",
+    name: t('about.aboutView.team.management.logistics.name'),
+    position: t('about.aboutView.team.management.logistics.title'),
+    role: t('about.aboutView.team.roles.logistics'),
     photo: researchImage5,
     highlights: [
-      "Licencié (Bac+5) en Sciences de gestion  (2024)",
-      "Assistant à temps partiel à l'Université Kongo"
+      t('about.aboutView.team.management.logistics.item1'),
+      t('about.aboutView.team.management.logistics.item2')
     ],
-    education: "Licence (Bac+5) en Sciences de gestion (2024)",
-    email: "marcel.bodi@creff-pme.org"
+    education: t('about.aboutView.team.management.logistics.title'),
+    email: 'marcel.bodi@creff-pme.org'
   }
 ])
 
