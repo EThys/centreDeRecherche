@@ -20,32 +20,30 @@
 
         <!-- Titre principal avec effet de dégradé animé -->
         <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-white to-blue-100 animate-gradient-text fade-in-up">
-          <span class="block">Actualités & Recherches</span>
+          <span class="block">{{ $t('allActualityPage.hero.title') }}</span>
           <span class="block text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-cyan-400 mt-2">
-            Financement des PME en RDC
+            {{ $t('allActualityPage.hero.subtitle') }}
           </span>
         </h1>
 
         <!-- Sous-titre avec animation -->
         <p class="text-lg sm:text-xl text-blue-50 max-w-3xl mx-auto mb-10 animate-fade-in fade-in-up delay-200">
-          Découvrez les dernières recherches, formations et développements en matière de 
-          <strong class="text-white">financement des petites et moyennes entreprises</strong> 
-          en République Démocratique du Congo.
+          {{ $t('allActualityPage.hero.description') }}
         </p>
 
         <!-- Statistiques -->
         <div class="flex flex-wrap justify-center gap-6 sm:gap-8 mb-8 fade-in-up delay-400">
           <div class="text-center">
             <div class="text-2xl sm:text-3xl font-bold text-white">{{ totalArticles }}</div>
-            <div class="text-blue-200 text-sm">Articles de Recherche</div>
+            <div class="text-blue-200 text-sm">{{ $t('allActualityPage.stats.articles') }}</div>
           </div>
           <div class="text-center">
             <div class="text-2xl sm:text-3xl font-bold text-white">{{ categories.length }}</div>
-            <div class="text-blue-200 text-sm">Domaines d'Expertise</div>
+            <div class="text-blue-200 text-sm">{{ $t('allActualityPage.stats.domains') }}</div>
           </div>
           <div class="text-center">
             <div class="text-2xl sm:text-3xl font-bold text-white">{{ currentYear }}</div>
-            <div class="text-blue-200 text-sm">Dernières Publications</div>
+            <div class="text-blue-200 text-sm">{{ $t('allActualityPage.stats.latestPublications') }}</div>
           </div>
         </div>
       </div>
