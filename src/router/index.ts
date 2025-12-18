@@ -23,6 +23,8 @@ import AuthView from '@/views/AuthView.vue';
 import AboutView from '@/views/AboutView.vue';
 //@ts-ignore
 import EntrepreneursView from '@/views/EntrepreneursView.vue';
+//@ts-ignore
+import ComiteScientifiqueView from '@/views/ComiteScientifiqueView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -90,9 +92,14 @@ const router = createRouter({
       component: ActivityRecherche,
     },
     {
-      path: '/entrepreneurs',
+      path: '/programme-entrepreneurs',
       name: 'entrepreneurs',
       component: EntrepreneursView,
+    },
+    {
+      path: '/comite-scientifique',
+      name: 'comite-scientifique',
+      component: ComiteScientifiqueView,
     },
     {
       path: '/politique-confidentialite',
