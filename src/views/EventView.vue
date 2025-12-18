@@ -20,36 +20,34 @@
 
       <!-- Titre principal avec effet de dégradé animé -->
       <h1 class="text-5xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-white to-blue-100 animate-gradient-text">
-        <span class="block">Événements & Conférences</span>
+        <span class="block">{{ $t('eventsPage.hero.title') }}</span>
         <span class="block text-transparent bg-clip-text bg-gradient-to-r from-blue-300 via-cyan-400 to-blue-400 mt-2">
-          Financement des PME en RDC
+          {{ $t('eventsPage.hero.subtitle') }}
         </span>
       </h1>
 
       <!-- Sous-titre avec animation -->
       <p class="text-xl text-blue-50 max-w-3xl mx-auto mb-10 animate-fade-in">
-        Participez à nos <strong class="text-white">événements exclusifs</strong>, 
-        conférences et ateliers sur le financement des petites et moyennes entreprises 
-        en République Démocratique du Congo.
+        {{ $t('eventsPage.hero.description') }}
       </p>
 
       <!-- Statistiques -->
       <div class="flex flex-wrap justify-center gap-8 mb-8">
         <div class="text-center">
           <div class="text-3xl font-bold text-white">{{ upcomingEvents.length }}</div>
-          <div class="text-blue-200 text-sm">Événements à Venir</div>
+          <div class="text-blue-200 text-sm">{{ $t('eventsPage.stats.upcoming') }}</div>
         </div>
         <div class="text-center">
           <div class="text-3xl font-bold text-white">{{ pastEvents.length }}</div>
-          <div class="text-blue-200 text-sm">Événements Passés</div>
+          <div class="text-blue-200 text-sm">{{ $t('eventsPage.stats.past') }}</div>
         </div>
         <div class="text-center">
           <div class="text-3xl font-bold text-white">{{ speakers.length }}</div>
-          <div class="text-blue-200 text-sm">Experts Invités</div>
+          <div class="text-blue-200 text-sm">{{ $t('eventsPage.stats.experts') }}</div>
         </div>
         <div class="text-center">
           <div class="text-3xl font-bold text-white">{{ allEvents.length }}</div>
-          <div class="text-blue-200 text-sm">Total Événements</div>
+          <div class="text-blue-200 text-sm">{{ $t('eventsPage.stats.total') }}</div>
         </div>
       </div>
     </div>
