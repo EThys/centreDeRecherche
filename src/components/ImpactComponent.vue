@@ -4,7 +4,7 @@
       <!-- Arrière-plan pour les chiffres clés -->
       <div class="absolute inset-0 z-0">
         <img 
-          src="../assets/carousel-3.jpg" 
+          src="../assets/carousel-2.jpeg" 
           alt="Chiffres clés"
           class="w-full h-full object-cover"
         />

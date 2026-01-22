@@ -3,7 +3,7 @@
     <!-- Image de fond avec effet parallax -->
     <div class="parallax-bg absolute inset-0 z-0">
       <img 
-        src="../assets/carousel-2.jpg" 
+        src="../assets/about-1.jpg" 
         alt="Centre de recherche CReFF-PME"
         class="w-full h-full object-cover transform scale-105"
       />

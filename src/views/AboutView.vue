@@ -8,7 +8,7 @@
       <!-- Image de fond -->
       <div class="absolute inset-0 z-0">
         <img 
-          src="../assets/carousel-2.jpg" 
+          src="../assets/about-1.jpg" 
           alt="CReFF-PME Background"
           class="w-full h-full object-cover"
         />

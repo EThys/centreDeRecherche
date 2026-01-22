@@ -4,7 +4,7 @@
     <!-- Image de fond -->
     <div class="absolute inset-0 overflow-hidden">
       <img 
-        src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80"
+        src="../assets/about-2.jpg"
         alt="Événements sur le Financement des PME"
         class="w-full h-full object-cover opacity-20"
       />

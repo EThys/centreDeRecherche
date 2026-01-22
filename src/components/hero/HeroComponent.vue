@@ -185,9 +185,9 @@ import { useI18n } from 'vue-i18n'
 import NavBarComponent from '../../components/navbar/NavBarComponent.vue'
 
 import researchImage1 from '../../assets/carousel-1.jpg'
-import researchImage2 from '../../assets/carousel-2.jpg'
-import researchImage3 from '../../assets/carousel-3.jpg'
-import researchImage4 from '../../assets/carousel-4.jpg'
+import researchImage2 from '../../assets/carousel-2.jpeg'
+import researchImage3 from '../../assets/carousel-3.jpeg'
+import researchImage4 from '../../assets/carousel-4.jpeg'
 
 const { t } = useI18n()
 

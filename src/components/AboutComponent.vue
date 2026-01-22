@@ -85,7 +85,7 @@
               :class="{ 'animate-enter': isVisible }"
             >
               <img
-                src="../assets/carousel-4.jpg"
+                src="../assets/carousel-4.jpeg"
                 alt="Formation et atelier du CReFF-PME"
                 class="w-full h-full object-cover"
               />

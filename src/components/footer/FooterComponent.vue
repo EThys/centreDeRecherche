@@ -3,7 +3,7 @@
     <!-- Image de fond avec overlay -->
     <div class="absolute inset-0 z-0">
       <img 
-        src="../../assets/carousel-4.jpg" 
+        src="../../assets/carousel-4.jpeg" 
         alt="Background Footer"
         class="w-full h-full object-cover opacity-20 transform scale-110"
       />

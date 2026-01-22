@@ -5,7 +5,7 @@
     <section class="relative pt-28 sm:pt-32 lg:pt-40 pb-12 sm:pb-16 lg:pb-24 min-h-[40vh] flex items-center overflow-hidden">
       <div class="absolute inset-0 z-0">
         <img
-          src="../assets/carousel-3.jpg"
+          src="../assets/carousel-1.jpg"
           :alt="$t('scientificCommittee.hero.alt')"
           class="w-full h-full object-cover"
         />
