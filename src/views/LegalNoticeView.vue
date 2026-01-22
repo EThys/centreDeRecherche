@@ -6,7 +6,7 @@
     <section class="relative pt-28 sm:pt-32 lg:pt-40 pb-12 sm:pb-16 lg:pb-20 bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800">
       <div class="absolute inset-0">
         <img 
-          src="../assets/carousel-2.jpg" 
+          src="../assets/carousel-2.jpeg" 
           alt="Background"
           class="w-full h-full object-cover opacity-10"
         />
