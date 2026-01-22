@@ -349,7 +349,7 @@ import NavBarComponent from '../components/navbar/NavBarComponent.vue'
 //@ts-ignore
 import DetailLoader from '../components/DetailLoader.vue'
 //@ts-ignore
-import defaultActualityImage from '../assets/carousel-2.jpg'
+import defaultActualityImage from '../assets/carousel-2.jpeg'
 
 const route = useRoute()
 const router = useRouter()
