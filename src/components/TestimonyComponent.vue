@@ -4,7 +4,7 @@
       <!-- Arrière-plan pour les témoignages -->
       <div class="absolute inset-0 z-0">
         <img 
-          src="../assets/carousel-2.jpg" 
+          src="../assets/carousel-2.jpeg" 
           alt="Témoignages"
           class="w-full h-full object-cover"
         />
