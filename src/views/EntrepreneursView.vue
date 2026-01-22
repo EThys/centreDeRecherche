@@ -503,8 +503,8 @@ import FooterComponent from '../components/footer/FooterComponent.vue'
 
 // Import des images
 const carousel1 = new URL('../assets/carousel-1.jpg', import.meta.url).href
-const carousel2 = new URL('../assets/carousel-2.jpg', import.meta.url).href
-const carousel4 = new URL('../assets/carousel-4.jpg', import.meta.url).href
+const carousel2 = new URL('../assets/carousel-2.jpeg', import.meta.url).href
+const carousel4 = new URL('../assets/carousel-4.jpeg', import.meta.url).href
 const profImage = new URL('../assets/prof.jpeg', import.meta.url).href
 
 import trainingRegistrationService from '@/services/training-registration.service'
