@@ -388,16 +388,23 @@ onUnmounted(() => {
   height: 100%;
 }
 
-/* Gradient Overlay */
+/* Gradient Overlay — léger, lisibilité à gauche sans assombrir toute l'image */
 .gradient-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    135deg, 
-    rgba(26, 26, 46, 0.65) 0%,
-    rgba(22, 33, 62, 0.55) 50%,
-    rgba(15, 52, 96, 0.65) 100%
-  );
+  background:
+    linear-gradient(
+      105deg,
+      rgba(26, 26, 46, 0.48) 0%,
+      rgba(22, 33, 62, 0.28) 42%,
+      rgba(57, 110, 246, 0.1) 68%,
+      transparent 100%
+    ),
+    linear-gradient(
+      to top,
+      rgba(15, 23, 42, 0.32) 0%,
+      transparent 45%
+    );
   z-index: 1;
   opacity: 0;
   transition: opacity 0.8s ease-in-out;
@@ -405,17 +412,6 @@ onUnmounted(() => {
 
 .gradient-overlay.active-overlay {
   opacity: 1;
-}
-
-.gradient-overlay::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 40%;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.4), transparent);
-  z-index: 1;
 }
 
 .image-container {
@@ -430,7 +426,7 @@ onUnmounted(() => {
   object-fit: cover;
   transform: scale(1.1);
   transition: transform 8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  filter: brightness(0.75);
+  filter: brightness(1.02) saturate(1.03);
 }
 
 .slide-image.active {
@@ -524,6 +520,7 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  text-shadow: 0 2px 24px rgba(15, 23, 42, 0.35);
 }
 
 .title-line {
@@ -549,6 +546,7 @@ onUnmounted(() => {
   transform: translateX(-50px) translateY(20px) scale(0.9);
   filter: blur(8px);
   transition: all 1s cubic-bezier(0.34, 1.56, 0.64, 1) 0.4s;
+  text-shadow: 0 2px 20px rgba(57, 110, 246, 0.45);
 }
 
 .slide-title.title-enter .highlight-text {
@@ -560,21 +558,21 @@ onUnmounted(() => {
 
 @keyframes titleGlow {
   0% {
-    text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+    text-shadow: 0 2px 20px rgba(15, 23, 42, 0.3);
   }
   100% {
-    text-shadow: 0 0 30px rgba(255, 255, 255, 0.5), 0 0 40px rgba(57, 110, 246, 0.3);
+    text-shadow: 0 2px 28px rgba(57, 110, 246, 0.25);
   }
 }
 
 @keyframes highlightPulse {
   0% {
-    text-shadow: 0 0 15px rgba(57, 110, 246, 0.4);
+    text-shadow: 0 2px 16px rgba(57, 110, 246, 0.35);
     transform: scale(1);
   }
   100% {
-    text-shadow: 0 0 25px rgba(57, 110, 246, 0.7), 0 0 35px rgba(57, 110, 246, 0.4);
-    transform: scale(1.02);
+    text-shadow: 0 2px 22px rgba(77, 124, 254, 0.5);
+    transform: scale(1.01);
   }
 }
 
@@ -594,6 +592,7 @@ onUnmounted(() => {
   transform: translateY(30px) scale(0.95);
   filter: blur(5px);
   transition: all 1s cubic-bezier(0.16, 1, 0.3, 1) 0.6s;
+  text-shadow: 0 1px 12px rgba(15, 23, 42, 0.3);
 }
 
 .slide-subtitle.subtitle-enter {
@@ -610,7 +609,7 @@ onUnmounted(() => {
 
 .slide-description {
   font-size: 1.125rem;
-  color: rgba(255, 255, 255, 0.9);
+  color: rgba(255, 255, 255, 0.95);
   line-height: 1.7;
   font-weight: 300;
   max-width: 90%;
@@ -618,6 +617,7 @@ onUnmounted(() => {
   transform: translateY(30px) scale(0.98);
   filter: blur(5px);
   transition: all 1s cubic-bezier(0.16, 1, 0.3, 1) 0.8s;
+  text-shadow: 0 1px 10px rgba(15, 23, 42, 0.25);
 }
 
 .slide-description.description-enter {
@@ -657,16 +657,16 @@ onUnmounted(() => {
   background: linear-gradient(135deg, var(--accent-color), var(--tertiary-accent));
   color: white;
   padding: 1rem 2.5rem;
-  border-radius: 12px;
+  border-radius: 9999px;
   font-weight: 600;
   font-size: 1rem;
   transition: all 0.3s ease;
   text-decoration: none;
   position: relative;
   overflow: hidden;
-  border: none;
+  border: 1px solid rgba(255, 255, 255, 0.25);
   cursor: pointer;
-  box-shadow: 0 4px 15px rgba(57, 110, 246, 0.4);
+  box-shadow: 0 8px 28px rgba(57, 110, 246, 0.35);
 }
 
 .cta-button::before {
@@ -687,7 +687,7 @@ onUnmounted(() => {
 .cta-button:hover {
   background: linear-gradient(135deg, var(--tertiary-accent), var(--accent-color));
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(57, 110, 246, 0.5);
+  box-shadow: 0 10px 32px rgba(57, 110, 246, 0.45);
 }
 
 .button-icon {
@@ -719,11 +719,12 @@ onUnmounted(() => {
 .thumbnails-container {
   display: flex;
   gap: 0.75rem;
-  background: rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(14px);
   padding: 0.75rem;
   border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 0 8px 32px rgba(15, 23, 42, 0.12);
 }
 
 .thumbnail {
@@ -748,7 +749,7 @@ onUnmounted(() => {
 .thumbnail.active {
   opacity: 1;
   border-color: var(--accent-color);
-  box-shadow: 0 0 15px rgba(57, 110, 246, 0.5);
+  box-shadow: 0 0 16px rgba(57, 110, 246, 0.55);
 }
 
 .thumbnail-image {
@@ -788,11 +789,11 @@ onUnmounted(() => {
   color: white;
   font-size: 0.875rem;
   font-weight: 600;
-  background: rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(14px);
   padding: 0.5rem 1rem;
   border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.35);
 }
 
 .current-slide {
@@ -809,9 +810,9 @@ onUnmounted(() => {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background: rgba(57, 110, 246, 0.2);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(57, 110, 246, 0.4);
+  background: rgba(255, 255, 255, 0.22);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
   color: white;
   width: 3.5rem;
   height: 3.5rem;
@@ -845,9 +846,9 @@ onUnmounted(() => {
 
 .carousel-control:hover {
   opacity: 1;
-  background: rgba(57, 110, 246, 0.3);
+  background: rgba(57, 110, 246, 0.45);
   transform: translateY(-50%) scale(1.1);
-  border-color: rgba(57, 110, 246, 0.6);
+  border-color: rgba(77, 124, 254, 0.7);
 }
 
 .carousel-control.prev {
