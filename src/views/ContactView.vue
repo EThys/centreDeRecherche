@@ -19,6 +19,7 @@ L.Icon.Default.mergeOptions({
 import FooterComponent from '../components/footer/FooterComponent.vue'
 //@ts-ignore
 import NavBar from '../components/navbar/NavBarComponent.vue'
+import { SOCIAL_LINKS } from '@/constants/social'
 
 const toast = useToast();
 const { t } = useI18n();
@@ -34,6 +35,8 @@ const form = ref({
   currency: 'USD',
   message: '',
 });
+
+const socialLinks = SOCIAL_LINKS
 
 const contactInfo = [
   { icon: EnvelopeIcon, title: 'Email', value: 'creff.pme.uk@gmail.com', link: 'mailto:creff.pme.uk@gmail.com' },
@@ -431,6 +434,24 @@ onUnmounted(() => {
                     {{ info.value }}
                   </a>
                 </div>
+              </div>
+            </div>
+
+            <!-- Réseaux sociaux -->
+            <div class="mt-8">
+                  <h3 class="text-sm font-medium text-gray-900 mb-3">{{ $t('contact.socialTitle') }}</h3>
+              <div class="flex gap-3">
+                <a
+                  v-for="social in socialLinks"
+                  :key="social.name"
+                  :href="social.url"
+                  :aria-label="social.name"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="w-10 h-10 rounded-lg bg-blue-100 text-blue-600 hover:bg-blue-600 hover:text-white flex items-center justify-center transition-all duration-300"
+                >
+                  <i :class="social.icon" class="text-sm"></i>
+                </a>
               </div>
             </div>
 

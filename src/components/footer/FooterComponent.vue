@@ -41,9 +41,11 @@
               v-for="(social, index) in socialLinks"
               :key="social.name"
               :href="social.url"
+              :aria-label="social.name"
               class="w-10 h-10 bg-white/10 hover:bg-blue-500 rounded-lg flex items-center justify-center transition-all duration-300 transform hover:scale-110 hover:-translate-y-1 backdrop-blur-sm"
               :style="`transition-delay: ${index * 100}ms`"
               target="_blank"
+              rel="noopener noreferrer"
             >
               <i :class="social.icon" class="text-white text-sm"></i>
             </a>
@@ -228,6 +230,7 @@ import { useI18n } from 'vue-i18n'
 import { useToast } from 'vue-toast-notification'
 import newsletterService from '@/services/newsletter.service'
 import logoImage from '../../assets/logoCreff-PME.jpeg'
+import { SOCIAL_LINKS } from '@/constants/social'
 
 const { t } = useI18n()
 const toast = useToast()
@@ -239,12 +242,7 @@ const currentYear = ref(new Date().getFullYear())
 const isSubmitting = ref(false)
 
 // Données du footer
-const socialLinks = [
-  { name: 'LinkedIn', icon: 'fab fa-linkedin-in', url: '#' },
-  { name: 'Twitter', icon: 'fab fa-twitter', url: '#' },
-  { name: 'Facebook', icon: 'fab fa-facebook-f', url: '#' },
-  { name: 'YouTube', icon: 'fab fa-youtube', url: '#' }
-]
+const socialLinks = SOCIAL_LINKS
 
 const quickLinks = [
   { labelKey: 'nav.home', path: '/' },
