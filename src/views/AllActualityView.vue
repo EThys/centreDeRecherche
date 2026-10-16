@@ -359,7 +359,9 @@ const loadArticles = async () => {
       status: err && err.status,
       stack: err && err.stack
     })
-    error.value = (err && err.message) || 'Erreur lors du chargement des actualités'
+    error.value = import.meta.env.PROD && err && err.isNetworkError
+      ? null
+      : (err && err.message) || 'Erreur lors du chargement des actualités'
     allArticles.value = []
   } finally {
     loading.value = false

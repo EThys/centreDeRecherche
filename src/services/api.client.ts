@@ -239,10 +239,12 @@ URL tentée: ${fullUrl}
 Origine: ${window.location.origin}
         `
         
-        console.error(corsMessage)
+        if (import.meta.env.DEV) {
+          console.error(corsMessage)
+        }
         
         throw {
-          message: `Erreur de connexion au serveur (CORS ou réseau). Vérifiez la console pour plus de détails.`,
+          message: 'Le contenu est momentanément indisponible.',
           status: 0,
           isNetworkError: true,
           originalError: error,

@@ -601,7 +601,9 @@ const loadEvents = async () => {
       return event
     })
   } catch (err: any) {
-    error.value = err.message || 'Erreur lors du chargement des événements'
+    error.value = import.meta.env.PROD && err?.isNetworkError
+      ? null
+      : err.message || 'Erreur lors du chargement des événements'
     console.error('Erreur:', err)
     allEvents.value = []
   } finally {

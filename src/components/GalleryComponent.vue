@@ -277,7 +277,9 @@ const loadPhotos = async (reset: boolean = false) => {
   } catch (err: any) {
     console.error('❌ Erreur lors du chargement des photos:', err)
     console.error('❌ Stack trace:', err.stack)
-    error.value = err.message || 'Erreur lors du chargement de la galerie'
+    error.value = import.meta.env.PROD && err?.isNetworkError
+      ? null
+      : err.message || 'Erreur lors du chargement de la galerie'
     photos.value = []
   } finally {
     loading.value = false

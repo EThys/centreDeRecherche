@@ -61,7 +61,9 @@ const loadPublications = async () => {
     }))
   } catch (err: any) {
     console.error('Erreur lors du chargement des publications:', err)
-    error.value = err.message || 'Erreur lors du chargement des publications'
+    error.value = import.meta.env.PROD && err?.isNetworkError
+      ? null
+      : err.message || 'Erreur lors du chargement des publications'
     allPublications.value = []
   } finally {
     loading.value = false
