@@ -105,9 +105,13 @@
         </div>
       </div>
 
-      <!-- Navigation moderne avec miniatures -->
+      <!-- Miniatures ancrées en bas à droite -->
       <div class="carousel-navigation">
-        <!-- Miniatures des slides -->
+        <div class="slide-counter">
+          <span class="current-slide">{{ String(currentSlide + 1).padStart(2, '0') }}</span>
+          <span class="separator"></span>
+          <span class="total-slides">{{ String(slides.length).padStart(2, '0') }}</span>
+        </div>
         <div class="thumbnails-container">
           <button
             v-for="(slide, index) in slides"
@@ -115,23 +119,21 @@
             :class="['thumbnail', { active: currentSlide === index }]"
             @click="goToSlide(index)"
             :aria-label="`Go to slide ${index + 1}`"
+            :aria-current="currentSlide === index ? 'true' : undefined"
           >
             <img
               :src="slide.image"
-              :alt="`Thumbnail ${index + 1}`"
+              :alt="slide.title"
               class="thumbnail-image"
             />
-            <div class="thumbnail-overlay"></div>
+            <span class="thumbnail-index">{{ String(index + 1).padStart(2, '0') }}</span>
           </button>
         </div>
-
-        <!-- Indicateur de progression -->
-
-        <!-- Compteur de slides -->
-        <div class="slide-counter">
-          <span class="current-slide">{{ currentSlide + 1 }}</span>
-          <span class="separator">/</span>
-          <span class="total-slides">{{ slides.length }}</span>
+        <div class="thumb-track" aria-hidden="true">
+          <div
+            class="thumb-track-fill"
+            :style="{ width: `${((currentSlide + 1) / slides.length) * 100}%` }"
+          ></div>
         </div>
       </div>
 
@@ -453,7 +455,7 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 5%;
+  padding: 8rem 5% 0;
 }
 
 .content-wrapper {
@@ -700,68 +702,90 @@ onUnmounted(() => {
   transform: translateX(4px);
 }
 
-/* Navigation moderne */
+/* Navigation : bandeau bas droite, hors du sujet de la photo */
 .carousel-navigation {
   position: absolute;
-  bottom: 2rem;
-  left: 50%;
-  transform: translateX(-50%);
+  right: 2.25rem;
+  bottom: 1.75rem;
   z-index: 10;
-  width: 90%;
-  max-width: 800px;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  align-items: center;
+  align-items: flex-end;
+  gap: 0.55rem;
+  width: max-content;
 }
 
-/* Miniatures */
 .thumbnails-container {
   display: flex;
-  gap: 0.75rem;
-  background: rgba(255, 255, 255, 0.18);
-  backdrop-filter: blur(14px);
-  padding: 0.75rem;
-  border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  box-shadow: 0 8px 32px rgba(15, 23, 42, 0.12);
+  align-items: flex-end;
+  gap: 0.5rem;
 }
 
 .thumbnail {
-  width: 80px;
-  height: 60px;
-  border-radius: 8px;
+  width: 4.35rem;
+  height: 2.85rem;
+  border-radius: 0.55rem;
   overflow: hidden;
   position: relative;
   cursor: pointer;
-  border: 2px solid transparent;
-  transition: all 0.3s ease;
-  opacity: 0.6;
+  border: 1.5px solid rgba(255, 255, 255, 0.45);
+  transition: width 0.35s ease, height 0.35s ease, opacity 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+  opacity: 0.62;
   background: none;
   padding: 0;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.22);
 }
 
 .thumbnail:hover {
   opacity: 1;
-  transform: scale(1.05);
 }
 
 .thumbnail.active {
+  width: 6.1rem;
+  height: 3.85rem;
   opacity: 1;
-  border-color: var(--accent-color);
-  box-shadow: 0 0 16px rgba(57, 110, 246, 0.55);
+  border-color: #fff;
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.38);
 }
 
 .thumbnail-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  display: block;
 }
 
-.thumbnail-overlay {
+.thumbnail-index {
   position: absolute;
-  inset: 0;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.3), transparent);
+  left: 0.35rem;
+  bottom: 0.22rem;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #fff;
+  text-shadow: 0 1px 6px rgba(15, 23, 42, 0.7);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.thumbnail.active .thumbnail-index,
+.thumbnail:hover .thumbnail-index {
+  opacity: 1;
+}
+
+.thumb-track {
+  width: 100%;
+  height: 2px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.28);
+  overflow: hidden;
+}
+
+.thumb-track-fill {
+  height: 100%;
+  background: #fff;
+  border-radius: inherit;
+  transition: width 0.45s ease;
 }
 
 /* Indicateur de progression */
@@ -785,24 +809,26 @@ onUnmounted(() => {
 .slide-counter {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  color: white;
-  font-size: 0.875rem;
+  gap: 0.45rem;
+  color: #fff;
+  font-size: 0.75rem;
   font-weight: 600;
-  background: rgba(255, 255, 255, 0.18);
-  backdrop-filter: blur(14px);
-  padding: 0.5rem 1rem;
-  border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.35);
+  letter-spacing: 0.14em;
+  text-shadow: 0 1px 8px rgba(15, 23, 42, 0.45);
 }
 
 .current-slide {
-  color: var(--accent-color);
-  font-size: 1rem;
+  font-size: 0.85rem;
 }
 
 .separator {
-  opacity: 0.6;
+  width: 1.1rem;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.total-slides {
+  opacity: 0.7;
 }
 
 /* Contrôles de navigation */
@@ -866,101 +892,94 @@ onUnmounted(() => {
 
 /* Responsive Design */
 @media (max-width: 768px) {
+  .gradient-overlay {
+    background: linear-gradient(
+      to top,
+      rgba(8, 18, 38, 0.94) 0%,
+      rgba(8, 18, 38, 0.86) 48%,
+      rgba(8, 18, 38, 0.45) 72%,
+      transparent 100%
+    );
+  }
+
   .slide-content {
-    padding: 0 1.5rem;
-    padding-top: 8rem;
-    align-items: flex-start;
+    align-items: flex-end;
+    justify-content: flex-start;
+    padding: 0 1.15rem 7.4rem;
   }
 
   .text-content {
     max-width: 100%;
-    text-align: center;
+    text-align: left;
   }
 
   .slide-title {
-    font-size: 2rem;
-    gap: 0.25rem;
+    font-size: 1.9rem;
+    gap: 0.15rem;
+    text-shadow: 0 2px 16px rgba(0, 0, 0, 0.45);
   }
 
   .slide-subtitle {
-    font-size: 1.25rem;
-    margin-bottom: 1rem;
+    font-size: 1.05rem;
+    margin-bottom: 0.65rem;
+    text-shadow: 0 1px 10px rgba(0, 0, 0, 0.4);
   }
 
   .slide-description {
-    font-size: 1rem;
+    font-size: 0.92rem;
     max-width: 100%;
-    margin-bottom: 2rem;
+    margin-bottom: 1.1rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 
   .cta-button {
-    padding: 0.875rem 2rem;
-    font-size: 0.95rem;
+    padding: 0.8rem 1.4rem;
+    font-size: 0.92rem;
   }
 
   .carousel-navigation {
-    bottom: 1rem;
-    width: 95%;
+    left: 0.85rem;
+    right: 0.85rem;
+    bottom: 0.7rem;
+    width: auto;
+    align-items: stretch;
   }
 
   .thumbnails-container {
-    gap: 0.5rem;
-    padding: 0.5rem;
+    width: 100%;
   }
 
-  .thumbnail {
-    width: 60px;
-    height: 45px;
+  .thumbnail,
+  .thumbnail.active {
+    flex: 1;
+    width: auto;
+    height: 2.65rem;
   }
 
   .carousel-control {
-    width: 2.75rem;
-    height: 2.75rem;
-    top: auto;
-    bottom: 12rem;
-  }
-
-  .carousel-control.prev {
-    left: 1rem;
-  }
-
-  .carousel-control.next {
-    right: 1rem;
-  }
-
-  .control-icon {
-    width: 1.25rem;
-    height: 1.25rem;
+    display: none;
   }
 }
 
 @media (max-width: 480px) {
   .slide-title {
-    font-size: 1.75rem;
+    font-size: 1.7rem;
   }
 
   .slide-subtitle {
-    font-size: 1.1rem;
+    font-size: 1rem;
   }
 
   .slide-description {
-    font-size: 0.95rem;
+    font-size: 0.88rem;
   }
 
-  .thumbnails-container {
-    gap: 0.4rem;
-    padding: 0.4rem;
-  }
-
-  .thumbnail {
-    width: 50px;
-    height: 38px;
-  }
-
-  .carousel-control {
-    width: 2.5rem;
-    height: 2.5rem;
-    bottom: 10rem;
+  .thumbnail,
+  .thumbnail.active {
+    height: 2.35rem;
   }
 }
 
