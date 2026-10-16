@@ -22,80 +22,66 @@
       </div>
 
       <!-- Grille des membres -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 lg:gap-10">
-        <!-- Carte membre -->
-        <div
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+        <button
           v-for="(member, index) in teamMembers"
-          :key="index"
-          class="group relative bg-white rounded-2xl sm:rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 fade-in-up stagger-item"
+          :key="member.id"
+          type="button"
+          class="team-card group relative flex min-h-[30rem] cursor-zoom-in flex-col justify-end overflow-hidden rounded-2xl text-left shadow-lg transition-shadow duration-500 hover:shadow-2xl fade-in-up stagger-item lg:min-h-[32rem]"
           :style="{ animationDelay: `${index * 150}ms` }"
           data-animate
+          :aria-label="`Agrandir la photo de ${member.name}`"
+          @click="openPhoto(index)"
         >
-          <!-- Photo avec overlay -->
-          <div class="relative h-64 sm:h-72 lg:h-80 overflow-hidden">
+          <div class="absolute inset-0">
             <img
               :src="member.photo"
               :alt="member.name"
-              class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+              class="h-full w-full object-cover object-[center_18%]"
             />
-            <!-- Overlay gradient au survol -->
-            <div class="absolute inset-0 bg-gradient-to-t from-blue-900/80 via-blue-800/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-            
-            <!-- Badge de rôle -->
-            <div class="absolute top-4 right-4 bg-white/95 backdrop-blur-sm px-3 sm:px-4 py-1.5 sm:py-2 rounded-full sm:rounded-xl shadow-lg z-10">
-              <span class="text-xs sm:text-sm font-bold text-blue-600">{{ member.role }}</span>
-            </div>
-
-            <!-- Icône décorative -->
-            <div class="absolute bottom-4 left-4 w-12 h-12 bg-blue-500/90 backdrop-blur-sm rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-y-4 group-hover:translate-y-0">
-              <i class="fas fa-user-tie text-white text-lg"></i>
-            </div>
+            <div class="team-shade absolute inset-0"></div>
           </div>
 
-          <!-- Contenu -->
-          <div class="p-5 sm:p-6 lg:p-8 relative">
-            <!-- Nom -->
-            <h3 class="text-xl sm:text-2xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors duration-300">
+          <div class="relative z-10 p-6 text-white sm:p-7">
+            <div
+              class="mb-3 inline-block rounded-full px-4 py-1.5 text-xs font-semibold text-white backdrop-blur-sm"
+              :class="member.accent.badge"
+            >
+              {{ member.role }}
+            </div>
+            <h3 class="text-2xl font-bold leading-tight sm:text-3xl">
               {{ member.name }}
             </h3>
-            
-            <!-- Position -->
-            <p class="text-blue-600 font-semibold text-sm sm:text-base mb-4 flex items-center">
-              <i class="fas fa-briefcase mr-2 text-xs"></i>
+            <p class="mt-3 text-sm font-medium sm:text-base" :class="member.accent.title">
               {{ member.position }}
             </p>
-
-            <!-- Education -->
-            <div class="mb-4 pb-4 border-b border-gray-100">
-              <p class="text-gray-600 text-xs sm:text-sm flex items-center">
-                <i class="fas fa-graduation-cap mr-2 text-blue-500"></i>
+            <div
+              v-if="member.highlights.length || member.education"
+              class="mt-3 space-y-2 border-t border-white/20 pt-3 text-sm text-gray-200"
+            >
+              <p
+                v-for="(highlight, hIndex) in member.highlights"
+                :key="hIndex"
+                class="leading-relaxed"
+              >
+                {{ highlight }}
+              </p>
+              <p v-if="member.education" class="pt-1 text-xs text-gray-300">
+                <i class="fas fa-graduation-cap mr-2"></i>
                 {{ member.education }}
               </p>
             </div>
-
-            <!-- Highlights -->
-            <div class="space-y-2">
-              <p class="text-xs sm:text-sm font-semibold text-gray-700 mb-2">{{ $t('team.highlights') }} :</p>
-              <ul class="space-y-2">
-                <li 
-                  v-for="(highlight, hIndex) in member.highlights"
-                  :key="hIndex"
-                  class="text-xs sm:text-sm text-gray-600 flex items-start"
-                >
-                  <i class="fas fa-check-circle text-blue-500 mr-2 mt-0.5 flex-shrink-0 text-xs"></i>
-                  <span class="leading-relaxed">{{ highlight }}</span>
-                </li>
-              </ul>
-            </div>
-
-            <!-- Bordure animée -->
-            <div class="absolute inset-0 rounded-2xl sm:rounded-3xl border-2 border-transparent group-hover:border-blue-400 transition-all duration-500 pointer-events-none"></div>
           </div>
-
-          <!-- Effet de brillance au survol -->
-          <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 transform -translate-x-full group-hover:translate-x-full pointer-events-none"></div>
-        </div>
+        </button>
       </div>
+
+      <vue-easy-lightbox
+        :visible="lightboxOpen"
+        :imgs="lightboxImages"
+        :index="lightboxIndex"
+        :scroll-disabled="true"
+        @hide="lightboxOpen = false"
+      />
 
    
 
@@ -104,89 +90,107 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import VueEasyLightbox from 'vue-easy-lightbox'
+import 'vue-easy-lightbox/dist/external-css/vue-easy-lightbox.css'
 import type { TeamMember } from '@/models'
 
-import researchImage1 from '../assets/nsomuna.jpeg'
-import researchImage2 from '../assets/president.jpeg'
-import researchImage3 from '../assets/prof.jpeg'
-import researchImage4 from '../assets/eunice.jpeg'
-import researchImage5 from '../assets/marcel.jpeg'
+import presidentPhoto from '../assets/president.jpeg'
+import vicePresidentPhoto from '../assets/prof.jpeg'
+import directorPhoto from '../assets/nsomuna.jpeg'
+import secretaryPhoto from '../assets/eunice.jpeg'
+import assistantPhoto from '../assets/glodi.jpg'
 
 const { t } = useI18n()
 
-const teamMembers = computed<TeamMember[]>(() => [
+type HomeTeamMember = TeamMember & {
+  accent: { badge: string; title: string }
+}
+
+const teamMembers = computed<HomeTeamMember[]>(() => [
   {
     id: 1,
     name: t('about.aboutView.team.board.president.name'),
     position: t('about.aboutView.team.board.president.title'),
     role: t('about.aboutView.team.roles.president'),
-    photo: researchImage2,
+    photo: presidentPhoto,
     highlights: [
       t('about.aboutView.team.board.president.item1'),
       t('about.aboutView.team.board.president.item2'),
       t('about.aboutView.team.board.president.item3')
     ],
     education: t('about.aboutView.team.board.president.education'),
-    email: 'olivier.witmeur@ulb.be'
+    accent: { badge: 'bg-blue-600/90', title: 'text-blue-200' }
   },
   {
     id: 2,
     name: t('about.aboutView.team.board.vicePresident.name'),
     position: t('about.aboutView.team.board.vicePresident.title'),
     role: t('about.aboutView.team.roles.vicePresident'),
-    photo: researchImage3,
+    photo: vicePresidentPhoto,
     highlights: [
       t('about.aboutView.team.board.vicePresident.item1'),
       t('about.aboutView.team.board.vicePresident.item2'),
       t('about.aboutView.team.board.vicePresident.item3')
     ],
     education: t('about.aboutView.team.board.vicePresident.education'),
-    email: 'justin.kamavuako@university.edu'
+    accent: { badge: 'bg-blue-600/90', title: 'text-blue-200' }
   },
   {
     id: 3,
     name: t('about.aboutView.team.board.secretary.name'),
     position: t('about.aboutView.team.board.secretary.title'),
     role: t('about.aboutView.team.roles.secretary'),
-    photo: researchImage1,
+    photo: directorPhoto,
     highlights: [
       t('about.aboutView.team.board.secretary.item1'),
       t('about.aboutView.team.board.secretary.item2'),
       t('about.aboutView.team.board.secretary.item3')
     ],
     education: t('about.aboutView.team.board.secretary.education'),
-    email: 'jean.nsonsumuna@creff-pme.org'
+    accent: { badge: 'bg-blue-600/90', title: 'text-blue-200' }
   },
   {
     id: 4,
     name: t('about.aboutView.team.management.secretary.name'),
     position: t('about.aboutView.team.management.secretary.title'),
     role: t('about.aboutView.team.roles.secretary'),
-    photo: researchImage4,
+    photo: secretaryPhoto,
     highlights: [
       t('about.aboutView.team.management.secretary.item1'),
       t('about.aboutView.team.management.secretary.item2'),
       t('about.aboutView.team.management.secretary.item3')
     ],
-    education: t('about.aboutView.team.management.secretary.title'),
-    email: 'eunice.kikadilu@creff-pme.org'
+    education: '',
+    accent: { badge: 'bg-indigo-600/90', title: 'text-indigo-200' }
   },
   {
     id: 5,
     name: t('about.aboutView.team.management.logistics.name'),
     position: t('about.aboutView.team.management.logistics.title'),
     role: t('about.aboutView.team.roles.logistics'),
-    photo: researchImage5,
-    highlights: [
-      t('about.aboutView.team.management.logistics.item1'),
-      t('about.aboutView.team.management.logistics.item2')
-    ],
-    education: t('about.aboutView.team.management.logistics.title'),
-    email: 'marcel.bodi@creff-pme.org'
+    photo: assistantPhoto,
+    highlights: [],
+    education: t('about.aboutView.team.management.logistics.education'),
+    accent: { badge: 'bg-cyan-600/90', title: 'text-cyan-200' }
   }
 ])
+
+const lightboxOpen = ref(false)
+const lightboxIndex = ref(0)
+
+const lightboxImages = computed(() =>
+  teamMembers.value.map((member) => ({
+    src: member.photo,
+    title: member.name
+  }))
+)
+
+const openPhoto = (index: number) => {
+  lightboxIndex.value = index
+  lightboxOpen.value = true
+}
 
 let observer: IntersectionObserver | null = null
 
@@ -248,6 +252,14 @@ onUnmounted(() => {
 .stagger-item.animate-in {
   opacity: 1;
   transform: translateY(0);
+}
+
+.team-shade {
+  background: linear-gradient(to top, rgba(15, 23, 42, 0.88) 0%, rgba(15, 23, 42, 0.28) 46%, rgba(15, 23, 42, 0) 68%);
+}
+
+:global(.vel-modal) {
+  z-index: 10050;
 }
 
 /* Animations flottantes */

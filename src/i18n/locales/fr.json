@@ -98,7 +98,7 @@
           "vicePresident": "Vice-Président",
           "secretary": "Secrétaire",
           "director": "Directeur",
-          "logistics": "Logistique"
+          "logistics": "Assistant"
         },
         "board": {
           "president": {
@@ -141,10 +141,10 @@
             "item3": "Gestion de l'entreprise Kadilo SIK SARL"
           },
           "logistics": {
-            "title": "Chargé du logistique",
-            "name": "Marcel BODI BODI",
-            "item1": "Licencié (Bac+5) en Sciences de gestion (2024)",
-            "item2": "Assistant à temps partiel à l'Université Kongo"
+            "title": "Assistant du directeur du CReFF",
+            "name": "Glodi Mangongo",
+            "education": "Master en management des organisations (Bac+5)",
+            "item1": "Master en management des organisations (Bac+5)"
           }
         }
       },

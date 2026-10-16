@@ -392,7 +392,7 @@
                 <div class="absolute inset-0 flex items-center justify-center">
                   <img 
                   :src="researchImage5" 
-                  alt="Jean Nsonsumuna" 
+                  alt="Glodi Mangongo" 
                   class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                 />
                 </div>
@@ -411,8 +411,7 @@
                 <p class="text-cyan-200 text-sm sm:text-base font-medium mb-4">{{ $t('about.aboutView.team.management.logistics.title') }}</p>
                 
                 <div class="space-y-2 text-sm sm:text-base text-gray-200 border-t border-white/20 pt-4">
-                  <p class="leading-relaxed">{{ $t('about.aboutView.team.management.logistics.item1') }}</p>
-                  <p class="leading-relaxed">{{ $t('about.aboutView.team.management.logistics.item2') }}</p>
+                  <p class="leading-relaxed">{{ $t('about.aboutView.team.management.logistics.education') }}</p>
                 </div>
               </div>
             </div>
@@ -528,7 +527,7 @@ import researchImage1 from '../assets/nsomuna.jpeg'
 import researchImage2 from '../assets/president.jpeg'
 import researchImage3 from '../assets/prof.jpeg'
 import researchImage4 from '../assets/eunice.jpeg'
-import researchImage5 from '../assets/marcel.jpeg'
+import researchImage5 from '../assets/glodi.jpg'
 import solvayLogo from '../assets/solvay.jpeg'
 import aresLogo from '../assets/ares.jpeg'
 
