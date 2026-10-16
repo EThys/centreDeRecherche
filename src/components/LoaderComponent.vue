@@ -19,38 +19,64 @@
 
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import logoImage from '@/assets/logoCreff-PME.jpeg'
 
+const router = useRouter()
 const isLoading = ref(true)
+const minVisible = 1400
+let started = 0
 let hideTimer = 0
 let capTimer = 0
+let removeBefore: (() => void) | null = null
+let removeAfter: (() => void) | null = null
+let routeLoader = false
 
 const hide = () => {
   isLoading.value = false
+  routeLoader = false
+}
+
+const show = () => {
+  window.clearTimeout(hideTimer)
+  window.clearTimeout(capTimer)
+  started = performance.now()
+  isLoading.value = true
+  capTimer = window.setTimeout(hide, 2400)
+}
+
+const scheduleHide = () => {
+  const wait = Math.max(0, minVisible - (performance.now() - started))
+  window.clearTimeout(hideTimer)
+  hideTimer = window.setTimeout(hide, wait)
 }
 
 onMounted(() => {
-  const started = performance.now()
-  const minVisible = 280
-
-  const dismiss = () => {
-    const wait = Math.max(0, minVisible - (performance.now() - started))
-    window.clearTimeout(hideTimer)
-    hideTimer = window.setTimeout(hide, wait)
-  }
+  show()
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', dismiss, { once: true })
+    document.addEventListener('DOMContentLoaded', scheduleHide, { once: true })
   } else {
-    dismiss()
+    scheduleHide()
   }
 
-  capTimer = window.setTimeout(hide, 650)
+  removeBefore = router.beforeEach((to, from) => {
+    if (to.path === from.path || from.matched.length === 0) return
+    routeLoader = true
+    show()
+  })
+
+  removeAfter = router.afterEach(() => {
+    if (!routeLoader) return
+    scheduleHide()
+  })
 })
 
 onUnmounted(() => {
   window.clearTimeout(hideTimer)
   window.clearTimeout(capTimer)
+  removeBefore?.()
+  removeAfter?.()
 })
 </script>
 
@@ -96,7 +122,7 @@ onUnmounted(() => {
   height: 100%;
   border-radius: inherit;
   background: #1a56db;
-  animation: boot-slide 0.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  animation: boot-slide 1.45s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
 @keyframes boot-slide {
@@ -110,7 +136,7 @@ onUnmounted(() => {
 
 .boot-enter-active,
 .boot-leave-active {
-  transition: opacity 0.18s ease;
+  transition: opacity 0.55s ease;
 }
 
 .boot-enter-from,
