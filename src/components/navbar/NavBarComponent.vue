@@ -282,14 +282,7 @@
       </div>
     </div>
 
-    <transition
-      enter-active-class="transition duration-300 ease-out"
-      enter-from-class="opacity-0"
-      enter-to-class="opacity-100"
-      leave-active-class="transition duration-200 ease-in"
-      leave-from-class="opacity-100"
-      leave-to-class="opacity-0"
-    >
+    <transition name="scrim">
       <button
         v-if="isMobile && isMobileMenuOpen"
         type="button"
@@ -300,14 +293,7 @@
     </transition>
 
     <!-- Mobile Menu -->
-    <transition
-      enter-active-class="transition duration-350 ease-out"
-      enter-from-class="opacity-0 -translate-y-3"
-      enter-to-class="opacity-100 translate-y-0"
-      leave-active-class="transition duration-200 ease-in"
-      leave-from-class="opacity-100 translate-y-0"
-      leave-to-class="opacity-0 -translate-y-3"
-    >
+    <transition name="drawer">
       <div
         v-if="isMobile && isMobileMenuOpen"
         id="nav-mobile-menu"
@@ -835,48 +821,52 @@ header {
 
 .nav-shell {
   position: relative;
-  z-index: 2;
+  z-index: 4;
 }
 
 .nav-burger {
-  width: 2.7rem;
-  height: 2.7rem;
-  border-radius: 0.8rem;
-  border: 1px solid #e2e8f0;
-  background: #f8fafc;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 999px;
+  border: 0;
+  background: #f1f3f4;
   display: inline-flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 5px;
   flex-shrink: 0;
-  transition: background 0.25s ease, border-color 0.25s ease;
+  transition: background 0.4s ease;
 }
 
 .nav-burger span {
   display: block;
-  width: 1.15rem;
-  height: 2px;
+  width: 1.05rem;
+  height: 1.5px;
   border-radius: 999px;
-  background: #0f2744;
-  transition: transform 0.28s ease, opacity 0.2s ease;
+  background: #1f1f1f;
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease, width 0.35s ease;
 }
 
 .nav-burger.is-open {
-  background: #eff6ff;
-  border-color: #bfdbfe;
+  background: #e8f0fe;
+}
+
+.nav-burger.is-open span {
+  background: #1a56db;
 }
 
 .nav-burger.is-open span:nth-child(1) {
-  transform: translateY(7px) rotate(45deg);
+  transform: translateY(6.5px) rotate(45deg);
 }
 
 .nav-burger.is-open span:nth-child(2) {
   opacity: 0;
+  width: 0;
 }
 
 .nav-burger.is-open span:nth-child(3) {
-  transform: translateY(-7px) rotate(-45deg);
+  transform: translateY(-6.5px) rotate(-45deg);
 }
 
 .nav-backdrop {
@@ -884,16 +874,45 @@ header {
   inset: 0;
   z-index: 1;
   border: 0;
-  background: rgba(8, 18, 38, 0.62);
+  background: rgba(32, 33, 36, 0.46);
+}
+
+.scrim-enter-active,
+.scrim-leave-active {
+  transition: opacity 0.45s ease;
+}
+
+.scrim-enter-from,
+.scrim-leave-to {
+  opacity: 0;
 }
 
 .nav-drawer {
-  position: relative;
-  z-index: 2;
+  position: fixed;
+  z-index: 3;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  padding-top: 6.35rem;
   background: #fff;
-  border-bottom: 1px solid #e2e8f0;
-  box-shadow: 0 22px 40px rgba(15, 23, 42, 0.14);
-  max-height: min(78vh, 640px);
+  overflow-y: auto;
+}
+
+.drawer-enter-active {
+  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.drawer-leave-active {
+  transition: transform 0.42s cubic-bezier(0.4, 0, 1, 1);
+}
+
+.drawer-enter-from {
+  transform: translateX(100%);
+}
+
+.drawer-leave-to {
+  transform: translateX(104%);
 }
 
 .nav-drawer-label {
@@ -1012,24 +1031,25 @@ header {
 .mobile-link {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.85rem 0.9rem;
-  border-radius: 0.9rem;
-  font-weight: 600;
-  font-size: 0.95rem;
-  color: #334155;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  gap: 0.9rem;
+  margin: 0 0.35rem;
+  padding: 0.95rem 0.85rem;
+  border-radius: 0.85rem;
+  font-weight: 500;
+  font-size: 1.05rem;
+  letter-spacing: -0.01em;
+  color: #202124;
+  transition: background-color 0.35s ease, color 0.35s ease;
 }
 
 .mobile-link:hover {
-  background: #eff6ff;
-  color: #2563eb;
+  background: #f8f9fa;
+  color: #1a56db;
 }
 
 .mobile-link-active {
-  background: linear-gradient(90deg, #dbeafe 0%, #eff6ff 100%);
-  color: #2563eb;
-  box-shadow: inset 3px 0 0 #396ef6;
+  background: #e8f0fe;
+  color: #1a56db;
 }
 
 .mobile-sublink {
@@ -1040,14 +1060,14 @@ header {
 }
 
 .mobile-icon {
-  width: 2.1rem;
-  height: 2.1rem;
-  border-radius: 0.7rem;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 999px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: #f1f5f9;
-  color: #396ef6;
+  background: #f1f3f4;
+  color: #3c4043;
   font-size: 0.85rem;
   flex-shrink: 0;
 }
@@ -1060,8 +1080,8 @@ header {
 }
 
 .mobile-link-active .mobile-icon {
-  background: #bfdbfe;
-  color: #2563eb;
+  background: #d2e3fc;
+  color: #1a56db;
 }
 
 .custom-scrollbar::-webkit-scrollbar {
@@ -1188,16 +1208,16 @@ header {
 }
 
 .nav-mobile-list > * {
-  animation: navRise 0.42s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+  animation: navRise 0.6s cubic-bezier(0.22, 1, 0.36, 1) backwards;
 }
 
-.nav-mobile-list > *:nth-child(1) { animation-delay: 0.04s; }
-.nav-mobile-list > *:nth-child(2) { animation-delay: 0.08s; }
-.nav-mobile-list > *:nth-child(3) { animation-delay: 0.12s; }
-.nav-mobile-list > *:nth-child(4) { animation-delay: 0.16s; }
-.nav-mobile-list > *:nth-child(5) { animation-delay: 0.2s; }
-.nav-mobile-list > *:nth-child(6) { animation-delay: 0.24s; }
-.nav-mobile-list > *:nth-child(7) { animation-delay: 0.28s; }
+.nav-mobile-list > *:nth-child(1) { animation-delay: 0.12s; }
+.nav-mobile-list > *:nth-child(2) { animation-delay: 0.18s; }
+.nav-mobile-list > *:nth-child(3) { animation-delay: 0.24s; }
+.nav-mobile-list > *:nth-child(4) { animation-delay: 0.3s; }
+.nav-mobile-list > *:nth-child(5) { animation-delay: 0.36s; }
+.nav-mobile-list > *:nth-child(6) { animation-delay: 0.42s; }
+.nav-mobile-list > *:nth-child(7) { animation-delay: 0.48s; }
 
 .mobile-icon {
   transition: transform 0.25s ease, background-color 0.25s ease, color 0.25s ease;
