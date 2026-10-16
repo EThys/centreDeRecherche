@@ -1,39 +1,59 @@
 <template>
   <header
-    class="fixed z-[100] left-3 right-3 sm:left-4 sm:right-4 lg:left-6 lg:right-6 transition-all duration-400 ease-out"
-    :class="headerPositionClass"
+    class="fixed z-[100] inset-x-0 top-0 transition-all duration-400 ease-out"
+    :class="{ 'is-scrolled': isScrolled }"
   >
     <div
-      class="max-w-7xl mx-auto rounded-2xl border transition-all duration-400"
+      class="nav-shell w-full border-b overflow-hidden transition-all duration-400"
       :class="headerSurfaceClass"
     >
+      <div class="nav-topbar">
+        <a
+          href="https://www.google.com/maps/search/?api=1&query=Universit%C3%A9+Kongo+Mbanza-Ngungu"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="nav-coord nav-coord-place min-w-0"
+        >
+          <span class="nav-coord-icon" aria-hidden="true"><i class="fas fa-map-marker-alt"></i></span>
+          <span class="truncate">Université Kongo, Mbanza-Ngungu</span>
+        </a>
+        <div class="nav-topbar-links">
+          <a href="tel:+243850593211" class="nav-coord">
+            <span class="nav-coord-icon" aria-hidden="true"><i class="fas fa-phone"></i></span>
+            <span>+243 85 059 32 11</span>
+          </a>
+          <span class="nav-coord-sep nav-coord-sep-alt" aria-hidden="true"></span>
+          <a href="tel:+243980495273" class="nav-coord nav-coord-alt">
+            <span class="nav-coord-icon" aria-hidden="true"><i class="fas fa-phone"></i></span>
+            <span>+243 980 49 52 73</span>
+          </a>
+          <span class="nav-coord-sep" aria-hidden="true"></span>
+          <a href="mailto:creff.pme.uk@gmail.com" class="nav-coord nav-coord-mail min-w-0">
+            <span class="nav-coord-icon" aria-hidden="true"><i class="fas fa-envelope"></i></span>
+            <span class="truncate">creff.pme.uk@gmail.com</span>
+          </a>
+        </div>
+      </div>
       <div class="px-3 sm:px-5 lg:px-6">
-        <div class="flex justify-between items-center h-[4.25rem] lg:h-[4.75rem]">
+        <div class="flex justify-between items-center h-16 sm:h-[4.5rem] lg:h-[4.85rem]">
           <!-- Logo -->
           <router-link
             to="/"
-            class="flex items-center gap-2 sm:gap-3 z-60 group relative flex-shrink-0 min-w-0"
+            class="nav-brand z-60 group relative flex-shrink-0 min-w-0"
+            aria-label="CReFF-PME, accueil"
             @click="closeMobileMenu"
           >
-            <div class="flex-shrink-0 rounded-xl overflow-hidden ring-1 ring-blue-900/5 shadow-sm">
+            <span class="nav-logo-clip">
               <img
                 :src="logoImage"
-                alt="CReFF-PME Logo"
-                class="h-10 sm:h-12 md:h-14 lg:h-[3.75rem] w-auto object-contain"
+                alt="CReFF-PME"
+                class="nav-logo-img"
               />
-            </div>
-            <div class="flex flex-col min-w-0 ml-0.5 sm:ml-1 leading-tight">
-              <span class="font-bold text-sm sm:text-base md:text-lg tracking-tight text-slate-900 group-hover:text-blue-700 transition-colors whitespace-nowrap">
-                CReFF-PME
-              </span>
-              <span class="hidden sm:block text-[10px] md:text-xs font-medium tracking-wide uppercase text-slate-500">
-                Centre de recherche
-              </span>
-            </div>
+            </span>
           </router-link>
 
           <!-- Desktop Navigation -->
-          <nav v-if="!isMobile" class="hidden lg:flex items-center gap-0.5 xl:gap-1">
+          <nav v-if="!isMobile" class="nav-desktop hidden lg:flex items-center gap-0.5 xl:gap-1">
             <router-link
               to="/"
               class="nav-link"
@@ -126,7 +146,7 @@
                         v-for="item in researchLinks"
                         :key="item.to"
                         :to="item.to"
-                        class="flex items-center gap-3 px-4 py-2.5 text-slate-700 hover:bg-blue-50 hover:text-blue-700 transition-colors duration-200 group/item"
+                        class="nav-drop-link flex items-center gap-3 px-4 py-2.5 text-slate-700 hover:bg-blue-50 hover:text-blue-700 transition-colors duration-200 group/item"
                         @click="closeDropdowns"
                       >
                         <span class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-sm group-hover/item:bg-blue-100 transition-colors">
@@ -246,39 +266,38 @@
           <!-- Mobile Menu Button -->
           <button
             v-if="isMobile"
+            type="button"
+            class="nav-burger lg:hidden"
+            :class="{ 'is-open': isMobileMenuOpen }"
+            :aria-expanded="isMobileMenuOpen"
+            aria-controls="nav-mobile-menu"
+            aria-label="Menu"
             @click="isMobileMenuOpen = !isMobileMenuOpen"
-            class="lg:hidden p-2.5 rounded-xl transition-all duration-300 z-60 relative"
-            :class="
-              isMobileMenuOpen
-                ? 'bg-blue-50 text-blue-700'
-                : 'text-slate-700 hover:bg-slate-100'
-            "
-            aria-label="Toggle menu"
           >
-            <div class="w-6 h-6 relative">
-              <span
-                class="absolute top-1/2 left-1/2 w-5 h-0.5 bg-current transform -translate-x-1/2 -translate-y-1/2 transition-all duration-300 rounded-full"
-                :class="{
-                  'rotate-45 translate-y-0': isMobileMenuOpen,
-                  '-translate-y-2': !isMobileMenuOpen,
-                }"
-              ></span>
-              <span
-                class="absolute top-1/2 left-1/2 w-5 h-0.5 bg-current transform -translate-x-1/2 -translate-y-1/2 transition-all duration-300 rounded-full"
-                :class="{ 'opacity-0': isMobileMenuOpen }"
-              ></span>
-              <span
-                class="absolute top-1/2 left-1/2 w-5 h-0.5 bg-current transform -translate-x-1/2 -translate-y-1/2 transition-all duration-300 rounded-full"
-                :class="{
-                  '-rotate-45 translate-y-0': isMobileMenuOpen,
-                  'translate-y-2': !isMobileMenuOpen,
-                }"
-              ></span>
-            </div>
+            <span></span>
+            <span></span>
+            <span></span>
           </button>
         </div>
       </div>
     </div>
+
+    <transition
+      enter-active-class="transition duration-300 ease-out"
+      enter-from-class="opacity-0"
+      enter-to-class="opacity-100"
+      leave-active-class="transition duration-200 ease-in"
+      leave-from-class="opacity-100"
+      leave-to-class="opacity-0"
+    >
+      <button
+        v-if="isMobile && isMobileMenuOpen"
+        type="button"
+        class="nav-backdrop"
+        aria-label="Fermer le menu"
+        @click="closeMobileMenu"
+      ></button>
+    </transition>
 
     <!-- Mobile Menu -->
     <transition
@@ -291,9 +310,11 @@
     >
       <div
         v-if="isMobile && isMobileMenuOpen"
-        class="lg:hidden mt-2 rounded-2xl border border-white/40 bg-white/95 backdrop-blur-2xl shadow-2xl shadow-blue-950/15 overflow-hidden max-h-[min(78vh,640px)] overflow-y-auto custom-scrollbar"
+        id="nav-mobile-menu"
+        class="nav-drawer lg:hidden overflow-y-auto custom-scrollbar"
       >
-        <div class="p-3 sm:p-4 space-y-1">
+        <div class="nav-mobile-list px-3 pt-2 pb-4 sm:px-4 space-y-1">
+          <p class="nav-drawer-label">Menu</p>
           <router-link
             to="/"
             class="mobile-link"
@@ -465,8 +486,6 @@ const isResearchRoute = computed(
     route.path.includes('/comite-scientifique')
 )
 
-const headerPositionClass = 'top-3 sm:top-4'
-
 const headerSurfaceClass = computed(() =>
   isScrolled.value
     ? 'bg-white border-slate-200/80 shadow-lg shadow-slate-900/8'
@@ -499,6 +518,10 @@ const changeLanguage = (lang: 'fr' | 'en') => {
 const handleScroll = () => {
   isScrolled.value = window.scrollY > 24
 }
+
+watch(isMobileMenuOpen, (open) => {
+  document.body.style.overflow = open ? 'hidden' : ''
+})
 
 const handleResize = () => {
   windowWidth.value = window.innerWidth
@@ -677,6 +700,7 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
+  document.body.style.overflow = ''
   window.removeEventListener('scroll', handleScroll)
   window.removeEventListener('resize', handleResize)
   document.removeEventListener('click', closeDropdowns)
@@ -698,6 +722,239 @@ header {
   font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
 }
 
+.nav-topbar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 2.45rem;
+  padding: 0.3rem 0.75rem;
+  background:
+    linear-gradient(90deg, rgba(57, 110, 246, 0.22), transparent 32%),
+    linear-gradient(180deg, #16345c 0%, #0c2340 100%);
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 0.72rem;
+  letter-spacing: 0.012em;
+}
+
+.nav-topbar::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(191, 219, 254, 0.75) 20%, rgba(191, 219, 254, 0.75) 80%, transparent);
+}
+
+@media (min-width: 640px) {
+  .nav-topbar {
+    min-height: 2.55rem;
+    padding: 0.3rem 1.25rem;
+    font-size: 0.78rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .nav-topbar {
+    padding-inline: 1.5rem;
+  }
+}
+
+.nav-topbar-links {
+  display: flex;
+  align-items: center;
+  gap: 0.15rem;
+  min-width: 0;
+  margin-left: auto;
+}
+
+.nav-coord {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-width: 0;
+  color: inherit;
+  white-space: nowrap;
+  border-radius: 999px;
+  padding: 0.18rem 0.4rem;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.nav-coord:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.nav-coord-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.15rem;
+  height: 1.15rem;
+  border-radius: 999px;
+  background: rgba(191, 219, 254, 0.16);
+  flex-shrink: 0;
+}
+
+.nav-coord-icon i {
+  font-size: 0.58rem;
+  color: #dbeafe;
+}
+
+.nav-coord-sep {
+  width: 1px;
+  height: 0.7rem;
+  background: rgba(255, 255, 255, 0.22);
+  flex-shrink: 0;
+}
+
+.nav-coord-mail {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.nav-coord-mail:hover {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.28);
+}
+
+@media (max-width: 639px) {
+  .nav-coord-place {
+    display: none;
+  }
+}
+
+@media (max-width: 767px) {
+  .nav-coord-alt,
+  .nav-coord-sep-alt {
+    display: none;
+  }
+}
+
+.nav-shell {
+  position: relative;
+  z-index: 2;
+}
+
+.nav-burger {
+  width: 2.7rem;
+  height: 2.7rem;
+  border-radius: 0.8rem;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  flex-shrink: 0;
+  transition: background 0.25s ease, border-color 0.25s ease;
+}
+
+.nav-burger span {
+  display: block;
+  width: 1.15rem;
+  height: 2px;
+  border-radius: 999px;
+  background: #0f2744;
+  transition: transform 0.28s ease, opacity 0.2s ease;
+}
+
+.nav-burger.is-open {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+}
+
+.nav-burger.is-open span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.nav-burger.is-open span:nth-child(2) {
+  opacity: 0;
+}
+
+.nav-burger.is-open span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+.nav-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  border: 0;
+  background: rgba(8, 18, 38, 0.62);
+}
+
+.nav-drawer {
+  position: relative;
+  z-index: 2;
+  background: #fff;
+  border-bottom: 1px solid #e2e8f0;
+  box-shadow: 0 22px 40px rgba(15, 23, 42, 0.14);
+  max-height: min(78vh, 640px);
+}
+
+.nav-drawer-label {
+  margin: 0.35rem 0.35rem 0.45rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #94a3b8;
+}
+
+@media (max-width: 639px) {
+  .nav-topbar {
+    min-height: 2.15rem;
+    padding-inline: 0.55rem;
+  }
+
+  .nav-coord-mail {
+    max-width: none;
+  }
+}
+
+.nav-logo-clip {
+  position: relative;
+  display: block;
+  height: 3.35rem;
+  width: 9.55rem;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.nav-logo-img {
+  position: absolute;
+  width: 110.8%;
+  height: auto;
+  max-width: none;
+  left: -6.65%;
+  top: -85.8%;
+}
+
+@media (min-width: 640px) {
+  .nav-logo-clip {
+    height: 3.75rem;
+    width: 10.65rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .nav-logo-clip {
+    height: 4.25rem;
+    width: 12.1rem;
+  }
+}
+
+@media (max-width: 639px) {
+  .nav-logo-clip {
+    height: 2.75rem;
+    width: 7.85rem;
+  }
+}
+
 .nav-link {
   position: relative;
   padding: 0.5rem 0.85rem;
@@ -706,6 +963,23 @@ header {
   border-radius: 0;
   transition: color 0.25s ease;
   white-space: nowrap;
+}
+
+.nav-link::before {
+  content: '';
+  position: absolute;
+  inset: 0.2rem 0.25rem;
+  border-radius: 0.55rem;
+  background: rgba(57, 110, 246, 0.08);
+  opacity: 0;
+  transform: scale(0.94);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.nav-link:hover::before,
+.nav-link-active::before {
+  opacity: 1;
+  transform: scale(1);
 }
 
 .nav-link::after {
@@ -718,12 +992,12 @@ header {
   border-radius: 999px;
   background: #396ef6;
   transform: scaleX(0);
-  transform-origin: center;
-  transition: transform 0.25s ease;
+  transform-origin: left center;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .nav-link:hover::after {
-  transform: scaleX(0.45);
+  transform: scaleX(1);
 }
 
 .nav-link-active::after {
@@ -755,6 +1029,7 @@ header {
 .mobile-link-active {
   background: linear-gradient(90deg, #dbeafe 0%, #eff6ff 100%);
   color: #2563eb;
+  box-shadow: inset 3px 0 0 #396ef6;
 }
 
 .mobile-sublink {
@@ -807,6 +1082,147 @@ header {
     font-size: 0.8125rem;
     padding-left: 0.65rem;
     padding-right: 0.65rem;
+  }
+}
+
+@keyframes navRise {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes navSweep {
+  from {
+    transform: translateX(-120%);
+    opacity: 0;
+  }
+  25% {
+    opacity: 1;
+  }
+  to {
+    transform: translateX(420%);
+    opacity: 0;
+  }
+}
+
+.nav-topbar {
+  transition: min-height 0.35s ease, padding 0.35s ease;
+}
+
+.nav-topbar::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 28%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #fff, transparent);
+  animation: navSweep 1.5s ease-out 0.35s 1 backwards;
+  pointer-events: none;
+}
+
+.nav-topbar > *,
+.nav-topbar-links > * {
+  animation: navRise 0.55s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+
+.nav-topbar-links > *:nth-child(1) { animation-delay: 0.08s; }
+.nav-topbar-links > *:nth-child(2) { animation-delay: 0.14s; }
+.nav-topbar-links > *:nth-child(3) { animation-delay: 0.18s; }
+.nav-topbar-links > *:nth-child(4) { animation-delay: 0.22s; }
+.nav-topbar-links > *:nth-child(5) { animation-delay: 0.26s; }
+
+.is-scrolled .nav-topbar {
+  min-height: 2.15rem;
+  padding-top: 0.12rem;
+  padding-bottom: 0.12rem;
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  line-height: 0;
+  animation: navRise 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.05s backwards;
+}
+
+.nav-logo-clip {
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.nav-brand:hover .nav-logo-clip {
+  transform: scale(1.045);
+}
+
+.nav-coord-icon {
+  transition: transform 0.25s ease, background 0.25s ease;
+}
+
+.nav-coord:hover .nav-coord-icon {
+  transform: translateY(-1px) scale(1.12);
+}
+
+.nav-desktop > * {
+  animation: navRise 0.55s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+
+.nav-desktop > *:nth-child(1) { animation-delay: 0.08s; }
+.nav-desktop > *:nth-child(2) { animation-delay: 0.13s; }
+.nav-desktop > *:nth-child(3) { animation-delay: 0.18s; }
+.nav-desktop > *:nth-child(4) { animation-delay: 0.23s; }
+.nav-desktop > *:nth-child(5) { animation-delay: 0.28s; }
+.nav-desktop > *:nth-child(6) { animation-delay: 0.32s; }
+.nav-desktop > *:nth-child(7) { animation-delay: 0.36s; }
+.nav-desktop > *:nth-child(8) { animation-delay: 0.4s; }
+
+.nav-drop-link {
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.25s ease;
+}
+
+.nav-drop-link:hover {
+  transform: translateX(4px);
+}
+
+.nav-mobile-list > * {
+  animation: navRise 0.42s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+
+.nav-mobile-list > *:nth-child(1) { animation-delay: 0.04s; }
+.nav-mobile-list > *:nth-child(2) { animation-delay: 0.08s; }
+.nav-mobile-list > *:nth-child(3) { animation-delay: 0.12s; }
+.nav-mobile-list > *:nth-child(4) { animation-delay: 0.16s; }
+.nav-mobile-list > *:nth-child(5) { animation-delay: 0.2s; }
+.nav-mobile-list > *:nth-child(6) { animation-delay: 0.24s; }
+.nav-mobile-list > *:nth-child(7) { animation-delay: 0.28s; }
+
+.mobile-icon {
+  transition: transform 0.25s ease, background-color 0.25s ease, color 0.25s ease;
+}
+
+.mobile-link:hover .mobile-icon {
+  transform: scale(1.08);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-topbar > *,
+  .nav-topbar-links > *,
+  .nav-topbar::before,
+  .nav-brand,
+  .nav-desktop > *,
+  .nav-mobile-list > * {
+    animation: none;
+  }
+
+  .nav-logo-clip,
+  .nav-coord-icon,
+  .nav-topbar,
+  .nav-drop-link,
+  .mobile-icon {
+    transition: none;
   }
 }
 </style>
